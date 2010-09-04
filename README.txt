@@ -1,7 +1,5 @@
 READ ME
 
-This is Just a test of GIT
+This is a test of GIT - hotfix branch
 
 d
-
-change change change
