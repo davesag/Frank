@@ -1,7 +1,8 @@
 READ ME
 
-This is Just a test of GIT
+I am using the project as a way of learning about GIT.
+
+There is really very little to see here.
 
 d
 
-change change change
