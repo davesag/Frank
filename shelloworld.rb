@@ -23,6 +23,6 @@ post '/' do
   if aName == 'Dave'
     haml :index, :locals => { :name => aName, :message => "Welcome" }
   else
-    haml :login, :locals => { :message => "Unknown User" }
+    haml :login, :locals => { :message => "Unknown User '#{aName}', please try again" }
   end
 end
