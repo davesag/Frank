@@ -1,4 +1,4 @@
-# indexTest.rb
+# shelloworld_test.rb
 require 'shelloworld'
 require 'test/unit'
 require 'rack/test'
