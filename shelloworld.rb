@@ -1,4 +1,5 @@
-# shelloworld.rb
+#!usr/bin/ruby
+
 require 'rubygems'
 require 'sinatra'
 require 'haml'
