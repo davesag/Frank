@@ -4,21 +4,27 @@ I am using this project as a way of learning about GIT, Ruby, Rails, Sinatra, an
 
 There is really very little to see here right now but as I mess about the code base is sure to expand.
 
-So far the code is a simple Sinatra app called shelloworld.rb
+So far the code is a simple Sinatra app called app.rb
 
-% ruby shelloworld.rb
+% ruby app.rb
 
 then go to http://localhost:4567
 
-It will say 'Sinatra, via HAML, says "Hello World".'
+It will present a login screen
 
-go to http://localhost:4567/hello/<your name>
+enter root and password and you will be logged in.  you can log out.
 
-It will say 'Sinatra, via HAML, says "Hello <your name>".'
+if you enter anything else you get bounced.
+
+uses active records
 
 This is unit tested via
 
-% ruby tests/shelloworld_test.rb
+% ruby tests/app_test.rb
+
+though the tests are incomplete
+
+see the rake file for db:migrate and db:seed
 
 Cheers
 
