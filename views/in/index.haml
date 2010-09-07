@@ -1,0 +1,7 @@
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+	%head
+		%title Welcome #{user.username}.
+	%body
+		%p Welcome #{user.username}. You are now logged in.
+		%p
+			%a{ :href => "/logout" } Log out

@@ -3,7 +3,7 @@
 class CreateUsersTable < ActiveRecord::Migration
   def self.up
     create_table :users do |t|
-      t.column :name, :string, :null => false
+      t.column :username, :string, :null => false
       t.column :password, :string, :null => false
     end
   end

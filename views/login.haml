@@ -1,9 +1,9 @@
 %html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
 	%head
-		%title #{message}.
+		%title Please Login.
 	%body
 		%p #{message}
-		%form(accept-charset='UTF-8' action='/' method='post')
+		%form(accept-charset='UTF-8' action='/login' method='post')
 			%p< 
 				%label{ :for => "username" }Username
 				%input(name='username' type='text')
