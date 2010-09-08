@@ -1,13 +1,15 @@
 %html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
-	%head
-		%title Please Login.
-	%body
-		%p #{message}
-		%form(accept-charset='UTF-8' action='/login' method='post')
-			%p< 
-				%label{ :for => "username" }Username
-				%input(name='username' type='text')
-			%p<
-				%label{ :for => "password" }Password
-				%input(name='password' type='password')
-			%input(type='submit' value='Log In')
+  %head
+    %link{ :href => "css/style.css", :rel => "stylesheet", :type => "text/css" }
+    %title Please Login.
+  %body
+    %p #{message}
+    %form(accept-charset='UTF-8' action='/login' method='post')
+      %p< 
+        %label{ :for => "username" }Username
+        %input(name='username' type='text')
+      %p<
+        %label{ :for => "password" }Password
+        %input(name='password' type='password')
+      %input(type='submit' value='Log In')
+ 
