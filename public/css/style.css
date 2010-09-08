@@ -1,0 +1,45 @@
+* {
+  padding:0;
+  margin:0;
+}
+h1, h2, h3, h4, h5, h6, p, pre, blockquote, label, ul, ol, dl, fieldset, address { margin:1em 0; }
+li, dd { margin-left:5%; }
+fieldset { padding: .5em; }
+select option{ padding:0 5px; }
+
+a{ outline:none; }
+a img{ border:none; }
+
+body{
+  font-family: "Cambria", "Georgia", "Times New Roman", Times, sans-serif;
+  font-size:14px;
+  line-height:1.4;
+  color:#666;
+}
+
+a{
+  color:#0084bd;
+  text-decoration:none;
+}
+a:visited{
+  color:#0084bd;
+}
+a:hover{
+  color:#6db4d3;
+  text-decoration:underline;
+}
+
+h1{
+  margin:18px 0 0 0;
+  font-size:36px;
+  font-weight:normal;
+  color:#000;
+}
+
+h2{
+  font-size:18px;
+  font-weight:normal;
+  color:#000;
+}
+
+
