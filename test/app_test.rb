@@ -31,10 +31,4 @@ class AppTest < Test::Unit::TestCase
     assert last_response.body.include?('log in to continue')    
   end
 
-  def test_login_attempts_bad_cred_gives_login_screen
-    post '/login', :params => { :username => 'bad', :password => 'dognobiscuit' }
-    assert last_response.ok?
-    assert last_response.body.include?('log in to continue')    
-  end
-
 end
