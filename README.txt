@@ -34,6 +34,11 @@ So far the code is a simple Sinatra app called app.rb
 
 To run it do the following
 
+Step 0. -  Check dependencies
+-----------------------------
+* Ruby 1.8.7 or higher
+* Various gems: rack, sinatra, haml, activerecord (probably more)
+
 Step 1. -  Get the code.
 ------------------------
 %cd src # or wherever it is you keep your source files
