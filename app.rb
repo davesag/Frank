@@ -12,7 +12,7 @@ enable :sessions
 
 CURRENT_USER_KEY = 'ACTIVE_TEST_APP_USER'
 
-ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'davetest.sqlite3.db'
+ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 def is_logged_in?
