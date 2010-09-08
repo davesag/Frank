@@ -37,7 +37,7 @@ To run it do the following
 Step 1. -  Get the code.
 ------------------------
 %cd src # or wherever it is you keep your source files
-% git clone git@github.com:davesag/Frank.git
+% git clone git://github.com/davesag/Frank.git
 
 Step 2. Init the data
 ---------------------
