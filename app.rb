@@ -19,6 +19,12 @@ log.info("Frank walks onto the stage.")
 ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
+def login_required! 
+  if ! is_logged_in? 
+    redirect '/login' 
+  end 
+end 
+
 def is_logged_in?
   session[CURRENT_USER_KEY] != nil
 end
@@ -39,6 +45,7 @@ def auth_user(username, password)
   User.login(username, password)
 end
 
+# home page - display login form, or divert to user home
 get '/' do
   if is_logged_in?
     haml :'in/index', :locals => { :user => active_user }
@@ -47,6 +54,7 @@ get '/' do
   end
 end
 
+# login request - display login form, or divert to user home
 get '/login' do
   if is_logged_in?
     haml :'in/index', :locals => { :user => active_user }
@@ -55,6 +63,7 @@ get '/login' do
   end
 end
 
+#logout action  - nuke user from session, display login form and thank user
 get '/logout' do
   if is_logged_in?
     name = active_user.username
@@ -65,6 +74,7 @@ get '/logout' do
   end
 end
 
+#login action - check credentials and load user into session
 post '/login' do
   aName = params['username']
   aPass = params['password']
@@ -75,4 +85,10 @@ post '/login' do
   else
     haml :login, :locals => { :message => "Unknown User/Password combination, please try again." }
   end
+end
+
+# userland pages
+get '/in/*' do
+  login_required!
+  haml :'in/index', :locals => { :user => active_user }
 end
