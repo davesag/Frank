@@ -1,5 +1,3 @@
-READ ME
-
 You must remember this
 ----------------------
 
@@ -23,6 +21,8 @@ Proposed Feature Set for v1
 * terms and conditions
 * privacy policy
 
+* Passwords must be stored securely
+
 Proposed features for v1.1
 --------------------------
 * oAuth authentication
@@ -37,7 +37,7 @@ To run it do the following
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, haml, activerecord (probably more)
+* Various gems: rack, sinatra, haml, active_record, bcrypt, logger
 
 Step 1. -  Get the code.
 ------------------------

@@ -12,6 +12,10 @@ enable :sessions
 
 CURRENT_USER_KEY = 'ACTIVE_TEST_APP_USER'
 
+log = Logger.new(STDOUT)
+log.level = Logger::DEBUG
+log.info("Frank walks onto the stage.")
+
 ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
@@ -32,7 +36,7 @@ def active_user
 end
 
 def auth_user(username, password)
-  User.find(:first, :conditions => { :username => username, :password => password })
+  User.login(username, password)
 end
 
 get '/' do
