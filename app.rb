@@ -7,6 +7,7 @@ require 'active_record'
 require 'logger'
 
 require 'models/user'
+require 'models/preference'
 
 enable :sessions
 
@@ -87,8 +88,15 @@ post '/login' do
   end
 end
 
-# userland pages
+# the show the current logged in user details page
+get '/in/show_user' do
+  login_required!
+  haml :'in/show_user', :locals => { :user => active_user }
+end
+
+# generic userland pages bounce to the logged in home page if logged in, or login page if not.
 get '/in/*' do
   login_required!
   haml :'in/index', :locals => { :user => active_user }
 end
+

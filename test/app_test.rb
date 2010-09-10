@@ -19,8 +19,11 @@ class AppTest < Test::Unit::TestCase
   GOOD_PASSWORD = "password"
   BAD_PASSWORD = "dog no biscuit"
   GOOD_EMAIL = "Frank_root_user@davesag.com"
-  BAD_EMAIL = "mrcreepy@thisisnotavalidemailaddress.con"
-
+  BAD_EMAIL = "Frank_root_user@thisisnotavalidemailaddress.con"
+  GOOD_PREFERENCE_TOKEN = "HTML_EMAIL"
+  GOOD_PREFERENCE_VALUE = "false"
+  BAD_PREFERENCE_TOKEN = "some old nonsense"
+  
 # test basic guest level requests
 
   def test_default_guest_gives_login_screen
@@ -114,4 +117,19 @@ class AppTest < Test::Unit::TestCase
     assert last_response.body.include?('Welcome root.')    
   end
   
+  # test that the logged in user's prferences are able to be set and retrieved.
+  
+  def test_users_preferences
+    # first log in
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+
+    # the show user page dumps all of the preferences.
+    get '/in/show_user'
+    assert last_response.ok?
+    assert last_response.body.include?( GOOD_PREFERENCE_TOKEN)    
+    assert last_response.body.include?( GOOD_PREFERENCE_VALUE)    
+    assert !last_response.body.include?( BAD_PREFERENCE_TOKEN)    
+
+  end
+
 end

@@ -1,0 +1,22 @@
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+  %head
+    %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
+    %title Show Details: #{user.username}.
+  %body
+    #user_details
+      %table
+        %tr<
+          %th> Username
+          %td #{user.username}
+        %tr<
+          %th> Email
+          %td #{user.email}
+        %tr<
+          %th{ :colspan => "2" } Preferences
+        - for pref in user.preferences
+          %tr<
+            %th>= pref.name
+            %td= pref.value
+    #footer
+      %p<
+        %a{ :href => "/logout" } Log out
