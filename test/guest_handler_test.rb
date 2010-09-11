@@ -3,15 +3,22 @@
 require 'frank'
 require 'test/unit'
 require 'rack/test'
+require 'rack/builder'
 require 'models/user'
 
-set :environment, :test
-
-class AppTest < Test::Unit::TestCase
+class GuestHandlerTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
-    Frank
+
+    @app ||= Rack::Builder.parse_file(File.join(Frank.root,"config.ru"))[0]
+    
+    if @app == nil
+      puts ("@app is nil")
+    else
+      puts ( "@app is a " + @app.class.to_s )
+    end
+    return @app
   end
 
 # see db/seeds.rb for the usename and password of the seeded 'root' user.
@@ -24,7 +31,7 @@ class AppTest < Test::Unit::TestCase
   GOOD_PREFERENCE_TOKEN = "HTML_EMAIL"
   GOOD_PREFERENCE_VALUE = "false"
   BAD_PREFERENCE_TOKEN = "some old nonsense"
-  
+
 # test basic guest level requests
 
   def test_default_guest_gives_login_screen
@@ -50,7 +57,7 @@ class AppTest < Test::Unit::TestCase
   def test_guest_access_to_userland_gives_login_screen
     get '/in/index'
     follow_redirect!
-    
+
     assert last_request.url.ends_with?("/login")
     assert last_response.ok?
     assert last_response.body.include?('log in to continue')   
@@ -117,9 +124,9 @@ class AppTest < Test::Unit::TestCase
     assert last_response.ok?
     assert last_response.body.include?('You are logged in as root')    
   end
-  
+
   # test that the logged in user's prferences are able to be set and retrieved.
-  
+
   def test_users_preferences
     # first log in
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
@@ -166,14 +173,14 @@ class AppTest < Test::Unit::TestCase
     assert last_response.ok?
     assert last_response.body.include?(GOOD_USERNAME + "' already exists")
   end
-  
+
   # test user registration of a user with a known email gives an error and shows registration page again
   def test_register_known_email_gives_error
     post '/registration', { :username => "any", :password => "any", :email => GOOD_EMAIL }
     assert last_response.ok?
     assert last_response.body.include?(GOOD_EMAIL + "' already exists")
   end
-  
+
   # test user registration of a user with a unique username and email is okay
   def test_register_unique_username_and_email_is_ok
     post '/registration', { :username => "unique_test", :password => "test_pass", :email => "unique_frank_test@davesag.com" }
@@ -181,7 +188,7 @@ class AppTest < Test::Unit::TestCase
     assert last_response.body.include?("A confirmation email has been sent to unique_frank_test@davesag.com")
     # here we could also test the whole email cycle.
     # for now once a user is registered they can log in.  change this test when the email of a rego link is done.
-    
+
     # can the new user log in?
     post '/login', { :username => "unique_test", :password => "test_pass" }
     assert last_response.ok?

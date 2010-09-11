@@ -2,8 +2,9 @@
 
 require 'active_record'
 require 'logger'
+require 'rake/testtask'
 
-task :default => ['db:migrate']
+task :default => :test
 
 namespace :db do
   desc "Set up the connection to the database"
@@ -23,5 +24,13 @@ namespace :db do
     seed_file = File.join('db', 'seeds.rb')
     load(seed_file) if File.exist?(seed_file)
   end
- 
+end
+
+desc "run the tests"
+task(:test => 'db:environment') do
+  Rake::TestTask.new do |t|
+    t.libs << "test"
+    t.test_files = FileList['test/*_test.rb']
+    t.verbose = true
+  end
 end

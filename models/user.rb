@@ -5,6 +5,8 @@ require 'logger'
 
 class User < ActiveRecord::Base
   has_many :preferences
+  validates_uniqueness_of :username
+  validates_uniqueness_of :email
 
   def haml_object_ref
     "a_user"

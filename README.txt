@@ -8,7 +8,7 @@ My original aim was to build a very simple web application that demonstrated a c
 It was fairly simple to do and an excellent learning experience as I have come from a Java world, but I found a out of gaps in other people's documentation and, in particular, no simple, canonical examples for how I would do such a simple thing.  I felt I had to work out far too much of this as I went.
 
 Proposed Feature Set for v1
---------------------
+---------------------------
 * Log in with username or email and password --> Logged in User screen
 * Log out (but remember who I am) --> Login screen
 * Log out completely --> Login screen
@@ -30,14 +30,21 @@ Proposed features for v1.1
 Where are we now?
 -----------------
 
-So far the code is a simple Sinatra app called app.rb
+The main application is a Sinatra app called frank.rb
 
-To run it do the following
+Frank in turn will refer to handlers in the /handlers folder
+This allows you to group your request handlers in smaller more modular files.
+Right now there are only two groups, guest (all guest functions live here), and user, where the various user functions live.
+
+Running Frank
+-------------
+
+Frank runs as a Rack application. To run Frank do the following
 
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, haml, active_record, bcrypt, logger
+* Various gems: rack, sinatra, haml, active_record, bcrypt, logger, rack, rake and rake
 
 Step 1. -  Get the code.
 ------------------------
@@ -52,13 +59,13 @@ Step 2. Init the data
 
 Step 3. - Run the unit tests.
 -----------------------------
-% ruby test/app_test.rb
+% rake test
 
 Step 4 - Run the app.
 ---------------------
-% ruby app.rb
+% rackup
 
-then go to http://localhost:4567 with your favourite web browser
+then go to http://localhost:9292 with your favourite web browser
 
 It will present a login screen
 
@@ -66,12 +73,18 @@ Enter 'root' and 'password' (without the quotes of course) and you will be logge
 
 if you enter anything other credentials you get bounced with a polite message.
 
+You can register as a new user and then log in.  You can then see your details and delete yourself.
+
+When you register it will claim to be emailing you but I've not done that bit yet.
+
 I want to be a part of it
 -------------------------
 
 So who is this project aimed at?  Me really, in that I need to build a web-app for a project I am doing and figure a great way to learn more about Sinatra and Ruby and so on is to polish up a more feature complete generic web app that does the very core of what I believe all 'user aware' web apps need to be able to do.
 
 If you'd like to collaborate with me on this then please get in touch
+
+I'd like to thank the people on the #sinatra IRC channel for their help.
 
 Cheers
 
