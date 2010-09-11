@@ -21,10 +21,13 @@ ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.F
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 # all tempolates within /in/ need to use the logged in user template
+# we will also be using Haml to send HTML formatted email
 helpers do
   def haml(template, options = {}, *)
     if template.to_s.start_with? 'in/'
       options[:layout] ||= :'in/layout'
+    elsif template.to_s.start_with? 'mail/'
+      options[:layout] ||= false
     end
     super
   end
@@ -123,7 +126,7 @@ post '/registration' do
   	  # TODO: notify the user with that email
     else
       user = User.create(:username => aName, :password => aPass, :email => anEmail)
-      user.set_preference("HTML_EMAIL", "false")
+      user.set_preference("HTML_EMAIL", "true")
       user.save!
       #TODO: generate a confirmation email and url and send it to the user.
       haml :login, :locals => { :message => "A confirmation email has been sent to #{anEmail}. You will not be able to log in until you confirm your email address.", :name => "#{aName}" }

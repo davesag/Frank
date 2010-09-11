@@ -6,3 +6,5 @@
 /TODO     # only ignore the root TODO file, not subdir/TODO
 build/    # ignore all files in the build/ directory
 *.db      # ignore all database files
+*.swp     # no swap files
+.DS_Store # ignore the OSX finder info
