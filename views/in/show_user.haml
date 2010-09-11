@@ -12,3 +12,6 @@
       %tr<
         %th>= pref.name
         %td= pref.value
+#self_destruct
+  %form(accept-charset='UTF-8' action='/delete_self' method='post')
+    %input(type='submit' value='Delete me')

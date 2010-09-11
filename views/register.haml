@@ -1,1 +1,15 @@
-/ put the registration form here
+%h2 #{message}
+%form(accept-charset='UTF-8' action='/registration' method='post')
+  %p< 
+    %label{ :for => "email" }Your email
+    %input(name='email' type='text')
+  %p< 
+    %label{ :for => "username" }Choose a username
+    %input(name='username' type='text')
+  %p<
+    %label{ :for => "password" }Choose a Password
+    %input(name='password' type='password')
+  %input(type='submit' value='Register me')
+%p
+  Or
+  %a{ :href => "/login" } Log in

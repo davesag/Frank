@@ -64,6 +64,15 @@ def login(name_or_email, plain_password)
   return @user
 end
 
+# Checking the existence of a user with this username or email
+def username_exists?(username)
+  return User.find_by_username(username) != nil
+end
+
+def email_exists?(email)
+  return User.find_by_email(email) != nil
+end
+
 # If a user forgets their password?
 # assign them a random one and mail it to them, asking them to change it
 
@@ -76,4 +85,4 @@ def reset_password(email)
 # commented out mailer for now as I have no Idea what it is or does. 
 end
 
-public :login, :reset_password
+public :login, :reset_password, :email_exists?, :username_exists?

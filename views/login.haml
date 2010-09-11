@@ -1,4 +1,4 @@
-%p #{message}
+%h2 #{message}
 %form(accept-charset='UTF-8' action='/login' method='post')
   %p< 
     %label{ :for => "username" }Username
@@ -7,3 +7,6 @@
     %label{ :for => "password" }Password
     %input(name='password' type='password')
   %input(type='submit' value='Log In')
+%p
+  Or please
+  %a{ :href => "/register" } register
