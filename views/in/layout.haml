@@ -1,0 +1,13 @@
+!!!
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+  %head
+    %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
+    %title #{message} #{user.username}
+  %body
+    #header
+      %h2 You are logged in as #{user.username}
+    #content
+      = yield
+    #footer
+      %p<
+        %a{ :href => "/logout" } Log out

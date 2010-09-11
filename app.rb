@@ -49,18 +49,18 @@ end
 # home page - display login form, or divert to user home
 get '/' do
   if is_logged_in?
-    haml :'in/index', :locals => { :user => active_user }
+    haml :'in/index', :layout => :"in/layout", :locals => { :message => "Welcome", :user => active_user }
   else
-	  haml :login, :locals => { :message => "Please log in to continue." }
+	  haml :login, :locals => { :message => "Please log in to continue", :name => "" }
   end
 end
 
 # login request - display login form, or divert to user home
 get '/login' do
   if is_logged_in?
-    haml :'in/index', :locals => { :user => active_user }
+    haml :'in/index', :layout => :"in/layout", :locals => { :message => "Welcome back", :user => active_user }
   else
-	  haml :login, :locals => { :message => "Please log in to continue." }
+	  haml :login, :locals => { :message => "Please log in to continue", :name => "" }
   end
 end
 
@@ -69,9 +69,9 @@ get '/logout' do
   if is_logged_in?
     name = active_user.username
     log_user_out
-    haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue." }
+    haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "" }
   else
-    haml :login, :locals => { :message => "You were not logged in. Please log in to continue." }
+    haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "" }
   end
 end
 
@@ -82,21 +82,21 @@ post '/login' do
   aUser = auth_user(aName, aPass)
   if aUser != nil
     log_user_in(aUser)
-    haml :'in/index', :locals => { :user => aUser }
+    haml :'in/index', :layout => :"in/layout", :locals => { :message => "You have logged in as", :user => aUser }
   else
-    haml :login, :locals => { :message => "Unknown User/Password combination, please try again." }
+    haml :login, :locals => { :message => "Unknown User/Password combination, please try again", :name => "" }
   end
 end
 
 # the show the current logged in user details page
 get '/in/show_user' do
   login_required!
-  haml :'in/show_user', :locals => { :user => active_user }
+  haml :'in/show_user', :layout => :"in/layout", :locals => { :message => "Show details:", :user => active_user }
 end
 
 # generic userland pages bounce to the logged in home page if logged in, or login page if not.
 get '/in/*' do
   login_required!
-  haml :'in/index', :locals => { :user => active_user }
+  haml :'in/index', :layout => :"in/layout", :locals => { :message => "Hello", :user => active_user }
 end
 

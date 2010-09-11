@@ -64,7 +64,7 @@ class AppTest < Test::Unit::TestCase
   end
 
   def test_login_attempt_bad_email_gives_login_screen
-    post '/login', { :username => 'bad@test.com', :password => BAD_PASSWORD }
+    post '/login', { :username => BAD_EMAIL, :password => BAD_PASSWORD }
     assert last_response.ok?
     assert last_response.body.include?('Unknown User/Password combination, please try again')    
   end
@@ -86,13 +86,13 @@ class AppTest < Test::Unit::TestCase
   def test_login_attempt_good__username_and_password_gives_user_home_screen
     post '/login', {:username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('Welcome root.')    
+    assert last_response.body.include?('You are logged in as root')    
   end
 
   def test_login_attempt_good_email_and_password_gives_user_home_screen
     post '/login', {:username => GOOD_EMAIL, :password => GOOD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('Welcome root.')    
+    assert last_response.body.include?('You are logged in as root')    
   end
 
   def test_logout_user_gives_home_screen
@@ -114,7 +114,7 @@ class AppTest < Test::Unit::TestCase
     # then specifically request the index page in userland
     get '/in/index'
     assert last_response.ok?
-    assert last_response.body.include?('Welcome root.')    
+    assert last_response.body.include?('You are logged in as root')    
   end
   
   # test that the logged in user's prferences are able to be set and retrieved.
