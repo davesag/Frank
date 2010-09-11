@@ -1,6 +1,6 @@
 #!usr/bin/ruby
 
-require 'app'
+require 'frank'
 require 'test/unit'
 require 'rack/test'
 require 'models/user'
@@ -11,7 +11,7 @@ class AppTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
-    Sinatra::Application
+    Frank
   end
 
 # see db/seeds.rb for the usename and password of the seeded 'root' user.

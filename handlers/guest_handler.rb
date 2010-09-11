@@ -29,6 +29,19 @@ class GuestHandler < Frank
     end
   end
 
+  #login action - check credentials and load user into session
+  post '/login' do
+    aName = params['username']
+    aPass = params['password']
+    aUser = auth_user(aName, aPass)
+    if aUser != nil
+      log_user_in(aUser)
+      haml :'in/index', :locals => { :message => "You have logged in as", :user => aUser }
+    else
+      haml :login, :locals => { :message => "Unknown User/Password combination, please try again", :name => "" }
+    end
+  end
+  
   # registration request - display registration form, or divert to user home if logged in
   get '/register' do
     if is_logged_in?

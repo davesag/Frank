@@ -9,7 +9,8 @@ class Frank < Sinatra::Base
   enable  :sessions
   set :root, File.dirname(__FILE__)
   set :handlers, Proc.new { root && File.join(root, 'handlers') }
-  set :CURRENT_USER_KEY, 'ACTIVE_TEST_APP_USER'
+  
+  CURRENT_USER_KEY = 'ACTIVE_TEST_APP_USER'
 
   # Externalise all of the various handlers into a /handlers folder
   # each handler will subclass Frank, live in /handlers and be called *_handler.rb
