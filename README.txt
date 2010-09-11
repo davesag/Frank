@@ -44,7 +44,7 @@ Frank runs as a Rack application. To run Frank do the following
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, haml, active_record, bcrypt, logger, rack, rake and rake
+* Various gems: rack, sinatra, haml, active_record, bcrypt, logger, and of course rake.
 
 Step 1. -  Get the code.
 ------------------------
