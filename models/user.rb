@@ -7,7 +7,11 @@ class User < ActiveRecord::Base
   has_many :preferences
   validates_uniqueness_of :username
   validates_uniqueness_of :email
-
+  validates_uniqueness_of :validation_token
+  before_create :assign_validation_token
+  
+  @@CHARS = ("a".."z").to_a + ("A".."Z").to_a
+  
   def haml_object_ref
     "a_user"
   end
@@ -37,19 +41,24 @@ class User < ActiveRecord::Base
     self.preferences.first(:conditions => {:name => name})
   end
 
-end
+ # make sure we also create the validation_token.
+ def assign_validation_token
+   if self.validation_token == nil || self.validation_token = ""
+     self.generate_token!
+     puts "Validation URL is http://localhost:9292/validate/" + self.validation_token
+   end
+ end
 
-# Creating a user.
+ def generate_token!
+   n = Digest::MD5.hexdigest(self.username).hex
+   token_array = []
+   while n > 0
+     token_array << @@CHARS[n.divmod(@@CHARS.size)[1]]
+     n = n.divmod(@@CHARS.size)[0]
+   end
+   self.validation_token = token_array.to_s
+ end
 
-def create (username, email, password)
-  @user = User.new(username)
-  @user.email = email
-  @user.password = password
-  @user.save!
-end
-
-def create
-  @user = User.create(params[:username], params[:email], params[:password])
 end
 
 # Authenticating a user
@@ -60,7 +69,7 @@ def login(name_or_email, plain_password)
   else
     @user = User.find_by_username(name_or_email)
   end
-  if @user == nil || @user.password != plain_password
+  if @user == nil || @user.password != plain_password || !@user.validated
     @user = nil
   end
   return @user
