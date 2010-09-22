@@ -1,4 +1,5 @@
 require "frank"
 
 use GuestHandler
-run UserHandler
+use UserHandler
+run RegistrationHandler
