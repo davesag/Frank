@@ -55,10 +55,17 @@ class RegistrationHandlerTest < HandlerTestBase
     post '/registration', { :username => "unique_test", :password => "test_pass", :email => "unique_frank_test@davesag.com" }
     assert last_response.ok?
     assert last_response.body.include?("A confirmation email has been sent to unique_frank_test@davesag.com")
-    # here we could also test the whole email cycle.
-    # for now once a user is registered they can log in.  change this test when the email of a rego link is done.
 
-    # can the new user log in?
+    # can the new user log in?  not yet! has not validated.
+    post '/login', { :username => "unique_test", :password => "test_pass" }
+    assert last_response.ok?
+    assert last_response.body.include?('Unknown User/Password combination, please try again')    
+
+    get '/validate/' + User.find_by_username("unique_test").validation_token
+    assert last_response.ok?
+    assert last_response.body.include?('Your registration has been confirmed')    
+
+    # can the new user log in?  should be ok now
     post '/login', { :username => "unique_test", :password => "test_pass" }
     assert last_response.ok?
     assert last_response.body.include?('You are logged in as unique_test')    
