@@ -68,4 +68,45 @@ class UserHandlerTest < HandlerTestBase
 
   end
 
+  def test_edit_user_email_clashes
+    setup_dummy_user("George")
+    setup_dummy_user("Mildred")
+    
+    # first log in
+    post '/login', { :username => "George", :password => GOOD_PASSWORD }
+ 
+    get '/in/edit_user'
+    assert last_response.ok?
+    assert last_response.body.include?( "Frank_Dummy_George@davesag.com")    
+
+    post '/in/editing_user', { :email => "Frank_Dummy_Mildred@davesag.com", :password => "", :html_email => 'true'}
+    assert last_response.ok?
+    assert last_response.body.include?( "already exists")    
+
+    post '/in/editing_user', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "", :html_email => 'true'}
+    assert last_response.ok?
+    assert last_response.body.include?( "A confirmation email has been sent to")    
+
+    post '/in/editing_user', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "newpassword", :html_email => 'true'}
+    assert last_response.ok?
+    assert last_response.body.include?( "saved")    
+
+    teardown_dummy_user("Mildred")
+    teardown_dummy_user("George")
+  end
+
+ def setup_dummy_user (name)
+   user = User.create( :username => name, :password => "password", :email => "Frank_Dummy_" + name + "@davesag.com")
+   user.set_preference("HTML_EMAIL", "true")
+   user.validated = true
+   user.save!
+ end
+ 
+ def teardown_dummy_user(name)
+   user = User.find_by_username(name)
+   if user != nil
+     user.destroy
+   end
+ end
+
 end
