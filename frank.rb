@@ -10,7 +10,8 @@ class Frank < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :handlers, Proc.new { root && File.join(root, 'handlers') }
   
-  CURRENT_USER_KEY = 'ACTIVE_TEST_APP_USER'
+  CURRENT_USER_KEY = 'ACTIVE_FRANK_USER'
+  LAST_USER_NAME_KEY = 'LAST_KNOWN_FRANK_USERNAME'
 
   # Externalise all of the various handlers into a /handlers folder
   # each handler will subclass Frank, live in /handlers and be called *_handler.rb
@@ -67,14 +68,32 @@ class Frank < Sinatra::Base
 
   def log_user_in(user)
     session[CURRENT_USER_KEY] = user
+    session[LAST_USER_NAME_KEY] = user.username
   end
 
   def log_user_out
-    session[CURRENT_USER_KEY] = nil
+    if session[CURRENT_USER_KEY] != nil
+      # there is a currently logged in user
+      session[CURRENT_USER_KEY] = nil
+    else
+      # nuke the remembered username
+      session[LAST_USER_NAME_KEY] = nil
+    end
   end
 
   def active_user
     session[CURRENT_USER_KEY]
+  end
+
+  def is_remembered_user?
+    session[LAST_USER_NAME_KEY] != nil
+  end
+
+  def active_username
+    if session[LAST_USER_NAME_KEY] == nil
+      return ""
+    end
+    return session[LAST_USER_NAME_KEY]
   end
 
   def auth_user(username, password)

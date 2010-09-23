@@ -27,10 +27,15 @@ class UserHandlerTest < HandlerTestBase
     # first log in
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
-    # then log out again
+    # then log out
     get '/logout'
     assert last_response.ok?
     assert last_response.body.include?('Please log in again to continue')    
+
+    # then log out again
+    get '/logout'
+    assert last_response.ok?
+    assert last_response.body.include?('logged out completely')    
   end
 
   # test that logged in users are allowed into userland

@@ -16,7 +16,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'in/index', :locals => { :message => "Welcome", :user => active_user }
     else
-  	  haml :login, :locals => { :message => "Please log in to continue", :name => "" }
+  	  haml :login, :locals => { :message => "Please log in to continue", :name => active_username }
     end
   end
 
@@ -25,7 +25,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'in/index', :locals => { :message => "Welcome back", :user => active_user }
     else
-  	  haml :login, :locals => { :message => "Please log in to continue", :name => "" }
+  	  haml :login, :locals => { :message => "Please log in to continue", :name => active_username }
     end
   end
 
@@ -38,7 +38,7 @@ class GuestHandler < Frank
       log_user_in(aUser)
       haml :'in/index', :locals => { :message => "You have logged in as", :user => aUser }
     else
-      haml :login, :locals => { :message => "Unknown User/Password combination, please try again", :name => "" }
+      haml :login, :locals => { :message => "Unknown User/Password combination, please try again", :name => active_username }
     end
   end
   
@@ -46,7 +46,9 @@ class GuestHandler < Frank
   get '/register' do
     if is_logged_in?
       haml :'in/index', :locals => { :message => "You are already logged in as", :user => active_user }
-    else
+    elsif is_remembered_user?
+      haml :login, :locals => { :message => "Please logout completely before trying to register a new user.", :name => active_username }
+	  else
   	  haml :register, :locals => { :message => "Registration is fast and free", :name => "" }
     end
   end

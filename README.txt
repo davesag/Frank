@@ -10,7 +10,7 @@ It was fairly simple to do and an excellent learning experience as I have come f
 Proposed Feature Set for v1
 ---------------------------
 * Log in with username or email and password --> Logged in User screen (done)
-* Log out (but remember who I am) --> Login screen (todo)
+* Log out (but remember who I am) --> Login screen (done)
 * Log out completely --> Login screen (done)
 * New User Registration --> sends verification email with link (done)
 						--> 'Please check your email' screen. (done)
@@ -76,6 +76,8 @@ if you enter anything other credentials you get bounced with a polite message.
 You can register as a new user and an email will be sent with a verification link.  You can click that link (localhost only right now) and then log in.  You can then see your details and delete yourself.
 
 If you try to register with an email address already in the system then that person will receive a warning email.
+
+If you log out the system will remember your username unless you log out completely.
 
 I want to be a part of it
 -------------------------

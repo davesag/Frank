@@ -17,6 +17,10 @@ class UserHandler < Frank
       name = active_user.username
       log_user_out
       haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "#{name}" }
+    elsif is_remembered_user?
+      name = active_username
+      log_user_out
+      haml :login, :locals => { :message => "You have logged out completely #{name}. Please log in again to continue", :name => "" }
     else
       haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "" }
     end
@@ -28,9 +32,10 @@ class UserHandler < Frank
       # delete the user
       active_user.destroy
       log_user_out
+      log_user_out # do it twice
       haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "" }
     else
-      haml :login, :locals => { :message => "You are not logged in", :name => "" }
+      haml :login, :locals => { :message => "You are not logged in", :name => active_user }
     end
   end
 
