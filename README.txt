@@ -9,17 +9,17 @@ It was fairly simple to do and an excellent learning experience as I have come f
 
 Proposed Feature Set for v1
 ---------------------------
-* Log in with username or email and password --> Logged in User screen
-* Log out (but remember who I am) --> Login screen
-* Log out completely --> Login screen
-* New User Registration --> sends verification email with link
-						--> 'Please check your email' screen.
-* New User Verification --> User is verified message on Logged in User screen
-* Forgot password --> Enter Email
+* Log in with username or email and password --> Logged in User screen (done)
+* Log out (but remember who I am) --> Login screen (todo)
+* Log out completely --> Login screen (done)
+* New User Registration --> sends verification email with link (done)
+						--> 'Please check your email' screen. (done)
+* New User Verification --> User is verified message on Logged in User screen (done)
+* Forgot password --> Enter Email (todo)
 					--> either reset password and send password reset link, or
 					--> email not known
-* terms and conditions
-* privacy policy
+* terms and conditions (todo)
+* privacy policy (todo)
 
 * Passwords must be stored securely
 
@@ -44,7 +44,7 @@ Frank runs as a Rack application. To run Frank do the following
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, haml, active_record, bcrypt, logger, and of course rake.
+* Various gems: rack, sinatra, haml, erb, active_record, bcrypt, logger, pony and of course rake.
 
 Step 1. -  Get the code.
 ------------------------
@@ -73,9 +73,9 @@ Enter 'root' and 'password' (without the quotes of course) and you will be logge
 
 if you enter anything other credentials you get bounced with a polite message.
 
-You can register as a new user and then log in.  You can then see your details and delete yourself.
+You can register as a new user and an email will be sent with a verification link.  You can click that link (localhost only right now) and then log in.  You can then see your details and delete yourself.
 
-When you register it will claim to be emailing you but I've not done that bit yet.
+If you try to register with an email address already in the system then that person will receive a warning email.
 
 I want to be a part of it
 -------------------------
