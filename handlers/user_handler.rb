@@ -7,6 +7,7 @@ require 'active_record'
 require 'logger'
 
 require 'models/user'
+require 'models/role'
 require 'models/preference'
 
 class UserHandler < Frank
