@@ -4,6 +4,9 @@ require 'rubygems'
 require 'sinatra/base'
 require 'active_record'
 require 'logger'
+require 'pony'
+require 'erb'
+require 'haml'
 
 class Frank < Sinatra::Base
   enable  :sessions
@@ -81,6 +84,11 @@ class Frank < Sinatra::Base
     end
   end
 
+  def nuke_session!
+    session[CURRENT_USER_KEY] = nil
+    session[LAST_USER_NAME_KEY] = nil
+  end
+
   def active_user
     session[CURRENT_USER_KEY]
   end
@@ -99,5 +107,47 @@ class Frank < Sinatra::Base
   def auth_user(username, password)
     User.login(username, password)
   end
+ 
+# utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
+ def send_email_to_user(user, subject, body_template, template_locals)
+   if user.get_preference("HTML_EMAIL").value == 'true'
+     email_body = haml(body_template, :locals => template_locals )
+     type = 'text/html'
+   else
+     email_body = erb(body_template, :locals => template_locals)
+     type = 'text/plain'
+   end
+   Pony.mail :to => user.email,
+             :from => "frank_test@davesag.com",
+             :subject => subject,
+             :headers => { 'Content-Type' => type },
+             :body => email_body
+ end
+
+# notify the user with that email if new registration tries to use your email
+  def notify_user_of_registration_overlap_attempt!(email,supplied_name)
+    user = User.find_by_email(email)
+    template_locals = { :user => user, :supplied_name => supplied_name}
+    send_email_to_user(user,"Frank says someone is using your email." ,:'mail/email_warning', template_locals)
+  end
+
+# notify the user with that email if user tries to change their email to yours
+  def notify_user_of_email_change_overlap_attempt!(email,supplied_name)
+    user = User.find_by_email(email)
+    template_locals = { :user => user, :supplied_name => supplied_name}
+    send_email_to_user(user,"Frank says someone is using your email." ,:'mail/email_change_warning', template_locals)
+  end
+
+# generate a confirmation url and email and send it to the user.
+  def send_confirmation_to(user)
+    token_link = "http://localhost:9292/validate/" + user.validation_token
+    template_locals = { :user => user, :token_url => token_link}
+    send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/new_registration', template_locals)
+  end
   
+  def send_email_update_confirmation_to(user)
+    token_link = "http://localhost:9292/validate/" + user.validation_token
+    template_locals = { :user => user, :token_url => token_link}
+    send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/change_email', template_locals)
+  end 
 end

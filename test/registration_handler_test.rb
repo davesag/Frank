@@ -68,7 +68,8 @@ class RegistrationHandlerTest < HandlerTestBase
     # can the new user log in?  should be ok now
     post '/login', { :username => "unique_test", :password => "test_pass" }
     assert last_response.ok?
-    assert last_response.body.include?('You are logged in as unique_test')    
+    assert last_response.body.include?('You are logged in')    
+    assert last_response.body.include?("unique_test")    
 
     # now clean the test crud from the database
     post '/delete_self'

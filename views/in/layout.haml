@@ -5,7 +5,10 @@
     %title #{message} #{user.username}
   %body
     #header
-      %h2 You are logged in as #{user.username}
+      %p<
+        You are logged in as
+        %b<
+          #{user.username}
     #content
       = yield
     #footer
@@ -13,5 +16,9 @@
         [
         %a{:href=>'/'}Home
         |
-        %a{ :href => "/logout" } Log out
+        %a{:href=>'/in/show_user'}Profile
+        |
+        %a{:href=>'/in/edit_user'}Edit Profile
+        |
+        %a{ :href => "/logout" }Log out
         ]

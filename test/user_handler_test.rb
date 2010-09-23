@@ -14,13 +14,15 @@ class UserHandlerTest < HandlerTestBase
   def test_login_attempt_good__username_and_password_gives_user_home_screen
     post '/login', {:username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('You are logged in as root')    
+    assert last_response.body.include?('You are logged in as')    
+    assert last_response.body.include?(GOOD_USERNAME)    
   end
 
   def test_login_attempt_good_email_and_password_gives_user_home_screen
     post '/login', {:username => GOOD_EMAIL, :password => GOOD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('You are logged in as root')    
+    assert last_response.body.include?('You are logged in as')    
+    assert last_response.body.include?(GOOD_USERNAME)    
   end
 
   def test_logout_user_gives_home_screen
@@ -47,7 +49,8 @@ class UserHandlerTest < HandlerTestBase
     # then specifically request the index page in userland
     get '/in/index'
     assert last_response.ok?
-    assert last_response.body.include?('You are logged in as root')    
+    assert last_response.body.include?('You are logged in as')    
+    assert last_response.body.include?(GOOD_USERNAME)    
   end
 
   # test that the logged in user's prferences are able to be set and retrieved.

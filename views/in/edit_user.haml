@@ -1,0 +1,16 @@
+%h2 #{message}
+%form(accept-charset='UTF-8' action='/in/editing_user' method='post')
+  %p< 
+    %label{ :for => "email" }Your email
+    %input(name='email' type='text' value='#{user.email}')
+  %p<
+    %label{ :for => "password" }New password
+    %input(name='password' type='password')
+    %p<
+      %label{ :for => "html_email" }Do you want HTML email?
+      %select(name='html_email')
+        %option{ :value => 'true', :selected => (user.get_preference('HTML_EMAIL').value == 'true' ? "selected" : nil)}<
+          Yes
+        %option{ :value => 'false', :selected => (user.get_preference('HTML_EMAIL').value == 'false' ? "selected" : nil)}<
+          No
+  %input(type='submit' value='Update me')
