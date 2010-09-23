@@ -2,11 +2,11 @@
 %form(accept-charset='UTF-8' action='/login' method='post')
   %p< 
     %label{ :for => "username" }Username
-    %input(name='username' type='text')
+    %input(name='username' type='text' value='#{name}')
   %p<
     %label{ :for => "password" }Password
     %input(name='password' type='password')
   %input(type='submit' value='Log In')
 %p
   Or please
-  %a{ :href => "/register" } register
+  %a{ :href => "/register" }register
