@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   def set_preference(name,value)
     pref = self.preferences.first(:conditions => {:name => name})
     if pref
-      pref.update!(:value => value)
+      pref.update_attribute :value, value
     else
       self.preferences.build(:name => name, :value => value)
     end

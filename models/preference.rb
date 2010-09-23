@@ -9,15 +9,3 @@ class Preference < ActiveRecord::Base
     "a_preference"
   end  
 end
-
-# Creating the preference
-
-def create (name,value)
-  @pref = Preference.new(name)
-  @pref.value = value
-  @pref.save!
-end
-
-def create
-  @pref = Preference.create(params[:name], params[:value])
-end

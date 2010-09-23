@@ -11,10 +11,14 @@
       = yield
     #footer
       / template footer content goes here
-      [
-      %a{:href=>'/'}Home
-      |
-      %a{:href=>'/'}Log in
-      |
-      %a{:href=>'/'}Register
-      ]
+      %p<
+        [
+        %a{:href=>'/'}Home
+        |
+        %a{:href=>'/'}Log in
+        -if name != ''
+          |
+          %a{:href=>'/logout'}Log out completely
+        |
+        %a{:href=>'/register'}Register
+        ]

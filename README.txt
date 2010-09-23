@@ -10,18 +10,20 @@ It was fairly simple to do and an excellent learning experience as I have come f
 Proposed Feature Set for v1
 ---------------------------
 * Log in with username or email and password --> Logged in User screen (done)
-* Log out (but remember who I am) --> Login screen (todo)
+* Log out (but remember who I am) --> Login screen (done)
 * Log out completely --> Login screen (done)
 * New User Registration --> sends verification email with link (done)
 						--> 'Please check your email' screen. (done)
 * New User Verification --> User is verified message on Logged in User screen (done)
+* User Delete Self (done)
+* User Edit own email, password and preferences (done)
+* terms and conditions (todo)
+* privacy policy (todo)
 * Forgot password --> Enter Email (todo)
 					--> either reset password and send password reset link, or
 					--> email not known
-* terms and conditions (todo)
-* privacy policy (todo)
-
-* Passwords must be stored securely
+* User roles (todo)
+* Passwords must be stored securely (done)
 
 Proposed features for v1.1
 --------------------------
@@ -76,6 +78,12 @@ if you enter anything other credentials you get bounced with a polite message.
 You can register as a new user and an email will be sent with a verification link.  You can click that link (localhost only right now) and then log in.  You can then see your details and delete yourself.
 
 If you try to register with an email address already in the system then that person will receive a warning email.
+
+If you log out the system will remember your username unless you log out completely.
+
+You can change your email, password or html_email preference.
+If you change your email to someone else's existing email then they will be sent a warning message and your change rejected.
+If you change your email successfully you will be sent an email confirmation link.  Once you log out you must click that link for your login to work.
 
 I want to be a part of it
 -------------------------
