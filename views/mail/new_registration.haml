@@ -1,9 +1,10 @@
 %p Dear #{user.username},
 %p
-  Thank's for registering. Please click
-  %a{ :href => "http://localhost:4567/verify/#{user.registration_token" }
+  Thanks for registering. Please click
+  %a{ :href => token_url }this link
+  to confirm your registration and then log in.
 %p Cheers
 %p Frank
 %p
   Sent by
-  %a{ :href => 'http://github.com/davesag/Frank' }
+  %a{ :href => 'http://github.com/davesag/Frank' }Frank

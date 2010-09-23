@@ -6,7 +6,15 @@
   %body
     #header
       / template header content goes here
+      %h2 Let me be Frank.
     #content
       = yield
     #footer
       / template footer content goes here
+      [
+      %a{:href=>'/'}Home
+      |
+      %a{:href=>'/'}Log in
+      |
+      %a{:href=>'/'}Register
+      ]

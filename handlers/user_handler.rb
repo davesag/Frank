@@ -16,7 +16,7 @@ class UserHandler < Frank
     if is_logged_in?
       name = active_user.username
       log_user_out
-      haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "" }
+      haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "#{name}" }
     else
       haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "" }
     end
