@@ -14,11 +14,23 @@
     #footer
       %p<
         [
-        %a{:href=>'/'}Home
+        -if nav_tag == 'home'
+          Home
+        -else
+          %a{:href=>'/'}Home
         |
-        %a{:href=>'/in/show_user'}Profile
+        -if nav_tag == 'profile'
+          Profile
+        -else
+          %a{:href=>'/in/show_user'}Profile
         |
-        %a{:href=>'/in/edit_user'}Edit Profile
+        -if nav_tag == 'edit_profile'
+          Edit Profile
+        -else
+          %a{:href=>'/in/edit_user'}Edit Profile
         |
-        %a{ :href => "/logout" }Log out
+        -if nav_tag == 'logout'
+          Log out
+        -else
+          %a{ :href => "/logout" }Log out
         ]

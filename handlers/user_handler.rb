@@ -17,13 +17,13 @@ class UserHandler < Frank
     if is_logged_in?
       name = active_user.username
       log_user_out
-      haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "#{name}" }
+      haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "#{name}", :nav_tag => "login" }
     elsif is_remembered_user?
       name = active_username
       log_user_out
-      haml :login, :locals => { :message => "You have logged out completely #{name}. Please log in again to continue", :name => "" }
+      haml :login, :locals => { :message => "You have logged out completely #{name}. Please log in again to continue", :name => "", :nav_tag => "login" }
     else
-      haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "" }
+      haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "", :nav_tag => "login" }
     end
   end
 
@@ -34,22 +34,22 @@ class UserHandler < Frank
       active_user.destroy
       log_user_out
       log_user_out # do it twice
-      haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "" }
+      haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "", :nav_tag => "register" }
     else
-      haml :login, :locals => { :message => "You are not logged in", :name => active_user }
+      haml :login, :locals => { :message => "You are not logged in", :name => active_user, :nav_tag => "login" }
     end
   end
 
   # the show the current logged in user's details page
   get '/in/show_user' do
     login_required!
-    haml :'in/show_user', :locals => { :message => "Show details:", :user => active_user }
+    haml :'in/show_user', :locals => { :message => "Show details:", :user => active_user, :nav_tag => "profile" }
   end
 
   # the edit the current logged in user's details page
   get '/in/edit_user' do
     login_required!
-    haml :'in/edit_user', :locals => { :message => "Edit your details:", :user => active_user }
+    haml :'in/edit_user', :locals => { :message => "Edit your details:", :user => active_user, :nav_tag => "edit_profile" }
   end
 
   post '/in/editing_user' do
@@ -89,21 +89,21 @@ class UserHandler < Frank
       end
     end
     if error
-      haml :'in/edit_user', :locals => { :message => message, :user => active_user }
+      haml :'in/edit_user', :locals => { :message => message, :user => active_user, :nav_tag => "edit_profile" }
   	elsif user_changed
       user.save!
       nuke_session!
       user.reload
       log_user_in(user) # puts the updated details back into the session.
-      haml :'in/show_user', :locals => { :message => message, :user => active_user }
+      haml :'in/show_user', :locals => { :message => message, :user => active_user, :nav_tag => "profile" }
     else
-      haml :'in/show_user', :locals => { :message => "Your details were not changed", :user => active_user }
+      haml :'in/show_user', :locals => { :message => "Your details were not changed", :user => active_user, :nav_tag => "profile" }
     end
   end
 
   # generic userland pages bounce to the logged in home page if logged in, or login page if not.
   get '/in/*' do
     login_required!
-    haml :'in/index', :locals => { :message => "Hello", :user => active_user }
+    haml :'in/index', :locals => { :message => "Hello", :user => active_user, :nav_tag => "home" }
   end
 end

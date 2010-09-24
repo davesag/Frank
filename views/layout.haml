@@ -13,12 +13,16 @@
       / template footer content goes here
       %p<
         [
-        %a{:href=>'/'}Home
-        |
-        %a{:href=>'/'}Log in
-        -if name != ''
+        -if nav_tag == 'login'
+          Log in
+        -else
+          %a{:href=>'/'}Log in
+        -if name != '' && nav_tag != 'logout'
           |
           %a{:href=>'/logout'}Log out completely
-        |
-        %a{:href=>'/register'}Register
+        -elsif name == '' && nav_tag != 'register'
+          |
+          %a{:href=>'/register'}Register
+        -elsif name == '' && nav_tag == 'register'
+          | Register
         ]
