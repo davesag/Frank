@@ -28,14 +28,27 @@ class UserHandler < Frank
   end
 
   # a user can delete themselves.
-  post '/delete_self' do
+  post '/delete_self' do    
     if is_logged_in?
-      # delete the user
-      active_user.destroy
-      log_user_out
-      log_user_out # do it twice
-      haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "", :nav_tag => "register" }
+      @@log.warn("/delete_self called by #{active_user.username}.")
+      if active_user.has_role?('admin')
+        # admin users can not delete themselves.  remove the user from admin role before trying to delete them
+        haml :'in/show_user', :locals => { :message => "An administrator can not be deleted.", :user => active_user, :nav_tag => "profile" }
+      else
+        force = params['frankie_says_force_it']
+        if force == 'true'
+          # delete the user
+          active_user.destroy
+          log_user_out
+          log_user_out # do it twice
+          haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "", :nav_tag => "register" }
+        else
+          # throw up a warning screen.
+          haml :'in/confirm_delete_self', :locals => { :message => "Are you sure you wish to delete yourself? This can not be undone.", :user => active_user, :nav_tag => "" }
+        end
+      end
     else
+      @@log.error("/delete_self called but no-one was logged in. Check the UI and Navigation options in your templates.")
       haml :login, :locals => { :message => "You are not logged in", :name => active_user, :nav_tag => "login" }
     end
   end

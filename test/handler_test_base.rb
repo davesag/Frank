@@ -32,4 +32,18 @@ class HandlerTestBase < Test::Unit::TestCase
    return true
  end
 
+ def setup_dummy_user (name)
+   user = User.create( :username => name, :password => "password", :email => "Frank_Dummy_" + name + "@davesag.com")
+   user.set_preference("HTML_EMAIL", "true")
+   user.validated = true
+   user.save!
+ end
+ 
+ def teardown_dummy_user(name)
+   user = User.find_by_username(name)
+   if user != nil
+     user.destroy
+   end
+ end
+
 end

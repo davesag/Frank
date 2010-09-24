@@ -72,9 +72,9 @@ class RegistrationHandlerTest < HandlerTestBase
     assert last_response.body.include?("unique_test")    
 
     # now clean the test crud from the database
-    post '/delete_self'
+    post '/delete_self', {:frankie_says_force_it => 'true'}
     assert last_response.ok?
-    assert last_response.body.include?('Your user record has been deleted. You must register again to log in')
+    assert last_response.body.include?('deleted')
     assert User.find_by_username("unique_test") == nil
   end
 

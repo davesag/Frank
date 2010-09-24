@@ -46,7 +46,6 @@ class User < ActiveRecord::Base
  def assign_validation_token
    if self.validation_token == nil || self.validation_token = ""
      self.generate_token!
-     puts "Validation URL is http://localhost:9292/validate/" + self.validation_token
    end
  end
 
@@ -114,18 +113,10 @@ end
 
 def has_role?(name)
   role = Role.find_by_name(name)
-  if role == nil
-    # this role doesn't exist, so the user can't be in it
-    return false
-  else
-    # role exists, is the user in it?
-    hasrole = self.roles.first(:conditions => {:name => name})
-    if hasrole
-      return true
-    else
-      return false
-    end
-  end
+  # does the role even exist?
+  return false unless role != nil
+  # role exists, is the user in it?
+  return self.roles.first(:conditions => {:name => name}) != nil
 end
 
 def add_role(name)

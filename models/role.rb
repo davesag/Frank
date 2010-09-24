@@ -9,15 +9,3 @@ class Role < ActiveRecord::Base
     "a_role"
   end  
 end
-
-# Creating the role
-
-def create (name)
-  @role = Role.new(name)
-  @role.save!
-end
-
-def create
-  @role = Role.create(params[:name])
-end
-

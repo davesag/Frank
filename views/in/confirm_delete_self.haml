@@ -1,0 +1,6 @@
+#messagebox
+  %p{:class => "warning"}< #{message}
+#self_destruct
+  %form(accept-charset='UTF-8' action='/delete_self' method='post')
+    %input(type='hidden' name='frankie_says_force_it' value='true')
+    %input(type='submit' value='Please Delete me')
