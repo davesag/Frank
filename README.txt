@@ -21,9 +21,11 @@ Proposed Feature Set for v1
 					--> send password reset link, or
 					--> email not known
 * Passwords must be stored securely (done)
-* User roles (done - needs formal tests)
-* terms and conditions (todo)
-* privacy policy (todo)
+* terms and conditions (done - insert your own text here. Terms must be accepted for registration to work)
+* privacy policy (done - insert your own text here.)
+* Simple and consistent navigation system using haml layouts. (done)
+* User roles (done - but needs formal tests)
+* Simple admin functions (todo)
 
 Proposed features for v1.1
 --------------------------
@@ -91,6 +93,8 @@ If you register as an ordinary user and then log in you can delete yourself in a
 If you have forgotten your password you can reset your password by entering your email address and clicking on the password reset link you get sent.
 
 When the tests run the system doesn't bother sending out emails, but simply logs a debug message with who it constructed the message for, and what the subject was.
+
+When you are logged in the haml template system will always use the layout in views/in/ thus presenting consistent navigation options even for pages outside of userland.
 
 I want to be a part of it
 -------------------------
