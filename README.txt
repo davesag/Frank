@@ -17,13 +17,13 @@ Proposed Feature Set for v1
 * New User Verification --> User is verified message on Logged in User screen (done)
 * User Delete Self (done)
 * User Edit own email, password and preferences (done)
+* Forgot password --> Enter Email (done)
+					--> send password reset link, or
+					--> email not known
+* Passwords must be stored securely (done)
+* User roles (done - needs formal tests)
 * terms and conditions (todo)
 * privacy policy (todo)
-* Forgot password --> Enter Email (todo)
-					--> either reset password and send password reset link, or
-					--> email not known
-* User roles (todo)
-* Passwords must be stored securely (done)
 
 Proposed features for v1.1
 --------------------------
@@ -56,12 +56,11 @@ Step 1. -  Get the code.
 Step 2. Init the data
 ---------------------
 % cd Frank
-% rake db:migrate
 % rake db:seed
 
 Step 3. - Run the unit tests.
 -----------------------------
-% rake test
+% rake
 
 Step 4 - Run the app.
 ---------------------
@@ -84,6 +83,12 @@ If you log out the system will remember your username unless you log out complet
 You can change your email, password or html_email preference.
 If you change your email to someone else's existing email then they will be sent a warning message and your change rejected.
 If you change your email successfully you will be sent an email confirmation link.  Once you log out you must click that link for your login to work.
+
+If you log in as root you can't delete yourself as you can't delete 'admin' users. (ie users in the role 'admin')
+
+If you register as an ordinary user and then log in you can delete yourself in a two step process.
+
+If you have forgotten your password you can reset your password by entering your email address and clicking on the password reset link you get sent.
 
 When the tests run the system doesn't bother sending out emails, but simply logs a debug message with who it constructed the message for, and what the subject was.
 
