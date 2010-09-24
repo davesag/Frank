@@ -1,9 +1,11 @@
-%h2 #{message}
-%form(accept-charset='UTF-8' action='/login' method='post')
-  %p< 
-    %label{ :for => "username" }Username
-    %input(name='username' type='text' value='#{name}')
-  %p<
-    %label{ :for => "password" }Password
-    %input(name='password' type='password')
-  %input(type='submit' value='Log In')
+#message_box
+  %h3 #{message}
+#login_form
+  %form(accept-charset='UTF-8' action='/login' method='post')
+    %p< 
+      %label{ :for => "username" }Username
+      %input(name='username' type='text' value='#{name}')
+    %p<
+      %label{ :for => "password" }Password
+      %input(name='password' type='password')
+    %input(type='submit' value='Log In')

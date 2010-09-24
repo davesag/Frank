@@ -41,7 +41,8 @@ class UserHandler < Frank
           active_user.destroy
           log_user_out
           log_user_out # do it twice
-          haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in", :name => "", :nav_tag => "register" }
+          haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in",
+            :name => "", :email => "", :nav_tag => "register" }
         else
           # throw up a warning screen.
           haml :'in/confirm_delete_self', :locals => { :message => "Are you sure you wish to delete yourself? This can not be undone.", :user => active_user, :nav_tag => "" }
@@ -89,12 +90,15 @@ class UserHandler < Frank
     end
     # if the email is new then deactivate and send a confirmation message
     if new_email != user.email
-      user.email = new_email
       if User.email_exists?(new_email)
+        @@log.debug("Email Clash. A user with email '#{new_email}' already exists.")
     	  notify_user_of_email_change_overlap_attempt!(new_email,user.username)
+        @@log.debug("User notified.")
     	  message = "A user with email '#{new_email}' already exists. Changes were not saved"
     	  error = true
+        @@log.debug("message => '" + message + "'")
       else
+        user.email = new_email
         user.validated = false
         send_email_update_confirmation_to(user)
         message = "A confirmation email has been sent to #{new_email}. Once you log out you will not be able to log in again until you confirm your email address."
@@ -102,6 +106,7 @@ class UserHandler < Frank
       end
     end
     if error
+      @@log.debug("An error occurred. :message => '" + message + "'")
       haml :'in/edit_user', :locals => { :message => message, :user => active_user, :nav_tag => "edit_profile" }
   	elsif user_changed
       user.save!

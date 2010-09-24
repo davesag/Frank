@@ -6,13 +6,23 @@
   %body
     #header
       / template header content goes here
-      %h2 Let me be Frank.
+      %h2< Let me be Frank.
     #content
       = yield
     #footer
       / template footer content goes here
       %p<
         [
+        -if nav_tag == 'privacy'
+          Privacy
+        -else
+          %a{:href=>'/privacy'}Privacy
+        |
+        -if nav_tag == 'terms'
+          Terms & Conditions
+        -else
+          %a{:href=>'/terms'}Terms & Conditions
+        |
         -if nav_tag == 'login'
           Log in
         -else
@@ -23,7 +33,7 @@
         -else
           %a{:href=>'/forgot_password'}I forgot my password
         -if name != '' && nav_tag != 'logout'
-          |
+          | Not #{name}?
           %a{:href=>'/logout'}Log out completely
         -elsif name == '' && nav_tag != 'register'
           |
