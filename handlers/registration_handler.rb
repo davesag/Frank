@@ -19,19 +19,24 @@ class RegistrationHandler < Frank
       anEmail = params['email']
       aName = params['username']
       aPass = params['password']
-      if User.username_exists?(aName)
-    	  haml :register, :locals => { :message => "A user with username '#{aName}' already exists", :name => "", :nav_tag => "register" }
-      elsif User.email_exists?(anEmail)
-    	  notify_user_of_registration_overlap_attempt!(anEmail,aName)
-    	  haml :register, :locals => { :message => "A user with email '#{anEmail}' already exists", :name => aName, :nav_tag => "register" }
+      terms = params['terms']
+      if terms == 'false'
+    	  haml :register, :locals => { :message => "You must accept the terms and conditions.", :name => aName, :email => anEmail, :nav_tag => "register" }        
       else
-        user = User.create(:username => aName, :password => aPass, :email => anEmail)
-        user.set_preference("HTML_EMAIL", "true")
-        user.save!
-        send_confirmation_to(user)
-        haml :login,
-          :locals => { :message => "A confirmation email has been sent to #{anEmail}. You will not be able to log in until you confirm your email address.", 
-          :name => "#{aName}", :nav_tag => "login" }
+        if User.username_exists?(aName)
+      	  haml :register, :locals => { :message => "A user with username '#{aName}' already exists", :name => "", :email => anEmail, :nav_tag => "register" }
+        elsif User.email_exists?(anEmail)
+      	  notify_user_of_registration_overlap_attempt!(anEmail,aName)
+      	  haml :register, :locals => { :message => "A user with email '#{anEmail}' already exists", :name => aName, :email => "", :nav_tag => "register" }
+        else
+          user = User.create(:username => aName, :password => aPass, :email => anEmail)
+          user.set_preference("HTML_EMAIL", "true")
+          user.save!
+          send_confirmation_to(user)
+          haml :login,
+            :locals => { :message => "A confirmation email has been sent to #{anEmail}. You will not be able to log in until you confirm your email address.", 
+            :name => "#{aName}", :nav_tag => "login" }
+        end
       end
     end
   end

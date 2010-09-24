@@ -29,6 +29,16 @@
         -else
           %a{:href=>'/in/edit_user'}Edit Profile
         |
+        -if nav_tag == 'privacy'
+          Privacy
+        -else
+          %a{:href=>'/privacy'}Privacy
+        |
+        -if nav_tag == 'terms'
+          Terms & Conditions
+        -else
+          %a{:href=>'/terms'}Terms & Conditions
+        |
         -if nav_tag == 'logout'
           Log out
         -else

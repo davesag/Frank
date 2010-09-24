@@ -20,6 +20,24 @@ class GuestHandler < Frank
     end
   end
 
+  # privacy page - display privacy text
+  get '/privacy' do
+    if is_logged_in?
+      haml :'privacy', :locals => { :message => "We take privacy seriously", :user => active_user, :nav_tag => "privacy" }
+    else
+  	  haml :privacy, :locals => { :message => "Privacy is important", :name => active_username, :nav_tag => "privacy" }
+    end
+  end
+
+  # privacy page - display privacy text
+  get '/terms' do
+    if is_logged_in?
+      haml :'terms', :locals => { :message => "The Terms and Conditions you agreed to when you registered.", :user => active_user, :nav_tag => "terms" }
+    else
+  	  haml :terms, :locals => { :message => "Terms and Conditions", :name => active_username, :nav_tag => "terms" }
+    end
+  end
+
   # login request - display login form, or divert to user home
   get '/login' do
     if is_logged_in?
@@ -51,7 +69,7 @@ class GuestHandler < Frank
       haml :login, :locals => { :message => "Please logout completely before trying to register a new user.",
          :name => active_username, :nav_tag => "login" }
 	  else
-  	  haml :register, :locals => { :message => "Registration is fast and free", :name => "", :nav_tag => "register" }
+  	  haml :register, :locals => { :message => "Registration is fast and free", :name => "", :email => "", :nav_tag => "register" }
     end
   end
 
@@ -61,7 +79,7 @@ class GuestHandler < Frank
       haml :'in/index', :locals => { :message => "You are already logged in as", :user => active_user, :nav_tag => "home" }
 	  else
   	  haml :forgot_password, :locals => { :message => "Please provide your email address and we will reset your password", 
-  	    :name => "", :nav_tag => "forgot_password" }
+  	    :name => active_username, :nav_tag => "forgot_password" }
     end
   end
 
@@ -76,7 +94,7 @@ class GuestHandler < Frank
       else
         user.password_reset = true
         user.save!
-        send_email_password_reset_to(user)
+        send_password_reset_to(user)
     	  haml :message_only, :locals => { :message => "Please check your email for your password reset instructions.",
     	    :detailed_message => "An email with a password reset link has been sent to your email address.", 
     	    :name => user.username, :nav_tag => "forgot_password" }

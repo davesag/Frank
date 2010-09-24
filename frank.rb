@@ -48,10 +48,10 @@ class Frank < Sinatra::Base
   # we will not use mail layout templates.
   helpers do
     def haml(template, options = {}, *)
-      if template.to_s.start_with? 'in/'
-        options[:layout] ||= :'in/layout'
-      elsif template.to_s.start_with? 'mail/'
+      if template.to_s.start_with? 'mail/'
         options[:layout] ||= false
+      elsif is_logged_in? || template.to_s.start_with?('in/')
+        options[:layout] ||= :'in/layout'
       end
       super
     end
@@ -108,7 +108,7 @@ class Frank < Sinatra::Base
   end
  
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
- def send_email_to_user(user, subject, body_template, template_locals)
+ def send_email_to_user(user, subject, body_template, template_locals)   
    if user.get_preference("HTML_EMAIL").value == 'true'
      email_body = haml(body_template, :locals => template_locals )
      type = 'text/html'
@@ -123,7 +123,7 @@ class Frank < Sinatra::Base
                :headers => { 'Content-Type' => type },
                :body => email_body
    else
-     @@log.debug("TESTING so constructed but did NOT actually send and email to #{user.email} with subject '#{subject}'.")
+     @@log.info("TESTING so I constructed, but did NOT actually send, an email to #{user.email} with subject '#{subject}' using template '#{body_template}'.")
    end
  end
 
@@ -154,7 +154,7 @@ class Frank < Sinatra::Base
     send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/change_email', template_locals)
   end 
 
-  def send_email_password_reset_to(user)
+  def send_password_reset_to(user)
     token_link = "http://" + request.host_with_port + "/reset_password/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user,"You have asked Frank for password assistance." ,:'mail/reset_password', template_locals)
