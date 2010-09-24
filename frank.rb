@@ -140,13 +140,13 @@ class Frank < Sinatra::Base
 
 # generate a confirmation url and email and send it to the user.
   def send_confirmation_to(user)
-    token_link = "http://localhost:9292/validate/" + user.validation_token
+    token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/new_registration', template_locals)
   end
   
   def send_email_update_confirmation_to(user)
-    token_link = "http://localhost:9292/validate/" + user.validation_token
+    token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/change_email', template_locals)
   end 
