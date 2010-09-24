@@ -153,4 +153,11 @@ class Frank < Sinatra::Base
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/change_email', template_locals)
   end 
+
+  def send_email_password_reset_to(user)
+    token_link = "http://" + request.host_with_port + "/reset_password/" + user.validation_token
+    template_locals = { :user => user, :token_url => token_link}
+    send_email_to_user(user,"You have asked Frank for password assistance." ,:'mail/reset_password', template_locals)
+  end 
+
 end

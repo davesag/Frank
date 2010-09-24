@@ -17,6 +17,11 @@
           Log in
         -else
           %a{:href=>'/'}Log in
+        |
+        -if nav_tag == 'forgot_password'
+          I forgot my password
+        -else
+          %a{:href=>'/forgot_password'}I forgot my password
         -if name != '' && nav_tag != 'logout'
           |
           %a{:href=>'/logout'}Log out completely
