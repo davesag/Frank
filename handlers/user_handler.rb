@@ -64,11 +64,9 @@ class UserHandler < Frank
     message = "Your details have been saved"
     
     old_html_email_pref = user.get_preference('HTML_EMAIL').value
-    puts "DEBUG --> HTML Email pref was '" + old_html_email_pref + "'"
 
     if old_html_email_pref != new_html_email_pref
       user.set_preference('HTML_EMAIL', new_html_email_pref)
-      puts "DEBUG --> HTML Email pref changed to '" + new_html_email_pref + "'"
       user_changed = true
     end
     # if the password is not '' then overwrite the password with the one supplied

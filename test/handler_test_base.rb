@@ -1,5 +1,7 @@
 #!usr/bin/ruby
 
+ENV['RACK_ENV'] = 'test'
+
 require 'frank'
 require 'test/unit'
 require 'rack/test'

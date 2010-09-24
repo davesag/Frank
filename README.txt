@@ -85,6 +85,8 @@ You can change your email, password or html_email preference.
 If you change your email to someone else's existing email then they will be sent a warning message and your change rejected.
 If you change your email successfully you will be sent an email confirmation link.  Once you log out you must click that link for your login to work.
 
+When the tests run the system doesn't bother sending out emails, but simply logs a debug message with who it constructed the message for, and what the subject was.
+
 I want to be a part of it
 -------------------------
 

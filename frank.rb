@@ -43,7 +43,6 @@ class Frank < Sinatra::Base
       load_handlers
     end
 
-
   # all tempolates within /views/in/ need to use the logged in user template
   # we will also be using Haml to send HTML formatted email but as of this version
   # we will not use mail layout templates.
@@ -117,11 +116,15 @@ class Frank < Sinatra::Base
      email_body = erb(body_template, :locals => template_locals)
      type = 'text/plain'
    end
-   Pony.mail :to => user.email,
-             :from => "frank_test@davesag.com",
-             :subject => subject,
-             :headers => { 'Content-Type' => type },
-             :body => email_body
+   if ENV['RACK_ENV'] != 'test' # TODO: find a cleaner way to achieve this.
+     Pony.mail :to => user.email,
+               :from => "frank_test@davesag.com",
+               :subject => subject,
+               :headers => { 'Content-Type' => type },
+               :body => email_body
+   else
+     @@log.debug("TESTING so constructed but did NOT actually send and email to #{user.email} with subject '#{subject}'.")
+   end
  end
 
 # notify the user with that email if new registration tries to use your email
