@@ -24,6 +24,7 @@ Proposed Feature Set for v1
 * terms and conditions (done - insert your own text here. Terms must be accepted for registration to work)
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
+* Support for Internationalisation and Localisation (partly done)
 * User roles (done - but needs formal tests)
 * Simple admin functions (todo)
 
@@ -48,7 +49,7 @@ Frank runs as a Rack application. To run Frank do the following
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, haml, erb, active_record, bcrypt, logger, pony and of course rake.
+* Various gems: rack, sinatra, sintatra-r18n, haml, erb, active_record, bcrypt, logger, pony and of course rake.
 
 Step 1. -  Get the code.
 ------------------------

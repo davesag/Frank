@@ -3,16 +3,16 @@
 #entry_form
   %form(accept-charset='UTF-8' action='/in/editing_user' method='post')
     %p< 
-      %label{ :for => "email" }Your email
+      %label{ :for => "email" }#{t.labels.edit_email_label}
       %input(name='email' type='text' value='#{user.email}')
     %p<
-      %label{ :for => "password" }New password
+      %label{ :for => "password" }#{t.labels.edit_password_label}
       %input(name='password' type='password')
       %p<
-        %label{ :for => "html_email" }Do you want HTML email?
+        %label{ :for => "html_email" }#{t.labels.edit_html_email_label}
         %select(name='html_email')
           %option{ :value => 'true', :selected => (user.get_preference('HTML_EMAIL').value == 'true' ? "selected" : nil)}<
-            Yes
+            #{t.labels.option_yes}
           %option{ :value => 'false', :selected => (user.get_preference('HTML_EMAIL').value == 'false' ? "selected" : nil)}<
-            No
-    %input(type='submit' value='Update me')
+            #{t.labels.option_no}
+    %input{ :type => "submit", :value => t.labels.update_me_label}

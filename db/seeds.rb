@@ -5,10 +5,13 @@ require 'models/user'
 require 'models/preference'
 require 'models/role'
 
-role = Role.find_by_name("admin")
-if role == nil
-  puts "Seeding database - adding admin role"
-  role = Role.create( :name => "admin")
+roles = ["admin", "superuser"]
+roles.each do |rolename|
+  role = Role.find_by_name(rolename)
+  if role == nil
+    puts "Seeding database - adding #{rolename} role"
+    role = Role.create( :name => rolename)
+  end
 end
 
 puts "Seeding database with Root User"

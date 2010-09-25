@@ -3,19 +3,19 @@
 #entry_form
   %form(accept-charset='UTF-8' action='/registration' method='post')
     %p< 
-      %label{ :for => "email" }Your email
+      %label{ :for => "email" }#{t.labels.choose_email_label}
       %input(name='email' type='text' value='#{email}')
     %p< 
-      %label{ :for => "username" }Choose a username
+      %label{ :for => "username" }#{t.labels.choose_username_label}
       %input(name='username' type='text' value='#{name}')
     %p<
-      %label{ :for => "password" }Choose a Password
+      %label{ :for => "password" }#{t.labels.choose_password_label}
       %input(name='password' type='password')
     %p<
       %label{ :for => "terms" }<
-        I have read, and agree to the
-        %a{:href=>"terms", :target => "_blank"}< Terms & Conditions
+        #{t.labels.read_and_agree_label}
+        %a{:href=>"/terms", :target => "_blank"}< #{t.nav.terms_button}
       %select(name='terms')
-        %option(value="true" selected="selected")< All Good
-        %option(value="false")< No
-    %input(type='submit' value='Register me')
+        %option(value="true" selected="selected")< #{t.labels.option_terms_yes}
+        %option(value="false")< #{t.labels.option_terms_no}
+    %input{ :type => "submit", :value => t.labels.register_me_label}

@@ -17,13 +17,13 @@ class UserHandler < Frank
     if is_logged_in?
       name = active_user.username
       log_user_out
-      haml :login, :locals => { :message => "Thanks for visiting #{name}. Please log in again to continue", :name => "#{name}", :nav_tag => "login" }
+      haml :login, :locals => { :message => t.u.logout_message(name), :name => "#{name}", :nav_tag => "login" }
     elsif is_remembered_user?
       name = active_username
       log_user_out
-      haml :login, :locals => { :message => "You have logged out completely #{name}. Please log in again to continue", :name => "", :nav_tag => "login" }
+      haml :login, :locals => { :message => t.u.logout_completely(name), :name => "", :nav_tag => "login" }
     else
-      haml :login, :locals => { :message => "You were not logged in. Please log in to continue", :name => "", :nav_tag => "login" }
+      haml :login, :locals => { :message => t.u.logout_error, :name => "", :nav_tag => "login" }
     end
   end
 
@@ -33,7 +33,7 @@ class UserHandler < Frank
       @@log.warn("/delete_self called by #{active_user.username}.")
       if active_user.has_role?('admin')
         # admin users can not delete themselves.  remove the user from admin role before trying to delete them
-        haml :'in/show_user', :locals => { :message => "An administrator can not be deleted.", :user => active_user, :nav_tag => "profile" }
+        haml :'in/show_user', :locals => { :message => t.u.delete_me_error_admin, :user => active_user, :nav_tag => "profile" }
       else
         force = params['frankie_says_force_it']
         if force == 'true'
@@ -41,29 +41,29 @@ class UserHandler < Frank
           active_user.destroy
           log_user_out
           log_user_out # do it twice
-          haml :register, :locals => { :message => "Your user record has been deleted. You must register again to log in",
+          haml :register, :locals => { :message => t.u.delete_me_success,
             :name => "", :email => "", :nav_tag => "register" }
         else
           # throw up a warning screen.
-          haml :'in/confirm_delete_self', :locals => { :message => "Are you sure you wish to delete yourself? This can not be undone.", :user => active_user, :nav_tag => "" }
+          haml :'in/confirm_delete_self', :locals => { :message => t.u.delete_me_confirmation, :user => active_user, :nav_tag => "" }
         end
       end
     else
       @@log.error("/delete_self called but no-one was logged in. Check the UI and Navigation options in your templates.")
-      haml :login, :locals => { :message => "You are not logged in", :name => active_user, :nav_tag => "login" }
+      haml :login, :locals => { :message => t.u.delete_me_error_login, :name => active_user, :nav_tag => "login" }
     end
   end
 
   # the show the current logged in user's details page
   get '/in/show_user' do
     login_required!
-    haml :'in/show_user', :locals => { :message => "Show details:", :user => active_user, :nav_tag => "profile" }
+    haml :'in/show_user', :locals => { :message => t.u.profile_message, :user => active_user, :nav_tag => "profile" }
   end
 
   # the edit the current logged in user's details page
   get '/in/edit_user' do
     login_required!
-    haml :'in/edit_user', :locals => { :message => "Edit your details:", :user => active_user, :nav_tag => "edit_profile" }
+    haml :'in/edit_user', :locals => { :message => t.u.profile_edit_message, :user => active_user, :nav_tag => "edit_profile" }
   end
 
   post '/in/editing_user' do
@@ -75,7 +75,7 @@ class UserHandler < Frank
     
     user_changed = false
     error = false
-    message = "Your details have been saved"
+    message = t.u.profile_edit_success
     
     old_html_email_pref = user.get_preference('HTML_EMAIL').value
 
@@ -91,22 +91,18 @@ class UserHandler < Frank
     # if the email is new then deactivate and send a confirmation message
     if new_email != user.email
       if User.email_exists?(new_email)
-        @@log.debug("Email Clash. A user with email '#{new_email}' already exists.")
-    	  notify_user_of_email_change_overlap_attempt!(new_email,user.username)
-        @@log.debug("User notified.")
-    	  message = "A user with email '#{new_email}' already exists. Changes were not saved"
+    	  notify_user_of_email_change_overlap_attempt!(new_email, user.username)
+    	  message = t.u.profile_edit_error_email_clash(new_email) + t.u.profile_edit_error
     	  error = true
-        @@log.debug("message => '" + message + "'")
       else
         user.email = new_email
         user.validated = false
         send_email_update_confirmation_to(user)
-        message = "A confirmation email has been sent to #{new_email}. Once you log out you will not be able to log in again until you confirm your email address."
+        message = t.u.profile_edit_success_email_confirmation(new_email)
         user_changed = true
       end
     end
     if error
-      @@log.debug("An error occurred. :message => '" + message + "'")
       haml :'in/edit_user', :locals => { :message => message, :user => active_user, :nav_tag => "edit_profile" }
   	elsif user_changed
       user.save!
@@ -115,13 +111,13 @@ class UserHandler < Frank
       log_user_in(user) # puts the updated details back into the session.
       haml :'in/show_user', :locals => { :message => message, :user => active_user, :nav_tag => "profile" }
     else
-      haml :'in/show_user', :locals => { :message => "Your details were not changed", :user => active_user, :nav_tag => "profile" }
+      haml :'in/show_user', :locals => { :message => t.u.profile_edit_no_change, :user => active_user, :nav_tag => "profile" }
     end
   end
 
   # generic userland pages bounce to the logged in home page if logged in, or login page if not.
   get '/in/*' do
     login_required!
-    haml :'in/index', :locals => { :message => "Hello", :user => active_user, :nav_tag => "home" }
+    haml :'in/index', :locals => { :message => t.u.hello_message, :user => active_user, :nav_tag => "home" }
   end
 end

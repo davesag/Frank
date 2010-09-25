@@ -13,7 +13,7 @@ class RegistrationHandlerTest < HandlerTestBase
   def test_guest_access_to_registration_form_okay
     get '/register'
     assert last_response.ok?
-    assert last_response.body.include?('Registration is fast and free')
+    assert last_response.body.include?('Registration is easy and free')
   end
 
   # test user registration form bypassed if already logged in
@@ -59,7 +59,7 @@ class RegistrationHandlerTest < HandlerTestBase
     # can the new user log in?  not yet! has not validated.
     post '/login', { :username => "unique_test", :password => "test_pass" }
     assert last_response.ok?
-    assert last_response.body.include?('Unknown User/Password combination, please try again')    
+    assert last_response.body.include?('Unknown User/Password combination. Please try again')    
 
     get '/validate/' + User.find_by_username("unique_test").validation_token
     assert last_response.ok?

@@ -5,42 +5,39 @@
     %title #{message} #{user.username}
   %body
     #header
-      %p<
-        You are logged in as
-        %b<
-          #{user.username}
+      %p< #{t.g.you_are_logged_in_as(user.username)}
     #content
       = yield
     #footer
       %p<
         [
         -if nav_tag == 'home'
-          Home
+          #{t.nav.home_button}
         -else
-          %a{:href=>'/'}Home
+          %a{:href=>'/'}#{t.nav.home_button}
         |
         -if nav_tag == 'profile'
-          Profile
+          #{t.nav.profile_button}
         -else
-          %a{:href=>'/in/show_user'}Profile
+          %a{:href=>'/in/show_user'}#{t.nav.profile_button}
         |
         -if nav_tag == 'edit_profile'
-          Edit Profile
+          #{t.nav.edit_profile_button}
         -else
-          %a{:href=>'/in/edit_user'}Edit Profile
+          %a{:href=>'/in/edit_user'}#{t.nav.edit_profile_button}
         |
         -if nav_tag == 'privacy'
-          Privacy
+          #{t.nav.privacy_button}
         -else
-          %a{:href=>'/privacy'}Privacy
+          %a{:href=>'/privacy'}#{t.nav.privacy_button}
         |
         -if nav_tag == 'terms'
-          Terms & Conditions
+          #{t.nav.terms_button}
         -else
-          %a{:href=>'/terms'}Terms & Conditions
+          %a{:href=>'/terms'}#{t.nav.terms_button}
         |
         -if nav_tag == 'logout'
-          Log out
+          #{t.nav.logout_button}
         -else
-          %a{ :href => "/logout" }Log out
+          %a{ :href => "/logout" }#{t.nav.logout_button}
         ]

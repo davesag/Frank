@@ -3,9 +3,9 @@
 #login_form
   %form(accept-charset='UTF-8' action='/login' method='post')
     %p< 
-      %label{ :for => "username" }Username
+      %label{ :for => "username" }#{t.labels.username_label}
       %input(name='username' type='text' value='#{name}')
     %p<
-      %label{ :for => "password" }Password
+      %label{ :for => "password" }#{t.labels.password_label}
       %input(name='password' type='password')
-    %input(type='submit' value='Log In')
+    %input{ :type => "submit", :value =>t.labels.log_me_in_label}

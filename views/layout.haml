@@ -6,7 +6,7 @@
   %body
     #header
       / template header content goes here
-      %h2< Let me be Frank.
+      %h2< #{t.g.welcome}
     #content
       = yield
     #footer
@@ -14,30 +14,30 @@
       %p<
         [
         -if nav_tag == 'privacy'
-          Privacy
+          #{t.nav.privacy_button}
         -else
-          %a{:href=>'/privacy'}Privacy
+          %a{:href=>'/privacy'}#{t.nav.privacy_button}
         |
         -if nav_tag == 'terms'
-          Terms & Conditions
+          #{t.nav.terms_button}
         -else
-          %a{:href=>'/terms'}Terms & Conditions
+          %a{:href=>'/terms'}#{t.nav.terms_button}
         |
         -if nav_tag == 'login'
-          Log in
+          #{t.nav.login_button}
         -else
-          %a{:href=>'/'}Log in
+          %a{:href=>'/'}#{t.nav.login_button}
         |
         -if nav_tag == 'forgot_password'
-          I forgot my password
+          #{t.nav.forgot_password_button}
         -else
-          %a{:href=>'/forgot_password'}I forgot my password
+          %a{:href=>'/forgot_password'}#{t.nav.forgot_password_button}
         -if name != '' && nav_tag != 'logout'
-          | Not #{name}?
-          %a{:href=>'/logout'}Log out completely
+          | #{t.nav.not_you(name)}
+          %a{:href=>'/logout'}#{t.nav.log_out_completely_button}
         -elsif name == '' && nav_tag != 'register'
           |
-          %a{:href=>'/register'}Register
+          %a{:href=>'/register'}#{t.nav.register_button}
         -elsif name == '' && nav_tag == 'register'
-          | Register
+          | #{t.nav.register_button}
         ]

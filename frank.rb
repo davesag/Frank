@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'sinatra/base'
+require 'sinatra/r18n'
 require 'active_record'
 require 'logger'
 require 'pony'
@@ -12,40 +13,49 @@ class Frank < Sinatra::Base
   enable  :sessions
   set :root, File.dirname(__FILE__)
   set :handlers, Proc.new { root && File.join(root, 'handlers') }
+  register Sinatra::R18n
   
   CURRENT_USER_KEY = 'ACTIVE_FRANK_USER'
   LAST_USER_NAME_KEY = 'LAST_KNOWN_FRANK_USERNAME'
 
   # Externalise all of the various handlers into a /handlers folder
   # each handler will subclass Frank, live in /handlers and be called *_handler.rb
-    class << self
-      def load_handlers
-        if @handlers_are_loaded
-          @@log.debug("Handlers were already loaded.")
-        else
-          raise "No handlers folder" unless File.directory? handlers
-          Dir.glob("handlers/**_handler.rb"){ |handler| require handler }
-          @@log.debug( "handers loaded" )
-          @handlers_are_loaded = true
-        end
+  class << self
+    def load_handlers
+      if @handlers_are_loaded
+        @@log.debug("Handlers were already loaded.")
+      else
+        raise "No handlers folder" unless File.directory? handlers
+        Dir.glob("handlers/**_handler.rb"){ |handler| require handler }
+        @@log.debug( "handers loaded" )
+        @handlers_are_loaded = true
       end
     end
+  end
 
-    configure :development do  
-      @@log = Logger.new(STDOUT)
-      @@log.level = Logger::DEBUG
-      @@log.info("Frank walks onto the stage.")
+  # TODO: someone needs to work out how these work.
+  # I tried setting up a configure :test block but it was never called.
+  configure :development do  
+    @@log = Logger.new(STDOUT)
+    @@log.level = Logger::DEBUG
+    @@log.info("Frank walks onto the stage.")
 
-      ActiveRecord::Base.logger = @@log
-      ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
+    ActiveRecord::Base.logger = @@log
+    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
 
-      @handlers_are_loaded = false
-      load_handlers
-    end
+    @handlers_are_loaded = false
+    load_handlers
+  end
 
-  # all tempolates within /views/in/ need to use the logged in user template
-  # we will also be using Haml to send HTML formatted email but as of this version
-  # we will not use mail layout templates.
+  # if there is a new locale setting then grab it.
+  before do
+    session[:locale] = params[:locale] if params[:locale]
+  end
+
+  # we use haml to create HTML rendered email so need to avoid using the web-facing templates
+  # if the user is logged in then use /in/layout.haml
+  # all templates within /views/in/ need to use their local layout template.
+  # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)
       if template.to_s.start_with? 'mail/'

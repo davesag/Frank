@@ -45,25 +45,25 @@ class GuestHandlerTest < HandlerTestBase
   def test_login_attempt_bad_username_gives_login_screen
     post '/login', { :username => BAD_USERNAME, :password => BAD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('Unknown User/Password combination, please try again')    
+    assert last_response.body.include?('Unknown User/Password combination. Please try again')    
   end
 
   def test_login_attempt_bad_email_gives_login_screen
     post '/login', { :username => BAD_EMAIL, :password => BAD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('Unknown User/Password combination, please try again')    
+    assert last_response.body.include?('Unknown User/Password combination. Please try again')    
   end
 
   def test_login_attempt_good_username_and_bad_password_gives_login_screen
     post '/login', { :username => GOOD_USERNAME, :password => BAD_PASSWORD }
     assert last_response.ok?
-    assert last_response.body.include?('Unknown User/Password combination, please try again')    
+    assert last_response.body.include?('Unknown User/Password combination. Please try again')    
   end
 
   def test_login_attempt_good_email_and_bad_password_gives_login_screen
      post '/login', { :username => GOOD_EMAIL, :password => BAD_PASSWORD }
      assert last_response.ok?
-     assert last_response.body.include?('Unknown User/Password combination, please try again')    
+     assert last_response.body.include?('Unknown User/Password combination. Please try again')    
    end
 
   # test a logged out user can't delete_self
