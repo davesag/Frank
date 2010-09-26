@@ -24,7 +24,7 @@ Proposed Feature Set for v1
 * terms and conditions (done - insert your own text here. Terms must be accepted for registration to work)
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
-* Support for Internationalisation and Localisation (partly done)
+* Support for Internationalisation and Localisation (mostly done - my French is poor and haml templates are not all translated. Addd translations for en, en-GB, en-AU and fr)
 * User roles (done - but needs formal tests)
 * Simple admin functions (todo)
 

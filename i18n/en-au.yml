@@ -20,14 +20,14 @@ labels:
   option_yes: Yep
   option_no: Nope
   option_terms_yes: Yeah I have
-  option_terms_no: Nah I couldn't be bothered'
+  option_terms_no: Nah I couldn't be bothered
   username_label: Username
   choose_username_label: Choose a Username
   email_label: Email
   choose_email_label: Your Email
   edit_email_label: New Email
   password_label: Password
-  choose_password_label: Choose a password
+  choose_password_label: Choose a Password
   edit_password_label: New password
   edit_html_email_label: D'ya want HTML Formatted Email?
   read_and_agree_label: I've read and agree to the

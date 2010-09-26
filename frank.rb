@@ -55,19 +55,17 @@ class Frank < Sinatra::Base
     # default local is English. 'en'
     # Also installed are Australian English (not recognised by R18n), British English and French.
     # by appending ?locale=fr for example you can switch the language to French.
-    # you should also be able to switch between British English, Australian English and a terser default English but the AU and GB dialects don't load
-    # I have filed an issue with the R18n people.
-    # See notes in http://davesag.lighthouseapp.com/projects/59602-frank/tickets/17-add-internationalisation-i18n-and-localisation-suppport
+    # you are also be able to switch between British English, Australian English and a terser default English
 
-    @@log.debug("Locale is '#{r18n.locale.code}' (#{r18n.locale.title})")   # show that the Locale is being set as expected.
-    @@log.debug("Default Locale is '#{R18n::I18n.default}'")                # note the default code
-                                                                            # step through all of the 'available' locales.
-    r18n.available_locales.each do |locl|                                   # available means there is a {locale.code}.yml file in ROOT/i18n/
-      default = R18n::I18n.default == locl.code ? ": Default" : ""          # is this the default locale? (in case the one we choose is unavailable).
-      star = r18n.locale == locl ? " <== active" : ""                       # active means this is the locale we are currently using.
-      supp = locl.supported? ? " and is supported   " : " but isn't supported" # supported means R18n::Locale.exists?(locl.code) == true
-      @@log.debug("Available#{supp}: '#{locl.code}' (#{locl.title})#{default}#{star}")
-    end
+#    @@log.debug("Locale is '#{r18n.locale.code}' (#{r18n.locale.title})")   # show that the Locale is being set as expected.
+#    @@log.debug("Default Locale is '#{R18n::I18n.default}'")                # note the default code
+#                                                                            # step through all of the 'available' locales.
+#    r18n.available_locales.each do |locl|                                   # available means there is a {locale.code}.yml file in ROOT/i18n/
+#      default = R18n::I18n.default == locl.code ? ": Default" : ""          # is this the default locale? (in case the one we choose is unavailable).
+#      star = r18n.locale == locl ? " <== active" : ""                       # active means this is the locale we are currently using.
+#      supp = locl.supported? ? " and is supported   " : " but isn't supported" # supported means R18n::Locale.exists?(locl.code) == true
+#      @@log.debug("Available#{supp}: '#{locl.code}' (#{locl.title})#{default}#{star}")
+#    end
   end
 
   # we use haml to create HTML rendered email, in which case we need to avoid using the web-facing templates
