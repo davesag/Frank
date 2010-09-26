@@ -60,11 +60,13 @@ class Frank < Sinatra::Base
     # See notes in http://davesag.lighthouseapp.com/projects/59602-frank/tickets/17-add-internationalisation-i18n-and-localisation-suppport
 
     @@log.debug("Locale is '#{r18n.locale.code}' (#{r18n.locale.title})")   # show that the Locale is being set as expected.
+    @@log.debug("Default Locale is '#{R18n::I18n.default}'")                # note the default code
                                                                             # step through all of the 'available' locales.
     r18n.available_locales.each do |locl|                                   # available means there is a {locale.code}.yml file in ROOT/i18n/
-      exists = R18n::Locale.exists?(locl.code) ? " and exists" : ""         # exists means the R18n system knows of this language.
+      default = R18n::I18n.default == locl.code ? ": Default" : ""          # is this the default locale? (in case the one we choose is unavailable).
       star = r18n.locale == locl ? " <== active" : ""                       # active means this is the locale we are currently using.
-      @@log.debug("Available#{exists}: '#{locl.code}' (#{locl.title})#{star}")
+      supp = locl.supported? ? " and is supported   " : " but isn't supported" # supported means R18n::Locale.exists?(locl.code) == true
+      @@log.debug("Available#{supp}: '#{locl.code}' (#{locl.title})#{default}#{star}")
     end
   end
 
