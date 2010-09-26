@@ -37,6 +37,9 @@ labels:
   update_password_label: Update password
   reset_password_label: Send password reset link
   log_me_in_label: Login
+  choose_language_label: Language
+  update_language_label: Change Language
+  edit_language_label: Language
 
 u:
   hello_message: Hi

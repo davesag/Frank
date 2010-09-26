@@ -42,23 +42,29 @@ class User < ActiveRecord::Base
     self.preferences.first(:conditions => {:name => name})
   end
 
- # make sure we also create the validation_token.
- def assign_validation_token
-   if self.validation_token == nil || self.validation_token = ""
-     self.generate_token!
-   end
- end
+  # make sure we also create the validation_token.
+  def assign_validation_token
+    if self.validation_token == nil || self.validation_token = ""
+      self.validation_token = self.generate_token(self.username)
+    end
+  end
 
- def generate_token!
-   n = Digest::MD5.hexdigest(self.username).hex
-   token_array = []
-   while n > 0
-     token_array << @@CHARS[n.divmod(@@CHARS.size)[1]]
-     n = n.divmod(@@CHARS.size)[0]
-   end
-   self.validation_token = token_array.to_s
- end
+  def generate_token(seed)
+    n = Digest::MD5.hexdigest(seed).hex
+    token_array = []
+    while n > 0
+      token_array << @@CHARS[n.divmod(@@CHARS.size)[1]]
+      n = n.divmod(@@CHARS.size)[0]
+    end
+    return token_array.to_s
+  end
 
+  def shuffle_token!
+    assign_validation_token
+    new_token = generate_token(self.validation_token)
+    shuffle_token! if User.find_by_validation_token(new_token)
+    self.validation_token = new_token
+  end
 
 # def remove_role(name)
 #   role = self.roles.first(:conditions => {:name => name})

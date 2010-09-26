@@ -14,26 +14,33 @@ class RegistrationHandler < Frank
 # registration action - check username and email are unique and valid and display 'check your email' page
   post '/registration' do
     if is_logged_in?
-      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_username), :user => active_user, :nav_tag => "home" }
+      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_username), :user => active_user, :nav_hint => "home" }
     else
-      anEmail = params['email']
-      aName = params['username']
-      aPass = params['password']
+      email = params['email']
+      name = params['username']
       terms = params['terms']
       if terms == 'false'
-    	  haml :register, :locals => { :message => t.u.register_error_terms, :name => aName, :email => anEmail, :nav_tag => "register" }        
+    	  haml :register, :locals => { :message => t.u.register_error_terms, :name => name, :email => email, :nav_hint => "register" }        
       else
-        if User.username_exists?(aName)
-      	  haml :register, :locals => { :message => t.u.register_error_username(aName), :name => "", :email => anEmail, :nav_tag => "register" }
-        elsif User.email_exists?(anEmail)
-      	  notify_user_of_registration_overlap_attempt!(anEmail,aName)
-      	  haml :register, :locals => { :message => t.u.register_error_email(anEmail), :name => aName, :email => "", :nav_tag => "register" }
+        if User.username_exists?(name)
+      	  haml :register, :locals => { :message => t.u.register_error_username(name), :name => "", :email => email, :nav_hint => "register" }
+        elsif User.email_exists?(email)
+      	  notify_user_of_registration_overlap_attempt!(email,name)
+      	  haml :register, :locals => { :message => t.u.register_error_email(email), :name => name, :email => "", :nav_hint => "register" }
         else
-          user = User.create(:username => aName, :password => aPass, :email => anEmail)
+          user = User.create(:username => name, :password => params['password'], :email => email)
           user.set_preference("HTML_EMAIL", "true")
+          locale_code = params['locale']
+          # just check the locale code provided is legit.
+          if !locale_available?(locale_code)
+            @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
+            user.locale = R18n::I18n.default
+          else
+            user.locale = locale_code
+          end
           user.save!
           send_confirmation_to(user)
-          haml :login, :locals => { :message => t.u.register_success(anEmail), :name => "#{aName}", :nav_tag => "login" }
+          haml :login, :locals => { :message => t.u.register_success(email), :name => name, :nav_hint => "login" }
         end
       end
     end
@@ -43,11 +50,12 @@ class RegistrationHandler < Frank
   get '/validate/:token' do
     user = User.find_by_validation_token(params[:token])
     if user == nil || user.validated?
-      haml :index, :locals => { :message => t.u.token_expired_error, :name => "", :nav_tag => "home"}
+      haml :index, :locals => { :message => t.u.token_expired_error, :name => "", :nav_hint => "home"}
     else
       user.validated = true
+      user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use to prevent reuse.
       user.save!
-      haml :login, :locals => { :message => t.u.register_success_confirmed, :name => user.username, :nav_tag => "login" }
+      haml :login, :locals => { :message => t.u.register_success_confirmed, :name => user.username, :nav_hint => "login" }
     end
   end
 

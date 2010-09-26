@@ -37,6 +37,9 @@ labels:
   update_password_label: Mot de passe de mise à jour
   reset_password_label: Envoyez le lien de remise de mot de passe
   log_me_in_label: Procédure de connexion
+  choose_language_label: Quel langage parlez-vous?
+  update_language_label: Changez le langage
+  edit_language_label: Votre langage
 
 u:
   hello_message: Salut

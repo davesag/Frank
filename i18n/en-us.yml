@@ -1,0 +1,112 @@
+g:
+  welcome: Let me be Frank
+  you_are_logged_in_as: You are logged in as <b>%1</b>.
+
+nav:
+  privacy_button: Privacy
+  terms_button: Terms'n'Conditions
+  forgot_password_button: Forgot Password
+  log_out_completely_button: Logout Completely
+  register_button: Register
+  not_you: Not %1?
+  login_button: Login
+  home_button: Home
+  profile_button: My Profile
+  edit_profile_button: Edit Profile
+  logout_button: Logout
+  delete_me_button: Delete Me
+
+labels:
+  option_yes: 'Yes'
+  option_no: 'No'
+  option_terms_yes: I have
+  option_terms_no: I have not
+  username_label: Username
+  choose_username_label: Choose a Username
+  email_label: Email
+  choose_email_label: Your Email
+  edit_email_label: New Email
+  password_label: Password
+  choose_password_label: Choose a Password
+  edit_password_label: New Password
+  edit_html_email_label: HTML Formatted Email
+  read_and_agree_label: I read & agree to the
+  register_me_label: Register me
+  delete_me_label: Delete me
+  update_me_label: Update me
+  update_password_label: Update Password
+  reset_password_label: Send Password reset link
+  log_me_in_label: Login
+  choose_language_label: Language
+  update_language_label: Switch To
+  edit_language_label: Language
+
+u:
+  hello_message: Howdy
+  welcome_in: Welcome back
+  welcome_out: Welcome
+  login_message: Please login to continue
+  login_error: Unknown User/Password combination. Please try again
+  logout_message: Thanks for visiting %1. Please login again to continue
+  logout_error: You were not logged in. Please login to continue
+  logout_completely: You have logged out completely %1. Please login again to continue
+  register_message: Registration is easy and free
+  register_error: Logout completely before trying to register a new user
+  register_error_already_as: I already know you as %1
+  register_error_username: Someone with username '%1' already exists
+  register_error_email: Someone with email '%1' already exists
+  register_error_terms: You must accept the terms'n'conditions
+  register_success: A confirmation email has been sent to %1. You will not be able to login until you confirm your email address
+  register_success_confirmed: Your registration has been confirmed. You may now login
+  forgot_password: Please provide your email address, then we will reset your password
+  forgot_password_error: Sorry but that email address is not known to me. Please try another one
+  forgot_password_error_already_as: You are still logged in as %1
+  forgot_password_instruction: Check your email for your password reset instructions
+  forgot_password_instruction_detail: An email with a password reset link has been sent to your email address
+  forgot_password_instruction_email: Choose a new password
+  forgot_password_success: Your password has been reset. Please login
+  you_are: You have logged in as
+  privacy_title_in: We take your privacy seriously
+  privacy_title_out: Your Privacy is important to us
+  terms_title_in: The Terms'n'Conditions you agreed to when you registered
+  terms_title_out: Terms'n'Conditions
+  delete_me_confirmation: Are you sure you wish to delete yourself? This can not be undone
+  delete_me_success: Your user record has been nuked. You must register again if you wish to login again
+  delete_me_error_login: You are not logged in
+  delete_me_error_admin: An Administrator can not be deleted
+  profile_message: Your Profile
+  profile_edit_message: Edit your Profile
+  profile_edit_success: Your details have been saved
+  profile_edit_error: Your changes were not saved
+  profile_edit_success_email_confirmation: A confirmation email has been sent to %1. Once you logout you will not be able to login again until you confirm your email address
+  profile_edit_no_change: You did not make any changes
+  profile_edit_error_email_clash: Someone with email '%1' already exists
+  token_expired_error: That token has expired
+
+r:
+  edit_message: You may edit this role's name
+
+users: !!pl
+  0: No Users
+  1: One User
+  2: %1 Users
+
+people: !!pl
+  0: No-one
+  1: One person
+  n: %1 people
+
+admins: !!pl
+  0: No Admins
+  1: One Admin
+  n: %1 Admins
+
+roles: !!pl
+  0: No Roles
+  1: One Role
+  n: %1 Roles
+
+preferences: !!pl
+  0: No Preferences
+  1: One Preference
+  n: %1 Preferences

@@ -23,8 +23,11 @@ if user != nil
 end
 user = User.create( :username => "root", :password => "password", :email => "Frank_root_user@davesag.com")
 user.set_preference("HTML_EMAIL", "false")
+puts "adding superuser role..."
+user.add_role("superuser")
 puts "adding admin role..."
 user.add_role("admin")
+user.locale = 'en'
 user.validated = true
 user.save!
 puts "Root User saved"
@@ -37,6 +40,7 @@ if user != nil
 end
 user = User.create( :username => "nobody", :password => "password", :email => "Frank_nobody_user@davesag.com")
 user.set_preference("HTML_EMAIL", "false")
+user.locale = 'en'
 user.validated = true
 user.save!
 puts "User nobody saved"

@@ -1,0 +1,5 @@
+%form{ :'accept-charset' => "UTF-8", :action => request.request_method == "GET" ? request.path : "/", :method => "GET" }
+  %label{ :for => "locale" }#{t.labels.update_language_label}
+  %select{ :name => "locale", :onchange => "this.form.submit();"}
+    - for locl in r18n.available_locales do
+      %option{:value=> "#{locl.code}", :selected => i18n.locale == locl ? "selected" : nil }#{locl.title}

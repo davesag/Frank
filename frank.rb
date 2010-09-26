@@ -71,17 +71,33 @@ class Frank < Sinatra::Base
   # we use haml to create HTML rendered email, in which case we need to avoid using the web-facing templates
   # if the user is logged in then use /in/layout.haml as a layout template.
   # all templates within /views/in/ need to use their local (ie /in/layout.haml) layout template.
+  # however templates in the 'views/chunks' folder are just chunks and are only to be injected into other haml templates, so use no layout
+  # Luckily I don't need to do anything special to cater for that.
+  # TODO: change the template path depending on avaialable locales.
   # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)
-      if template.to_s.start_with? 'mail/'
+      if template.to_s.start_with?('mail/')
         options[:layout] ||= false
       elsif is_logged_in? || template.to_s.start_with?('in/')
         options[:layout] ||= :'in/layout'
       end
+      
+      # now make an adjustment to the template path depending on locale.
+      
       super
     end
   end
+
+# code example suggested to load localised haml template.
+# question: what type is 'template'
+#  def localized_haml(template)
+#      R18n.get.locales.each do |locale|
+#        return haml "#{template}.#{locale}" if File.exists? "view/#{template}.#{locale}.haml"
+#      end
+#      return haml template
+#    end
+  
   
   # some other handy methods
   def login_required! 
@@ -97,6 +113,9 @@ class Frank < Sinatra::Base
   def log_user_in(user)
     session[CURRENT_USER_KEY] = user
     session[LAST_USER_NAME_KEY] = user.username
+    if user.locale != nil
+      session[:locale] = user.locale
+    end
   end
 
   def log_user_out
@@ -133,25 +152,30 @@ class Frank < Sinatra::Base
     User.login(username, password)
   end
  
+  def locale_available?(locale_code)
+    r18n.available_locales.each do |locl|
+      return true if locale_code == locl.code
+    end
+    return false
+  end
+ 
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
- def send_email_to_user(user, subject, body_template, template_locals)   
-   if user.get_preference("HTML_EMAIL").value == 'true'
-     email_body = haml(body_template, :locals => template_locals )
-     type = 'text/html'
-   else
-     email_body = erb(body_template, :locals => template_locals)
-     type = 'text/plain'
-   end
-   if ENV['RACK_ENV'] != 'test' # TODO: find a cleaner way to achieve this.
-     Pony.mail :to => user.email,
-               :from => "frank_test@davesag.com",
-               :subject => subject,
-               :headers => { 'Content-Type' => type },
-               :body => email_body
-   else
-     @@log.info("TESTING so I constructed, but did NOT actually send, an email to #{user.email} with subject '#{subject}' using template '#{body_template}'.")
-   end
- end
+  def send_email_to_user(user, subject, body_template, template_locals)   
+    if user.get_preference("HTML_EMAIL").value == 'true'
+      email_body = haml(body_template, :locals => template_locals )
+      type = 'text/html'
+    else
+      email_body = erb(body_template, :locals => template_locals)
+      type = 'text/plain'
+    end
+    if ENV['RACK_ENV'] != 'test' # TODO: find a cleaner way to achieve this.
+      Pony.mail :to => user.email,
+        :from => "frank_test@davesag.com", :subject => subject,
+        :headers => { 'Content-Type' => type }, :body => email_body
+    else
+      @@log.info("TESTING so I constructed, but did NOT actually send, an email to #{user.email} with subject '#{subject}' using template '#{body_template}'.")
+    end
+  end
 
 # notify the user with that email if new registration tries to use your email
   def notify_user_of_registration_overlap_attempt!(email,supplied_name)

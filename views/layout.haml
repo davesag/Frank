@@ -1,43 +1,48 @@
 !!!
-%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "#{i18n.locale.code}", :lang => "#{i18n.locale.code}", :encoding =>'utf-8' }
   %head
+    %meta{ :'http-equiv' => "Content-Type", :content => "text/html; charset=UTF-8"}
     %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
     %title #{message}
   %body
     #header
       / template header content goes here
-      %h2< #{t.g.welcome}
+      #welcome_message
+        %h2< #{t.g.welcome}
+        -if nav_hint != 'register'
+          #locale_selector
+            =haml(:'chunks/change_locale_menu_form', :layout => false)
     #content
       = yield
     #footer
       / template footer content goes here
       %p<
         [
-        -if nav_tag == 'privacy'
+        -if nav_hint == 'privacy'
           #{t.nav.privacy_button}
         -else
           %a{:href=>'/privacy'}#{t.nav.privacy_button}
         |
-        -if nav_tag == 'terms'
+        -if nav_hint == 'terms'
           #{t.nav.terms_button}
         -else
           %a{:href=>'/terms'}#{t.nav.terms_button}
         |
-        -if nav_tag == 'login'
+        -if nav_hint == 'login'
           #{t.nav.login_button}
         -else
           %a{:href=>'/'}#{t.nav.login_button}
         |
-        -if nav_tag == 'forgot_password'
+        -if nav_hint == 'forgot_password'
           #{t.nav.forgot_password_button}
         -else
           %a{:href=>'/forgot_password'}#{t.nav.forgot_password_button}
-        -if name != '' && nav_tag != 'logout'
+        -if name != '' && nav_hint != 'logout'
           | #{t.nav.not_you(name)}
           %a{:href=>'/logout'}#{t.nav.log_out_completely_button}
-        -elsif name == '' && nav_tag != 'register'
+        -elsif name == '' && nav_hint != 'register'
           |
           %a{:href=>'/register'}#{t.nav.register_button}
-        -elsif name == '' && nav_tag == 'register'
+        -elsif name == '' && nav_hint == 'register'
           | #{t.nav.register_button}
         ]
