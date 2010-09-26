@@ -15,11 +15,11 @@ class ForgotPasswordTest < HandlerTestBase
 
     get '/forgot_password'
     assert last_response.ok?
-    assert last_response.body.include?('Please provide your email address')
+    assert last_response.body.include?('Provide your email address')
     
     post '/forgot_password', {:email => "Frank_Dummy_" + dummy_name + "@davesag.com"}
     assert last_response.ok?
-    assert last_response.body.include?('Please check your email')
+    assert last_response.body.include?('Check your email')
     
     token = User.find_by_username(dummy_name).validation_token
     assert token != nil

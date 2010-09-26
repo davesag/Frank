@@ -1,0 +1,109 @@
+g:
+  welcome: Lemme be Frank
+  you_are_logged_in_as: You're logged in as <b>%1</b>.
+
+nav:
+  privacy_button: Privacy
+  terms_button: Legals
+  forgot_password_button: I forgot my password
+  log_out_completely_button: Log Out Completely
+  register_button: Sign up
+  not_you: Not %1?
+  login_button: Sign in
+  home_button: Home
+  profile_button: Me
+  edit_profile_button: Edit Me
+  logout_button: Bye
+  delete_me_button: Delete Me
+
+labels:
+  option_yes: Yep
+  option_no: Nope
+  option_terms_yes: Yeah I have
+  option_terms_no: Nah I couldn't be bothered'
+  username_label: Username
+  choose_username_label: Choose a Username
+  email_label: Email
+  choose_email_label: Your Email
+  edit_email_label: New Email
+  password_label: Password
+  choose_password_label: Choose a password
+  edit_password_label: New password
+  edit_html_email_label: D'ya want HTML Formatted Email?
+  read_and_agree_label: I've read and agree to the
+  register_me_label: Sign me up
+  delete_me_label: Please delete me
+  update_me_label: Save
+  update_password_label: Update password
+  reset_password_label: Send a password reset link
+  log_me_in_label: Lemme in
+
+u:
+  hello_message: G'day
+  welcome_in: Hello again
+  welcome_out: Hello
+  login_message: Please log in to continue
+  login_error: Unknown User/Password combination. Please try again
+  logout_message: Thanks for visiting %1. Please log in again to continue
+  logout_error: You weren't logged in. Please log in to continue
+  logout_completely: You've logged out completely %1. Please log in again to continue
+  register_message: Registration is easy and free
+  register_error: Please logout completely before trying to sign up a new user
+  register_error_already_as: You are already signed in as %1
+  register_error_username: Someone with username '%1' already exists
+  register_error_email: Someone with email '%1' already exists
+  register_error_terms: You've gotta accept the legals
+  register_success: A confirmation email has been sent to %1. You'll not be able to log in until you confirm your email address
+  register_success_confirmed: Your rego's has been confirmed. You can log in now
+  forgot_password: Gimme your email and we'll reset your password
+  forgot_password_error: Sorry but I've no idea whose email address that is. Please try another one
+  forgot_password_error_already_as: You're still logged in as %1
+  forgot_password_instruction: Check your email for your password reset instructions
+  forgot_password_instruction_detail: An email with a password reset link has been sent to you
+  forgot_password_instruction_email: Gimme a new password
+  forgot_password_success: Your password has been reset. Please sign in
+  you_are: You have signed in as
+  privacy_title_in: We take privacy seriously
+  privacy_title_out: Privacy is important
+  terms_title_in: The Legals you agreed to when you signed up
+  terms_title_out: Legals
+  delete_me_confirmation: Are you sure you wanna delete yourself? This can't be undone
+  delete_me_success: You are out of here like last year. You must register again to log in
+  delete_me_error_login: You aren't logged in
+  delete_me_error_admin: An administrator can't be deleted
+  profile_message: You
+  profile_edit_message: Edit yourself
+  profile_edit_success: Saved
+  profile_edit_error: Any changes weren't saved
+  profile_edit_success_email_confirmation: A confirmation email has been sent to %1. Once you log out you won't be able to log in again until you confirm your email address
+  profile_edit_no_change: You didn't make any changes
+  profile_edit_error_email_clash: Someone with email '%1' already exists
+  token_expired_error: That token has expired and I've got no bloody idea what to do about it
+  
+r:
+  edit_message: Please edit this role's name
+
+users: !!pl
+  0: No Users
+  1: One User
+  2: %1 Users
+
+people: !!pl
+  0: No-one
+  1: One person
+  n: %1 people
+
+admins: !!pl
+  0: No Admins
+  1: One Admin
+  n: %1 Admins
+
+roles: !!pl
+  0: No Roles
+  1: One Role
+  n: %1 Roles
+
+preferences: !!pl
+  0: No Preferences
+  1: One Preference
+  n: %1 Preferences

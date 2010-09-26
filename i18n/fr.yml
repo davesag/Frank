@@ -1,0 +1,109 @@
+g:
+  welcome: Laissez-moi être Frank
+  you_are_logged_in_as: Vous êtes ouvert une session en tant que <b>%1</b>.
+
+nav:
+  privacy_button: Intimité
+  terms_button: Limites
+  forgot_password_button: A oublié le mot de passe
+  log_out_completely_button: Déconnexion complètement
+  register_button: Registre
+  not_you: Pas %1?
+  login_button: Procédure de connexion
+  home_button: Page d'accueil
+  profile_button: Profil
+  edit_profile_button: Éditez le profil
+  logout_button: Déconnexion
+  delete_me_button: Effacez-moi
+
+labels:
+  option_yes: Oui
+  option_no: Non
+  option_terms_yes: Oui
+  option_terms_no: Non
+  username_label: Username
+  choose_username_label: Choisissez un username
+  email_label: Email
+  choose_email_label: Votre Email
+  edit_email_label: Nouvel Email
+  password_label: Mot de passe
+  choose_password_label: Choisissez le mot de passe
+  edit_password_label: Nouveau mot de passe
+  edit_html_email_label: Email formaté par HTML
+  read_and_agree_label: J'ai lu et suis d'accord sur le
+  register_me_label: Enregistrez-moi
+  delete_me_label: Effacez-moi
+  update_me_label: Mettez- à jourmoi
+  update_password_label: Mot de passe de mise à jour
+  reset_password_label: Envoyez le lien de remise de mot de passe
+  log_me_in_label: Procédure de connexion
+
+u:
+  hello_message: Salut
+  welcome_in: Bienvenue en arrière
+  welcome_out: Bienvenue
+  login_message: Ouvrez une session pour continuer
+  login_error: Combinaison inconnue d'utilisateur/mot de passe. Essayez s'il vous plaît de nouveau
+  logout_message: Merci pour visiter la procédure de connexion %1. De nouveau pour continuer
+  logout_error: Vous n'avez pas été ouvert une session. Ouvrez une session pour continuer
+  logout_completely: Vous vous êtes déconnecté la procédure de connexion complètement %1. De nouveau pour continuer
+  register_message: L'enregistrement est facile et libre
+  register_error: Déconnectez-vous complètement avant l'essai d'enregistrer un nouvel utilisateur
+  register_error_already_as: Vous êtes déjà ouvert une session en tant que %1
+  register_error_username: Un utilisateur avec username '%1'  existe déjà
+  register_error_email: Un utilisateur avec l'email '%1' existe déjà
+  register_error_terms: Vous devez recevoir les limites
+  register_success: Un email de confirmation a été envoyé à %1. Vous ne pourrez pas ouvrir une session jusqu'à ce que vous confirmiez votre adresse email
+  register_success_confirmed: Votre enregistrement a été confirmé. Vous pouvez maintenant ouvrir une session
+  forgot_password: Fournissez votre adresse email. Nous remettrons à l'état initial votre mot de passe
+  forgot_password_error: Cette adresse email est inconnue. Veuillez essayer encore
+  forgot_password_error_already_as: Vous êtes encore ouvert une session en tant que %1
+  forgot_password_instruction: Examinez votre email pour assurer vos instructions de remise de mot de passe
+  forgot_password_instruction_detail: Un email avec un lien de remise de mot de passe a été envoyé à votre adresse email
+  forgot_password_instruction_email: Fournissez un nouveau mot de passe
+  forgot_password_success: Votre mot de passe a été remis à l'état initial. Procédure de connexion
+  you_are: Vous avez ouvert une session as
+  privacy_title_in: Nous prenons l'intimité au sérieux
+  privacy_title_out: L'intimité est importante
+  terms_title_in: Les limites
+  terms_title_out: Limites
+  delete_me_confirmation: Êtes-vous sûr ? Ceci ne peut pas être défait
+  delete_me_success: Vous avez été effacé. Registre de nouveau à la procédure de connexion
+  delete_me_error_login: Vous n'êtes pas ouvert une session
+  delete_me_error_admin: Un Administrateur ne peut pas être effacé
+  profile_message: Profil
+  profile_edit_message: Éditez votre profil
+  profile_edit_success: Détails sauvegardés
+  profile_edit_error: Modifications non sauvegardées
+  profile_edit_success_email_confirmation: Un email de confirmation a été envoyé à %1. Une fois que vous vous déconnectez vous ne pourrez pas ouvrir une session de nouveau jusqu'à ce que vous confirmiez votre adresse email
+  profile_edit_no_change: Aucunes modifications apportées
+  profile_edit_error_email_clash: Un utilisateur avec l'email '%1' existe déjà
+  token_expired_error: 'Erreur : Le jeton a expiré'
+  
+r:
+  edit_message: Éditez le nom de ce rôle
+
+users: !!pl
+  0: Aucuns utilisateurs
+  1: Un utilisateur
+  2: %1 utilisateurs
+
+people: !!pl
+  0: Personne
+  1: Une personne
+  n: %1 personnes
+
+admins: !!pl
+  0: Aucuns administrateurs
+  1: Un administrateur
+  n: %1 administrateurs
+
+roles: !!pl
+  0: Aucuns rôles
+  1: Un rôle
+  n: %1 rôles
+
+preferences: !!pl
+  0: Aucunes préférences
+  1: Une préférence
+  n: %1 préférences

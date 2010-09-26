@@ -33,11 +33,11 @@ class SelfDeletionTest < HandlerTestBase
     
     post '/delete_self'
     assert last_response.ok?
-    assert last_response.body.include?("An administrator can not be deleted")    
+    assert last_response.body.include?("An Administrator can not be deleted")    
 
     post '/delete_self', {:frankie_says_force_it => 'true'}
     assert last_response.ok?
-    assert last_response.body.include?("An administrator can not be deleted")    
+    assert last_response.body.include?("An Administrator can not be deleted")    
     
     assert User.find_by_username("root") != nil
   end

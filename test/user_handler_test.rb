@@ -32,7 +32,7 @@ class UserHandlerTest < HandlerTestBase
     # then log out
     get '/logout'
     assert last_response.ok?
-    assert last_response.body.include?('Please log in again to continue')    
+    assert last_response.body.include?('Login again to continue')    
 
     # then log out again
     get '/logout'

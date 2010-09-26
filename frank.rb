@@ -47,14 +47,30 @@ class Frank < Sinatra::Base
     load_handlers
   end
 
-  # if there is a new locale setting then grab it.
+  # if there is a new locale setting in the request then use it.
   before do
-    session[:locale] = params[:locale] if params[:locale]
+    session[:locale] = params[:locale] if params[:locale] #the r18n system will load it automatically
+
+    # expected behaviour
+    # default local is English. 'en'
+    # Also installed are Australian English (not recognised by R18n), British English and French.
+    # by appending ?locale=fr for example you can switch the language to French.
+    # you should also be able to switch between British English, Australian English and a terser default English but the AU and GB dialects don't load
+    # I have filed an issue with the R18n people.
+    # See notes in http://davesag.lighthouseapp.com/projects/59602-frank/tickets/17-add-internationalisation-i18n-and-localisation-suppport
+
+    @@log.debug("Locale is '#{r18n.locale.code}' (#{r18n.locale.title})")   # show that the Locale is being set as expected.
+                                                                            # step through all of the 'available' locales.
+    r18n.available_locales.each do |locl|                                   # available means there is a {locale.code}.yml file in ROOT/i18n/
+      exists = R18n::Locale.exists?(locl.code) ? " and exists" : ""         # exists means the R18n system knows of this language.
+      star = r18n.locale == locl ? " <== active" : ""                       # active means this is the locale we are currently using.
+      @@log.debug("Available#{exists}: '#{locl.code}' (#{locl.title})#{star}")
+    end
   end
 
-  # we use haml to create HTML rendered email so need to avoid using the web-facing templates
-  # if the user is logged in then use /in/layout.haml
-  # all templates within /views/in/ need to use their local layout template.
+  # we use haml to create HTML rendered email, in which case we need to avoid using the web-facing templates
+  # if the user is logged in then use /in/layout.haml as a layout template.
+  # all templates within /views/in/ need to use their local (ie /in/layout.haml) layout template.
   # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)

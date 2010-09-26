@@ -4,8 +4,8 @@ g:
 
 nav:
   privacy_button: Privacy
-  terms_button: Terms & Conditions
-  forgot_password_button: Forgot password
+  terms_button: Terms and Conditions
+  forgot_password_button: I forgot my password
   log_out_completely_button: Log Out Completely
   register_button: Register
   not_you: Not %1?
@@ -17,71 +17,71 @@ nav:
   delete_me_button: Delete Me
 
 labels:
-  option_yes: 'Yes'
-  option_no: 'No'
-  option_terms_yes: 'Yes'
-  option_terms_no: 'No'
+  option_yes: Yes Please
+  option_no: No Thanks
+  option_terms_yes: Yes I have
+  option_terms_no: No I haven't
   username_label: Username
   choose_username_label: Choose a Username
   email_label: Email
   choose_email_label: Your Email
   edit_email_label: New Email
   password_label: Password
-  choose_password_label: Choose password
+  choose_password_label: Choose a password
   edit_password_label: New password
-  edit_html_email_label: HTML Formatted Email
-  read_and_agree_label: I have read and agree to the
+  edit_html_email_label: Do you want HTML Formatted Email
+  read_and_agree_label: I have read, and I agree to the
   register_me_label: Register me
-  delete_me_label: Delete me
-  update_me_label: Update me
+  delete_me_label: Please delete me
+  update_me_label: Please update me
   update_password_label: Update password
-  reset_password_label: Send password reset link
-  log_me_in_label: Login
+  reset_password_label: Send a password reset link
+  log_me_in_label: Log me in
 
 u:
-  hello_message: Hi
+  hello_message: Hello
   welcome_in: Welcome back
   welcome_out: Welcome
-  login_message: Login to continue
+  login_message: Please log in to continue
   login_error: Unknown User/Password combination. Please try again
-  logout_message: Thanks for visiting %1. Login again to continue
-  logout_error: You were not logged in. Login to continue
-  logout_completely: You have logged out completely %1. Login again to continue
+  logout_message: Thanks for visiting %1. Please log in again to continue
+  logout_error: You were not logged in. Please log in to continue
+  logout_completely: You have logged out completely %1. Please log in again to continue
   register_message: Registration is easy and free
-  register_error: Logout completely before trying to register a new user
+  register_error: Please logout completely before trying to register a new user
   register_error_already_as: You are already logged in as %1
   register_error_username: A user with username '%1' already exists
   register_error_email: A user with email '%1' already exists
-  register_error_terms: You must accept the terms & conditions
+  register_error_terms: You must accept the terms and conditions
   register_success: A confirmation email has been sent to %1. You will not be able to log in until you confirm your email address
   register_success_confirmed: Your registration has been confirmed. You may now log in
-  forgot_password: Provide your email address. We will reset your password
-  forgot_password_error: That email address is unknown. Please try another one
+  forgot_password: Please provide your email address and we will reset your password
+  forgot_password_error: I'm sorry but that email address is unknown to me. Please try another one
   forgot_password_error_already_as: You are still logged in as %1
-  forgot_password_instruction: Check your email for your password reset instructions
+  forgot_password_instruction: Please check your email for your password reset instructions
   forgot_password_instruction_detail: An email with a password reset link has been sent to your email address
-  forgot_password_instruction_email: Supply a new password
-  forgot_password_success: Your password has been reset. Login
+  forgot_password_instruction_email: Please supply a new password
+  forgot_password_success: Your password has been reset. Please log in
   you_are: You have logged in as
   privacy_title_in: We take privacy seriously
   privacy_title_out: Privacy is important
-  terms_title_in: The Terms & Conditions you agreed to when you registered
-  terms_title_out: Terms & Conditions
-  delete_me_confirmation: Are you sure? This can not be undone
-  delete_me_success: You have been deleted. Register again to log in
+  terms_title_in: The Terms and Conditions you agreed to when you registered
+  terms_title_out: Terms and Conditions
+  delete_me_confirmation: Are you sure you wish to delete yourself? This can not be undone
+  delete_me_success: Your user record has been deleted. You must register again to log in
   delete_me_error_login: You are not logged in
-  delete_me_error_admin: An Administrator can not be deleted
-  profile_message: Profile
+  delete_me_error_admin: An administrator can not be deleted
+  profile_message: Your profile
   profile_edit_message: Edit your profile
-  profile_edit_success: Details saved
-  profile_edit_error: Changes not saved
+  profile_edit_success: Your details have been saved
+  profile_edit_error: Your changes were not saved
   profile_edit_success_email_confirmation: A confirmation email has been sent to %1. Once you log out you will not be able to log in again until you confirm your email address
-  profile_edit_no_change: No changes made
-  profile_edit_error_email_clash: A user with email '%1' already exists
-  token_expired_error: 'Error: Token expired'
+  profile_edit_no_change: You did not make any changes
+  profile_edit_error_email_clash: Email Clash. A user with email '%1' already exists
+  token_expired_error: That token has expired and so did not match any known users
   
 r:
-  edit_message: Edit this role's name
+  edit_message: Please edit this role's name
 
 users: !!pl
   0: No Users
