@@ -35,6 +35,7 @@ class HandlerTestBase < Test::Unit::TestCase
  def setup_dummy_user (name)
    user = User.create( :username => name, :password => "password", :email => "Frank_Dummy_" + name + "@davesag.com")
    user.set_preference("HTML_EMAIL", "true")
+   user.locale = "en"
    user.validated = true
    user.save!
  end

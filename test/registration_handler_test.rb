@@ -61,9 +61,11 @@ class RegistrationHandlerTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?('Unknown User/Password combination. Please try again')    
 
-    get '/validate/' + User.find_by_username("unique_test").validation_token
+    v_token = User.find_by_username("unique_test").validation_token
+    get '/validate/' + v_token
     assert last_response.ok?
     assert last_response.body.include?('Your registration has been confirmed')    
+    assert v_token != User.find_by_username("unique_test").validation_token
 
     # can the new user log in?  should be ok now
     post '/login', { :username => "unique_test", :password => "test_pass" }
