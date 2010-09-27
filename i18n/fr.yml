@@ -15,6 +15,12 @@ nav:
   edit_profile_button: Éditez le profil
   logout_button: Déconnexion
   delete_me_button: Effacez-moi
+  list_users_button: Utilisateurs de liste
+  list_roles_button: Rôles de liste
+  view_user_button: Utilisateur de vue
+  update_user_button: Utilisateur en mise à jour
+  edit_user_button: Éditez l'utilisateur
+  delete_user_button: Utilisateur d'effacement
 
 labels:
   option_yes: Oui
@@ -88,6 +94,17 @@ u:
   mail_edit_email_confirmation_subject: Frank demande que vous vérifiez votre nouvelle adresse email.
   mail_password_reset_subject: Vous avez demandé à Frank l'aide de mot de passe.
   mail_edit_email_overlap_subject: Frank dit que quelqu'un utilise votre email.
+  list_users_message: !!pl
+    0: Je suis désolé mais il n'y a aucun utilisateur avaialable
+    1: Il y a seulement un utilisateur
+    n: Il y a %1 utilisateurs
+  show_user_message: Petits groupes d'utilisateur pour %1.
+  edit_user_message: Éditez les détails pour %1.
+  edit_user_success: Petits groupes d'utilisateur sauvegardés
+  edit_user_error_email_clash: Quelqu'un avec l'email '%1' existe déjà
+  edit_user_no_change: Vous n'avez apporté aucune modification
+  error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
+  delete_user_success_message: L'utilisateur '%1' a été effacé
 
 r:
   edit_message: Éditez le nom de ce rôle

@@ -1,0 +1,27 @@
+#message_box
+  %h3 #{message}
+#entry_form
+  %form{ :'accept-charset' => 'UTF-8', :action => "/user/edit/#{target_user.id}", :method => 'post'}
+    %p< 
+      %label{ :for => "email" }#{t.labels.edit_email_label}
+      %input(name='email' type='text' value='#{target_user.email}')
+    %p<
+      %label{ :for => "password" }#{t.labels.edit_password_label}
+      %input(name='password' type='password')
+    %p<
+      %label{ :for => "locale" }#{t.labels.edit_language_label}
+      %select{ :name => "_locale" }
+        - for locl in r18n.available_locales do
+          %option{:value=> "#{locl.code}", :selected => locl.code == target_user.locale ? "selected" : nil }#{locl.title}
+    %p<
+      %label{ :for => "html_email" }#{t.labels.edit_html_email_label}
+      %select(name='html_email')
+        %option{ :value => 'true', :selected => (target_user.get_preference('HTML_EMAIL').value == 'true' ? "selected" : nil)}<
+          #{t.labels.option_yes}
+        %option{ :value => 'false', :selected => (target_user.get_preference('HTML_EMAIL').value == 'false' ? "selected" : nil)}<
+          #{t.labels.option_no}
+    %input{ :type => "submit", :value => t.nav.update_user_button}
+#view_button
+  [
+  %a{ :href => "/user/#{target_user.id}", :method => 'get'}#{t.nav.view_user_button}
+  ]

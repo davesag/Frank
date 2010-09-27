@@ -32,8 +32,8 @@ Proposed Feature Set for v1
 *** Firstly create locale specific yml files in i18n folder for the various small bits of text in the site.
 *** but for large blocks of text, whole pages or emails, simply put the view templates into views/{location_code}/.. and they will be loaded
     automatically if they exist.
-* User roles (done - but needs formal tests)
-* Simple admin functions (todo)
+* User roles (done, and shown to be working but needs formal tests)
+* Simple admin functions (partly done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Still to add role editing)
 
 Proposed features for v1.1
 --------------------------

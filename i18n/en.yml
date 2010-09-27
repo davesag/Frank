@@ -15,6 +15,12 @@ nav:
   edit_profile_button: Edit Profile
   logout_button: Logout
   delete_me_button: Delete Me
+  list_users_button: List Users
+  list_roles_button: List Roles
+  view_user_button: View User
+  update_user_button: Update User
+  edit_user_button: Edit User
+  delete_user_button: Delete User
 
 labels:
   option_yes: 'Yes'
@@ -88,6 +94,17 @@ u:
   mail_edit_email_confirmation_subject: Frank requests that you verify your new email address.
   mail_password_reset_subject: You have asked Frank for password assistance.
   mail_edit_email_overlap_subject: Frank says someone is using your email.
+  list_users_message: !!pl
+    0: No users here
+    1: There is one user
+    n: There are %1 users
+  show_user_message: User Details for %1.
+  edit_user_message: Edit Details for %1.
+  edit_user_success: User Details Saved
+  edit_user_error_email_clash: A User with email '%1' already exists
+  edit_user_no_change: You made no changes
+  error_cant_delete_superuser_message: You can not delete a superuser
+  delete_user_success_message: User '%1' has been deleted
   
 r:
   edit_message: Edit this role's name

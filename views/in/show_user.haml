@@ -1,0 +1,24 @@
+#message_box
+  %p< #{message}
+#user_details
+  %table
+    %tr<
+      %th> #{t.labels.username_label}
+      %td #{target_user.username}
+    %tr<
+      %th> #{t.labels.email_label}
+      %td #{target_user.email}
+    %tr<
+      %th{ :colspan => "2" }#{t.preferences(target_user.preferences.size)}
+    - for pref in target_user.preferences
+      %tr<
+        %th>= pref.name
+        %td= pref.value
+-if !target_user.has_role?('admin')
+  #edit_button
+    [
+    %a{ :href => "/user/edit/#{target_user.id}", :method => 'get'}#{t.nav.edit_user_button}
+    ]
+  #delete_button
+    %form{ :'accept-charset' => 'UTF-8', :action => "/user/delete/#{target_user.id}", :method => 'post'}
+      %input{ :type=>"submit", :value => t.nav.delete_user_button}

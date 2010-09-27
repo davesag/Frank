@@ -177,6 +177,16 @@ class Frank < Sinatra::Base
     end 
   end 
 
+  # some other handy methods
+  def admin_required!(bounce)
+    if ! is_logged_in? 
+      redirect '/login' 
+    end
+    if !active_user.has_role?('admin')
+      redirect bounce
+    end
+  end 
+
   def is_logged_in?
     session[CURRENT_USER_KEY] != nil
   end
