@@ -11,7 +11,7 @@
         %h2< #{t.g.welcome}
         -if nav_hint != 'register'
           #locale_selector
-            =haml(:'chunks/change_locale_menu_form', :layout => false)
+            =haml(:'chunks/change_locale_menu_form')
     #content
       = yield
     #footer

@@ -72,20 +72,59 @@ class Frank < Sinatra::Base
   # if the user is logged in then use /in/layout.haml as a layout template.
   # all templates within /views/in/ need to use their local (ie /in/layout.haml) layout template.
   # however templates in the 'views/chunks' folder are just chunks and are only to be injected into other haml templates, so use no layout
-  # Luckily I don't need to do anything special to cater for that.
   # TODO: change the template path depending on avaialable locales.
   # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)
-      if template.to_s.start_with?('mail/')
+      template_name = template.to_s
+      @@log.debug("HAML Template is '" + template_name + "'")
+      template_bits = template.to_s.split("/")
+ 
+      # note layout.haml files must never hold untranslated text
+      do_not_localise = false
+      if template_name.include?('chunks/')
         options[:layout] ||= false
-      elsif is_logged_in? || template.to_s.start_with?('in/')
+        do_not_localise = true
+      elsif template_name.include?('mail/')
+        options[:layout] ||= false
+      elsif is_logged_in? || template_name.include?('in/')
         options[:layout] ||= :'in/layout'
       end
       
-      # now make an adjustment to the template path depending on locale.
-      
-      super
+      # now if template_bits[0] is a locale code then just pass through
+      if do_not_localise
+        @@log.debug("Don't bother localising chunks.")
+        super
+      elsif  locale_available?(template_bits[0])
+        @@log.debug("The template originally supplied has been over-ridden by a localised version, #{template_name}.")
+        super
+      else
+        # there is no locale code in front of the template name
+        # now make an adjustment to the template path depending on locale.
+        @@log.debug("Trying '" + r18n.locale.code.downcase + "/" + template_name + "'")
+        local_template_file = "views/#{r18n.locale.code.downcase}/#{template_name}.haml"
+        if File.exists? local_template_file
+          @@log.debug("Found a localised template so we'll use that one.")
+          local_template = File.read(local_template_file)
+          return haml(local_template, options)
+        elsif r18n.locale.sublocales != nil && r18n.locale.sublocales.size > 0
+          @@log.debug("Couldn't find a template for that specific locale.")
+          local_template_file = "views/#{r18n.locale.sublocales[0].downcase}/#{template_name}.haml"
+          if File.exists? local_template_file
+            @@log.debug("but there is a more generic language file so use that.")
+            # note if I really wanted to I could loop through in case sublocales[0] doesn't exist but other one does.
+            # too complicated for now though and simply not needed.  TODO: polish this up later.
+            local_template = File.read(local_template_file)
+            return haml(local_template, options)
+          else
+            @@log.debug("No localsied version of this template exists. Okay use the template we were supplied, namely #{template_name}.")
+            super
+          end
+        else
+          @@log.debug("That locale has no sublocales so just use the template we were supplied, namely #{template_name}.")
+          super
+        end
+      end
     end
   end
 

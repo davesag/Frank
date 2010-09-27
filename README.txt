@@ -1,11 +1,13 @@
 You must remember this
 ----------------------
 
-This project started life as a test project for learning about GIT, Ruby, Sinatra, and Active Record.
+This project started life, back in the first week of September 2010, as a test project for me to learning about GIT, Ruby, Sinatra, Active Record and the like.
 
 My original aim was to build a very simple web application that demonstrated a complete round-trip of user login, and log out.
 
-It was fairly simple to do and an excellent learning experience as I have come from a Java world, but I found a out of gaps in other people's documentation and, in particular, no simple, canonical examples for how I would do such a simple thing.  I felt I had to work out far too much of this as I went.
+It was fairly simple to do and an excellent learning experience as I have come from a Java world, but I found a out of gaps in other people's documentation and, in particular, no simple, canonical examples for how I would do such a simple thing.
+
+So, using Sinatra as a simple base, and with the collaboration of a few friends and with some excellent help from people on the #rolo, #sinatra and #git IRC channels, this project started to get a little more ambitious.
 
 Proposed Feature Set for v1
 ---------------------------
@@ -24,14 +26,16 @@ Proposed Feature Set for v1
 * terms and conditions (done - insert your own text here. Terms must be accepted for registration to work)
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
-* Support for Internationalisation and Localisation (mostly done - my French is poor and haml templates are not all translated. Addd translations for en, en-GB, en-AU and fr)
+** include examples of injecting chunks of haml into other haml templates.
+* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor and haml templates are not all translated. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.  Still TODO: look for localised haml and erb templates in order of "ll-CC", "ll" or none)
 * User roles (done - but needs formal tests)
 * Simple admin functions (todo)
 
 Proposed features for v1.1
 --------------------------
 * oAuth authentication
-
+* RESTful API allowing logged in Admins to add, edit and delete Users and Roles.
+  * safeguards preventing deletion of superuser by anyone
 Where are we now?
 -----------------
 
