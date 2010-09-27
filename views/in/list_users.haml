@@ -1,0 +1,8 @@
+#user_list
+  %ol
+  - for a_user in user_list do
+    %li<
+      %a{:href => "/user/#{a_user.id}"}#{a_user.username}
+      (
+      %a{:href => "/user/edit/#{a_user.id}"}edit
+      )

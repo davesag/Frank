@@ -25,12 +25,12 @@
         -if nav_hint == 'profile'
           #{t.nav.profile_button}
         -else
-          %a{:href=>'/in/show_user'}#{t.nav.profile_button}
+          %a{:href=>'/profile'}#{t.nav.profile_button}
         |
         -if nav_hint == 'edit_profile'
           #{t.nav.edit_profile_button}
         -else
-          %a{:href=>'/in/edit_user'}#{t.nav.edit_profile_button}
+          %a{:href=>'/profile/edit'}#{t.nav.edit_profile_button}
         |
         -if nav_hint == 'privacy'
           #{t.nav.privacy_button}

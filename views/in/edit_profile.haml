@@ -1,7 +1,7 @@
 #message_box
   %h3 #{message}
 #entry_form
-  %form(accept-charset='UTF-8' action='/in/editing_user' method='post')
+  %form(accept-charset='UTF-8' action='/profile/edit' method='post')
     %p< 
       %label{ :for => "email" }#{t.labels.edit_email_label}
       %input(name='email' type='text' value='#{user.email}')

@@ -16,19 +16,19 @@ class EmailClashTest < HandlerTestBase
     # first log in
     post '/login', { :username => "George", :password => GOOD_PASSWORD }
  
-    get '/in/edit_user'
+    get '/profile/edit'
     assert last_response.ok?
     assert last_response.body.include?( "Frank_Dummy_George@davesag.com")    
 
-    post '/in/editing_user', { :email => "Frank_Dummy_Mildred@davesag.com", :password => "", :html_email => 'true'}
+    post '/profile/edit', { :email => "Frank_Dummy_Mildred@davesag.com", :password => "", :html_email => 'true'}
     assert last_response.ok?
     assert last_response.body.include?( "already exists")    
 
-    post '/in/editing_user', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "", :html_email => 'true'}
+    post '/profile/edit', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "", :html_email => 'true'}
     assert last_response.ok?
     assert last_response.body.include?( "A confirmation email has been sent to")    
 
-    post '/in/editing_user', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "newpassword", :html_email => 'true'}
+    post '/profile/edit', { :email => "Frank_Dummy_All_Okay@davesag.com", :password => "newpassword", :html_email => 'true'}
     assert last_response.ok?
     assert last_response.body.include?( "saved")    
 

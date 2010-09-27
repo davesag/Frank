@@ -60,7 +60,7 @@ class UserHandlerTest < HandlerTestBase
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # the show user page dumps all of the preferences.
-    get '/in/show_user'
+    get '/profile'
     assert last_response.ok?
     assert last_response.body.include?( GOOD_PREFERENCE_TOKEN)    
     assert last_response.body.include?( GOOD_PREFERENCE_VALUE)    

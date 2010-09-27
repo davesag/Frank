@@ -33,7 +33,7 @@ class UserHandler < Frank
       @@log.warn("/delete_self called by #{active_user.username}.")
       if active_user.has_role?('admin')
         # admin users can not delete themselves.  remove the user from admin role before trying to delete them
-        haml :'in/show_user', :locals => { :message => t.u.delete_me_error_admin, :user => active_user, :nav_hint => "profile" }
+        haml :'in/profile', :locals => { :message => t.u.delete_me_error_admin, :user => active_user, :nav_hint => "profile" }
       else
         force = params['frankie_says_force_it']
         if force == 'true'
@@ -55,18 +55,18 @@ class UserHandler < Frank
   end
 
   # the show the current logged in user's details page
-  get '/in/show_user' do
+  get '/profile' do
     login_required!
-    haml :'in/show_user', :locals => { :message => t.u.profile_message, :user => active_user, :nav_hint => "profile" }
+    haml :'in/profile', :locals => { :message => t.u.profile_message, :user => active_user, :nav_hint => "profile" }
   end
 
   # the edit the current logged in user's details page
-  get '/in/edit_user' do
+  get '/profile/edit' do
     login_required!
-    haml :'in/edit_user', :locals => { :message => t.u.profile_edit_message, :user => active_user, :nav_hint => "edit_profile" }
+    haml :'in/edit_profile', :locals => { :message => t.u.profile_edit_message, :user => active_user, :nav_hint => "edit_profile" }
   end
 
-  post '/in/editing_user' do
+  post '/profile/edit' do
     login_required!
     user = active_user
     new_email = params['email']
@@ -110,15 +110,15 @@ class UserHandler < Frank
       user_changed = true
     end
     if error
-      haml :'in/edit_user', :locals => { :message => message, :user => active_user, :nav_hint => "edit_profile" }
+      haml :'in/edit_profile', :locals => { :message => message, :user => active_user, :nav_hint => "edit_profile" }
   	elsif user_changed
       user.save!
       nuke_session!
       user.reload
       log_user_in(user) # puts the updated details back into the session.
-      haml :'in/show_user', :locals => { :message => message, :user => active_user, :nav_hint => "profile" }
+      haml :'in/profile', :locals => { :message => message, :user => active_user, :nav_hint => "profile" }
     else
-      haml :'in/show_user', :locals => { :message => t.u.profile_edit_no_change, :user => active_user, :nav_hint => "profile" }
+      haml :'in/profile', :locals => { :message => t.u.profile_edit_no_change, :user => active_user, :nav_hint => "profile" }
     end
   end
 
