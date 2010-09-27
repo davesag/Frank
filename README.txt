@@ -27,7 +27,7 @@ Proposed Feature Set for v1
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
 ** include examples of injecting chunks of haml into other haml templates.
-* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor and haml templates are not all translated. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.  Still TODO: look for localised haml and erb templates in order of "ll-CC", "ll" or none)
+* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.  Still TODO: look for localised erb templates in order of "ll-CC", "ll" or none when sending mail)
 * User roles (done - but needs formal tests)
 * Simple admin functions (todo)
 
