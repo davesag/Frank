@@ -37,6 +37,8 @@ class RegistrationHandler < Frank
             user.locale = R18n::I18n.default
           else
             user.locale = locale_code
+            # and set the local
+            session[:locale] = locale_code
           end
           user.save!
           send_confirmation_to(user)

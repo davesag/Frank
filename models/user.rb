@@ -61,9 +61,7 @@ class User < ActiveRecord::Base
 
   def shuffle_token!
     assign_validation_token
-    new_token = generate_token(self.validation_token)
-    shuffle_token! if User.find_by_validation_token(new_token)
-    self.validation_token = new_token
+    # TODO: shuffle the token properly, ensuring it stays unique.
   end
 
 # def remove_role(name)

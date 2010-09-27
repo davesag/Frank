@@ -45,6 +45,7 @@ u:
   welcome_in: Hello again
   welcome_out: Hello
   login_message: Please log in to continue
+  login_success: You've logged in as
   login_error: Unknown User/Password combination. Please try again
   logout_message: Thanks for visiting %1. Please log in again to continue
   logout_error: You weren't logged in. Please log in to continue
@@ -81,7 +82,12 @@ u:
   profile_edit_no_change: You didn't make any changes
   profile_edit_error_email_clash: Someone with email '%1' already exists
   token_expired_error: That token has expired and I've got no bloody idea what to do about it
-  
+  mail_registration_confirmation_subject: Frank requests that you verify your email address.
+  mail_registration_email_overlap_subject: Frank says someone is using your email.
+  mail_edit_email_confirmation_subject: Frank requests that you verify your new email address.
+  mail_password_reset_subject: You have asked Frank for password assistance.
+  mail_edit_email_overlap_subject: Frank says someone is using your email.
+
 r:
   edit_message: Please edit this role's name
 

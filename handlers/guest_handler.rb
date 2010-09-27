@@ -93,7 +93,7 @@ class GuestHandler < Frank
         user.save!
         send_password_reset_to(user)
     	  haml :message_only, :locals => { :message => t.u.forgot_password_instruction,
-    	    :detailed_message => t.u.forgot_password_instruction_detailed, 
+    	    :detailed_message => t.u.forgot_password_instruction_detail, 
     	    :name => user.username, :nav_hint => "forgot_password" }
       end
     end

@@ -27,7 +27,11 @@ Proposed Feature Set for v1
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
 ** include examples of injecting chunks of haml into other haml templates.
-* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.  Still TODO: look for localised erb templates in order of "ll-CC", "ll" or none when sending mail)
+* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.)
+** You have two choices with localisation and I suggest you use both
+*** Firstly create locale specific yml files in i18n folder for the various small bits of text in the site.
+*** but for large blocks of text, whole pages or emails, simply put the view templates into views/{location_code}/.. and they will be loaded
+    automatically if they exist.
 * User roles (done - but needs formal tests)
 * Simple admin functions (todo)
 

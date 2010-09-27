@@ -76,67 +76,99 @@ class Frank < Sinatra::Base
   # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)
-      template_name = template.to_s
-      @@log.debug("HAML Template is '" + template_name + "'")
-      template_bits = template.to_s.split("/")
- 
-      # note layout.haml files must never hold untranslated text
-      do_not_localise = false
-      if template_name.include?('chunks/')
-        options[:layout] ||= false
-        do_not_localise = true
-      elsif template_name.include?('mail/')
-        options[:layout] ||= false
-      elsif is_logged_in? || template_name.include?('in/')
-        options[:layout] ||= :'in/layout'
-      end
       
-      # now if template_bits[0] is a locale code then just pass through
-      if do_not_localise
-        @@log.debug("Don't bother localising chunks.")
-        super
-      elsif  locale_available?(template_bits[0])
-        @@log.debug("The template originally supplied has been over-ridden by a localised version, #{template_name}.")
+      # template will either be the name of a template or the body of a template.
+      # if it's the body then it will contain a "%" symbol and so we can skip any processing
+      
+      template_name = template.to_s
+      
+      do_not_localise = false
+      if template_name.include?('%')
+        # it's actually the template content we have here, not a template name
         super
       else
-        # there is no locale code in front of the template name
-        # now make an adjustment to the template path depending on locale.
-        @@log.debug("Trying '" + r18n.locale.code.downcase + "/" + template_name + "'")
-        local_template_file = "views/#{r18n.locale.code.downcase}/#{template_name}.haml"
-        if File.exists? local_template_file
-          @@log.debug("Found a localised template so we'll use that one.")
-          local_template = File.read(local_template_file)
-          return haml(local_template, options)
-        elsif r18n.locale.sublocales != nil && r18n.locale.sublocales.size > 0
-          @@log.debug("Couldn't find a template for that specific locale.")
-          local_template_file = "views/#{r18n.locale.sublocales[0].downcase}/#{template_name}.haml"
+        # it's a template name we have here.
+        # note layout.haml files must never hold untranslated text
+        if template_name.include?('chunks/')
+          options[:layout] ||= false
+          do_not_localise = true
+        elsif template_name.include?('mail/')
+          options[:layout] ||= false
+        elsif is_logged_in? || template_name.include?('in/')
+          options[:layout] ||= :'in/layout'
+        end
+
+        # now if template_bits[0] is a locale code then just pass through
+        if do_not_localise
+          # "Don't bother localising chunks.
+          super
+        else
+          # there is no locale code in front of the template name
+          # now make an adjustment to the template path depending on locale.
+          local_template_file = "views/#{r18n.locale.code.downcase}/#{template_name}.haml"
           if File.exists? local_template_file
-            @@log.debug("but there is a more generic language file so use that.")
+            # Found a localised template so we'll use that one
+            local_template = File.read(local_template_file)
+            return haml(local_template, options)
+          elsif r18n.locale.sublocales != nil && r18n.locale.sublocales.size > 0
+            # Couldn't find a template for that specific locale.
+            local_template_file = "views/#{r18n.locale.sublocales[0].downcase}/#{template_name}.haml"
+            if File.exists? local_template_file
+              # but there is a more generic language file so use that.
+              # note if I really wanted to I could loop through in case sublocales[0] doesn't exist but other one does.
+              # too complicated for now though and simply not needed.  TODO: polish this up later.
+              local_template = File.read(local_template_file)
+              return haml(local_template, options)
+            else
+              # No localsied version of this template exists. Okay use the template we were supplied.
+              super
+            end
+          else
+            # That locale has no sublocales so just use the template we were supplied.
+            super
+          end
+        end
+      end
+    end
+
+    def erb(template, options = {}, *)
+      # template will either be the name of a template or the body of a template.
+      # if it's the body then it will contain a "%" symbol and so we can skip any processing
+      
+      template_name = template.to_s
+      
+      if template_name.include?('%')
+        # it's actually the template content we have here, not a template name
+        super
+      else
+        # it's a template name we have here.
+
+        # now make an adjustment to the template path depending on locale.
+        local_template_file = "views/#{r18n.locale.code.downcase}/#{template_name}.erb"
+        if File.exists? local_template_file
+          # Found a localised template so we'll use that one
+          local_template = File.read(local_template_file)
+          return erb(local_template, options)
+        elsif r18n.locale.sublocales != nil && r18n.locale.sublocales.size > 0
+          # Couldn't find a template for that specific locale.
+          local_template_file = "views/#{r18n.locale.sublocales[0].downcase}/#{template_name}.erb"
+          if File.exists? local_template_file
+            # but there is a more generic language file so use that.
             # note if I really wanted to I could loop through in case sublocales[0] doesn't exist but other one does.
             # too complicated for now though and simply not needed.  TODO: polish this up later.
             local_template = File.read(local_template_file)
-            return haml(local_template, options)
+            return erb(local_template, options)
           else
-            @@log.debug("No localsied version of this template exists. Okay use the template we were supplied, namely #{template_name}.")
+            # No localsied version of this template exists. Okay use the template we were supplied.
             super
           end
         else
-          @@log.debug("That locale has no sublocales so just use the template we were supplied, namely #{template_name}.")
+          # That locale has no sublocales so just use the template we were supplied.
           super
         end
       end
     end
   end
-
-# code example suggested to load localised haml template.
-# question: what type is 'template'
-#  def localized_haml(template)
-#      R18n.get.locales.each do |locale|
-#        return haml "#{template}.#{locale}" if File.exists? "view/#{template}.#{locale}.haml"
-#      end
-#      return haml template
-#    end
-  
   
   # some other handy methods
   def login_required! 
@@ -220,33 +252,33 @@ class Frank < Sinatra::Base
   def notify_user_of_registration_overlap_attempt!(email,supplied_name)
     user = User.find_by_email(email)
     template_locals = { :user => user, :supplied_name => supplied_name}
-    send_email_to_user(user,"Frank says someone is using your email." ,:'mail/email_warning', template_locals)
+    send_email_to_user(user, t.u.mail_registration_email_overlap_subject, :'mail/email_warning', template_locals)
   end
 
 # notify the user with that email if user tries to change their email to yours
   def notify_user_of_email_change_overlap_attempt!(email,supplied_name)
     user = User.find_by_email(email)
     template_locals = { :user => user, :supplied_name => supplied_name}
-    send_email_to_user(user,"Frank says someone is using your email." ,:'mail/email_change_warning', template_locals)
+    send_email_to_user(user, t.u.mail_edit_email_overlap_subject, :'mail/email_change_warning', template_locals)
   end
 
 # generate a confirmation url and email and send it to the user.
   def send_confirmation_to(user)
     token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
-    send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/new_registration', template_locals)
+    send_email_to_user(user, t.u.mail_registration_confirmation_subject, :'mail/new_registration', template_locals)
   end
   
   def send_email_update_confirmation_to(user)
     token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
-    send_email_to_user(user,"Frank requests that you verify your email address." ,:'mail/change_email', template_locals)
-  end 
+    send_email_to_user(user, t.u.mail_edit_email_confirmation_subject, :'mail/change_email', template_locals)
+  end
 
   def send_password_reset_to(user)
     token_link = "http://" + request.host_with_port + "/reset_password/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
-    send_email_to_user(user,"You have asked Frank for password assistance." ,:'mail/reset_password', template_locals)
+    send_email_to_user(user, t.u.mail_password_reset_subject, :'mail/reset_password', template_locals)
   end 
 
 end
