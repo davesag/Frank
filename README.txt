@@ -33,7 +33,14 @@ Proposed Feature Set for v1
 *** but for large blocks of text, whole pages or emails, simply put the view templates into views/{location_code}/.. and they will be loaded
     automatically if they exist.
 * User roles (done)
-* Simple admin functions (almost done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Still to add role editing)
+* Simple admin functions (almost done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple role editing now works)
+
+TODO: V1.0
+----------
+* admin function to create a user
+* admin function to create a role
+* more tests around editing of roles
+* UI to assign a role or roles to a user.
 
 Proposed features for v1.1
 --------------------------
@@ -99,6 +106,8 @@ If you change your email to someone else's existing email then they will be sent
 If you change your email successfully you will be sent an email confirmation link.  Once you log out you must click that link for your login to work.
 
 If you log in as root you can't delete yourself as you can't delete 'admin' users. (ie users in the role 'admin')
+
+Logging in as root also shows you the various admin functions.
 
 If you register as an ordinary user and then log in you can delete yourself in a two step process.
 
