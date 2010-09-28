@@ -154,12 +154,49 @@ class AdminHandler < Frank
 
   post '/role/edit/:name' do
     admin_required! "/"
-
+    new_name = params[:new_name]
+    target_role = Role.find_by_name(params[:name])
+    if target_role == nil
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+    elsif is_blessed_role?(target_role)
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+    elsif Role.find_by_name(new_name) != nil  # there's already a role called #{newname}
+      # TODO: for now just call error but a better solution is to offer to merge the roles.
+      #       Need to define business logic for that so it's beyond the scope of Frank.
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.error_dupe_role_name_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
+    else
+      # change the name of the role.  How does this affect other users in that role? (TODO: test that)
+      target_role.name = new_name
+      target_role.save!
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.edit_role_message(target_role.name),
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+    end
   end
 
   post '/role/delete/:name' do
     admin_required! "/"
-  
-  end
+      target_role = Role.find_by_name(params[:name])
+      if target_role == nil
+        role_list = Role.all
+        haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
+          :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      elsif is_blessed_role?(target_role)
+        role_list = Role.all
+        haml :'in/list_roles', :locals => { :message => t.u.error_cant_delete_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
+          :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      else
+        target_role.destroy
+        role_list = Role.all
+        haml :'in/list_roles', :locals => { :message => t.u.delete_role_message(target_role.name), 
+          :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      end
+    end
 
 end

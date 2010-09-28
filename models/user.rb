@@ -64,6 +64,29 @@ class User < ActiveRecord::Base
     self.validation_token = self.generate_token(random_seed)
   end
 
+  def has_role?(name)
+    role = Role.find_by_name(name)
+    # does the role even exist?
+    return false unless role != nil
+    # role exists, is the user in it?
+    return self.roles.first(:conditions => {:name => name}) != nil
+  end
+
+  def add_role(name)
+    role = Role.find_by_name(name)
+    if role != nil
+      # role exists
+      myrole = self.roles.find_by_name(name)
+      if myrole == nil  # add this role as we don't already have it.
+        self.roles << role
+      end
+    else
+      # oh dear, role #{name} doesn't exist.
+      # do nothing or return an error?  throw an exception?  What is the Ruby way?
+      puts "There is no such Role as '#{name}'"
+    end
+  end
+
 # def remove_role(name)
 #   role = self.roles.first(:conditions => {:name => name})
 #   if role
@@ -75,21 +98,20 @@ class User < ActiveRecord::Base
 
 end
 
-# Authenticating a user
+######################### CLASS LEVEL METHODS ################################
 
 def login(name_or_email, plain_password)
   if name_or_email.include?("@")
-    @user = User.find_by_email(name_or_email)
+    user = User.find_by_email(name_or_email)
   else
-    @user = User.find_by_username(name_or_email)
+    user = User.find_by_username(name_or_email)
   end
-  if @user == nil || @user.password != plain_password || !@user.validated
-    @user = nil
+  if user == nil || user.password != plain_password || !user.validated
+    user = nil
   end
-  return @user
+  return user
 end
 
-# Checking the existence of a user with this username or email
 def username_exists?(username)
   return User.find_by_username(username) != nil
 end
@@ -98,27 +120,4 @@ def email_exists?(email)
   return User.find_by_email(email) != nil
 end
 
-def has_role?(name)
-  role = Role.find_by_name(name)
-  # does the role even exist?
-  return false unless role != nil
-  # role exists, is the user in it?
-  return self.roles.first(:conditions => {:name => name}) != nil
-end
-
-def add_role(name)
-  role = Role.find_by_name(name)
-  if role != nil
-    # role exists
-    myrole = self.roles.find_by_name(name)
-    if myrole == nil  # add this role as we don't already have it.
-      self.roles << role
-    end
-  else
-    # oh dear, role #{name} doesn't exist.
-    # do nothing or return an error?  throw an exception?  What is the Ruby way?
-    puts "There is no such Role as '#{name}'"
-  end
-end
-
-public :login, :email_exists?, :username_exists?, :has_role?, :add_role
+public :login, :email_exists?, :username_exists?
