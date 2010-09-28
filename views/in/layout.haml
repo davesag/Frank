@@ -38,7 +38,10 @@
           -else
             %a{:href=>'/users'}#{t.nav.list_users_button}
           |
-          #{t.nav.list_roles_button}
+          -if nav_hint == 'list_roles'
+            #{t.nav.list_roles_button}
+          -else
+            %a{:href=>'/roles'}#{t.nav.list_roles_button}
           |
         -if nav_hint == 'privacy'
           #{t.nav.privacy_button}

@@ -1,0 +1,10 @@
+#user_list
+  %h2 #{message}
+  %ol
+    - for a_role in role_list do
+      %li<
+        #{a_role.name}
+        - if (user.has_role?('admin') && !is_blessed_role?(a_role))
+          (
+          %a{:href => "/role/edit/#{a_role.name}"}edit
+          )

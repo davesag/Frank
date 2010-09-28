@@ -1,0 +1,8 @@
+#message_box
+  %h3 #{message}
+#entry_form
+  %form{ :'accept-charset' => 'UTF-8', :action => "/role/edit/#{target_role.name}", :method => 'post'}
+    %p< 
+      %label{ :for => "new_name" }#{t.labels.edit_rolename_label}
+      %input(name='new_name' type='text' value='#{target_role.name}')
+    %input{ :type => "submit", :value => t.nav.update_role_button}

@@ -5,7 +5,7 @@ require 'models/user'
 require 'models/preference'
 require 'models/role'
 
-roles = ["admin", "superuser"]
+roles = ["admin", "superuser", "user"]
 roles.each do |rolename|
   role = Role.find_by_name(rolename)
   if role == nil

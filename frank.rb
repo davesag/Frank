@@ -239,6 +239,11 @@ class Frank < Sinatra::Base
     return false
   end
  
+  def is_blessed_role?(role)
+    return ['admin', 'superuser'].include?(role.name)
+  end
+ 
+ 
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
   def send_email_to_user(user, subject, body_template, template_locals)   
     if 'true' == user.get_preference("HTML_EMAIL").value

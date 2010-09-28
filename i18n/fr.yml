@@ -21,6 +21,9 @@ nav:
   update_user_button: Utilisateur en mise à jour
   edit_user_button: Éditez l'utilisateur
   delete_user_button: Utilisateur d'effacement
+  update_role_button: Rôle de mise à jour
+  edit_role_button: Éditez le rôle
+  delete_role_button: Rôle d'effacement
 
 labels:
   option_yes: Oui
@@ -46,6 +49,7 @@ labels:
   choose_language_label: Quel langage parlez-vous?
   update_language_label: Changez le langage
   edit_language_label: Votre langage
+  edit_rolename_label: Éditez le nom de rôle
 
 u:
   hello_message: Salut
@@ -105,8 +109,17 @@ u:
   edit_user_error_email_clash: Quelqu'un avec l'email '%1' existe déjà
   edit_user_no_change: Vous n'avez apporté aucune modification
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
+  error_cant_edit_blessed_role_message: Vous ne pouvez pas éditer le rôle '%1'
   error_user_unknown_message: L'identification de l'utilisateur fournie n'a pas été identifiée
+  error_role_unknown_message: Le nom de rôle fourni n'a pas été identifié
   delete_user_success_message: L'utilisateur '%1' a été effacé
+  list_roles_message: !!pl
+    0: Aucuns rôles ici
+    1: Il y a un rôle
+    n: Il y a %1 rôles
+  edit_role_message: Éditez le rôle '%1'.
+  edit_role_success: Rôle sauvegardé
+  delete_role_success_message: Le rôle '%1' a été effacé
 
 r:
   edit_message: Éditez le nom de ce rôle

@@ -21,6 +21,9 @@ nav:
   update_user_button: Update User
   edit_user_button: Edit User
   delete_user_button: Delete User
+  update_role_button: Update Role
+  edit_role_button: Edit Role
+  delete_role_button: Delete Role
 
 labels:
   option_yes: 'Yes'
@@ -46,6 +49,7 @@ labels:
   choose_language_label: Language
   update_language_label: Switch To
   edit_language_label: Language
+  edit_rolename_label: Edit role name
 
 u:
   hello_message: Howdy
@@ -105,8 +109,17 @@ u:
   edit_user_error_email_clash: A User with email '%1' already exists
   edit_user_no_change: You made no changes
   error_cant_delete_superuser_message: You can not delete a superuser
+  error_cant_edit_blessed_role_message: You can't edit the role '%1'
   error_user_unknown_message: The user id supplied was not recognised
+  error_role_unknown_message: The role name supplied was not recognised
   delete_user_success_message: User '%1' has been deleted
+  list_roles_message: !!pl
+    0: No roles here
+    1: There is one role
+    n: There are %1 roles
+  edit_role_message: Edit Role '%1'.
+  edit_role_success: Role Saved
+  delete_role_success_message: Role '%1' has been deleted
 
 r:
   edit_message: You may edit this role's name

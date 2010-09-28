@@ -128,4 +128,38 @@ class AdminHandler < Frank
     end
   end
 
+  #if logged in and if an admin then list all the users
+  get '/roles' do
+    admin_required! "/"
+    # an admin user can list roles
+    role_list = Role.all
+    haml :'in/list_roles', :locals => { :message => t.u.list_roles_message(role_list.size), :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+  end
+  
+  get '/role/edit/:name' do
+    admin_required! "/"
+    target_role = Role.find_by_name(params[:name])
+    if target_role == nil
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+    elsif is_blessed_role?(target_role)
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+    else
+      haml :'in/edit_role', :locals => { :message => t.u.edit_role_message(target_role.name), :user => active_user, :target_role => target_role, :nav_hint => "edit_role" }
+    end
+  end
+
+  post '/role/edit/:name' do
+    admin_required! "/"
+
+  end
+
+  post '/role/delete/:name' do
+    admin_required! "/"
+  
+  end
+
 end
