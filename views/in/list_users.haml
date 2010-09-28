@@ -6,5 +6,11 @@
         %a{:href => "/user/#{a_user.id}"}#{a_user.username}
         - if !a_user.has_role?('admin')
           (
-          %a{:href => "/user/edit/#{a_user.id}"}edit
+          %a{:href => "/user/edit/#{a_user.id}"}#{t.nav.edit_user_button}
           )
+#user_buttons
+  [
+  %a{:href => '/user' }#{t.nav.create_user_button}
+  |
+  %a{:href => '/role' }#{t.nav.create_role_button}
+  ]

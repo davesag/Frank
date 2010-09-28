@@ -6,8 +6,14 @@
         #{a_role.name}
         - if (user.has_role?('admin') && !is_blessed_role?(a_role))
           (
-          %a{:href => "/role/edit/#{a_role.name}"}< #{t.edit}
+          %a{:href => "/role/edit/#{a_role.name}"}< #{t.nav.edit_role_button}
           |
           %form{ :action => "/role/delete/#{a_role.name}", :'accept-charset' => 'UTF-8', :method => 'POST' }
             %input{:type => "submit", :value => "#{t.nav.delete_role_button}"}
           )
+#user_buttons
+  [
+  %a{:href => '/user' }#{t.nav.create_user_button}
+  |
+  %a{:href => '/role' }#{t.nav.create_role_button}
+  ]

@@ -1,0 +1,8 @@
+#message_box
+  %h3 #{message}
+#entry_form
+  %form{ :'accept-charset' => 'UTF-8', :action => "/role", :method => 'post'}
+    %p< 
+      %label{ :for => "new_name" }#{t.labels.create_rolename_label}
+      %input(name='new_name' type='text')
+    %input{ :type => "submit", :value => t.nav.create_role_button}

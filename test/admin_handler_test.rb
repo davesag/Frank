@@ -5,6 +5,7 @@ require 'test/unit'
 require 'rack/test'
 require 'rack/builder'
 require 'models/user'
+require 'models/role'
 require 'test/handler_test_base'
 
 class AdminHandlerTest < HandlerTestBase
@@ -157,6 +158,48 @@ class AdminHandlerTest < HandlerTestBase
     
     # clean up database at the end of the test
     super_george.destroy
+  end
+  
+  def test_admin_can_create_user
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+
+    get '/user'
+    assert last_response.ok?
+    assert last_response.body.include?("Add a new User")
+    
+    post '/user', { :username => "new_user", :password => GOOD_PASSWORD,
+      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true' }
+    assert last_response.ok?
+    assert last_response.body.include?("You have added a user called 'new_user'")
+    
+    new_user = User.find_by_username('new_user')
+    
+    # test that this user can now log in.
+    get '/logout'
+    assert last_response.ok?
+
+    post '/login', { :username => new_user.username, :password => GOOD_PASSWORD }
+    assert last_response.ok?
+    assert last_response.body.include?('You are logged in as')    
+    assert last_response.body.include?(new_user.username)    
+    
+    new_user.destroy
+    
+  end
+
+  def test_created_user_dupe_username_password
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+
+    post '/user', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD,
+      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true' }
+    assert last_response.ok?
+    assert last_response.body.include?("A user with username '#{GOOD_USERNAME}' is already registered")
+ 
+    post '/user', { :username => "new_username", :password => GOOD_PASSWORD,
+      :email => GOOD_EMAIL, :_locale => "en", :html_email => 'true' }
+    assert last_response.ok?
+    assert last_response.body.include?("A user with email #{GOOD_EMAIL} is already registered")
+ 
   end
   
 end

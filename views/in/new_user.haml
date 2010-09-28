@@ -1,0 +1,26 @@
+#message_box
+  %h3 #{message}
+#entry_form
+  %form{ :'accept-charset' => 'UTF-8', :action => "/user", :method => 'post'}
+    %p< 
+      %label{ :for => "username" }#{t.labels.create_user_username_label}
+      %input(name='username' type='text')
+    %p< 
+      %label{ :for => "email" }#{t.labels.create_user_email_label}
+      %input(name='email' type='text')
+    %p<
+      %label{ :for => "password" }#{t.labels.create_user_password_label}
+      %input(name='password' type='password')
+    %p<
+      %label{ :for => "locale" }#{t.labels.create_user_language_label}
+      %select{ :name => "_locale" }
+        - for locl in r18n.available_locales do
+          %option{:value=> "#{locl.code}", :selected => r18n.locale.code == locl.code ? "selected" : nil }#{locl.title}
+    %p<
+      %label{ :for => "html_email" }#{t.labels.edit_html_email_label}
+      %select(name='html_email')
+        %option{ :value => 'true', :selected => 'true' }<
+          #{t.labels.option_yes}
+        %option{ :value => 'false' }<
+          #{t.labels.option_no}
+    %input{ :type => "submit", :value => t.nav.create_user_button}

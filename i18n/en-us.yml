@@ -24,6 +24,8 @@ nav:
   update_role_button: Update Role
   edit_role_button: Edit Role
   delete_role_button: Delete Role
+  create_user_button: Add User
+  create_role_button: Add Role
 
 labels:
   option_yes: 'Yes'
@@ -50,6 +52,11 @@ labels:
   update_language_label: Switch To
   edit_language_label: Language
   edit_rolename_label: Edit role name
+  create_user_username_label: User's Username
+  create_user_email_label: User's email
+  create_user_password_label: User's password
+  create_user_language_label: Language
+  create_rolename_label: Role name
 
 u:
   hello_message: Howdy
@@ -117,6 +124,13 @@ u:
   error_dupe_role_name_message: There is already a role called '%1'
   delete_user_success_message: User '%1' has been deleted
   delete_role_message: The role '%1' was deleted
+  create_user_message: Add a new User
+  create_user_username_error: A user with username '%1' is already registered
+  create_user_email_error: A user with email %1 is already registered
+  create_user_success: You have added a user called '%1'
+  create_role_message: Add a new Role
+  create_role_error: A role called '%1' already exists
+  create_role_success: Role '%1' created
   list_roles_message: !!pl
     0: No roles here
     1: There is one role

@@ -145,4 +145,25 @@ class RoleAdminHandlerTest < HandlerTestBase
     assert Role.find_by_name("#{admin_role.name}") !=  nil
   end
 
+  def test_admin_can_create_role
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+ 
+    get '/role'
+    assert last_response.ok?
+    assert last_response.body.include?("Add a new Role")
+    
+    post '/role', {:new_name => "new_role"}
+    assert last_response.ok?
+    assert last_response.body.include?("Role 'new_role' created")
+  
+    # try again with the same name should give an error
+    post '/role', {:new_name => "new_role"}
+    assert last_response.ok?
+    assert last_response.body.include?("A role called 'new_role' already exists")
+    
+    new_role = Role.find_by_name('new_role')
+    new_role.destroy
+    
+  end
+
 end

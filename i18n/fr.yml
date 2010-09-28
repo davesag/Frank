@@ -24,6 +24,8 @@ nav:
   update_role_button: Rôle de mise à jour
   edit_role_button: Éditez le rôle
   delete_role_button: Rôle d'effacement
+  create_user_button: Ajoutez l'utilisateur
+  create_role_button: Ajoutez le rôle
 
 labels:
   option_yes: Oui
@@ -50,6 +52,11 @@ labels:
   update_language_label: Changez le langage
   edit_language_label: Votre langage
   edit_rolename_label: Éditez le nom de rôle
+  create_user_username_label: L'username
+  create_user_email_label: L'email
+  create_user_password_label: Le mot de passe
+  create_user_language_label: Langage
+  create_rolename_label: Nom de rôle
 
 u:
   hello_message: Salut
@@ -117,6 +124,13 @@ u:
   error_dupe_role_name_message: Il y a déjà un rôle appelé '%1'
   delete_user_success_message: L'utilisateur '%1' a été effacé
   delete_role_message: Le rôle '%1' a été effacé
+  create_user_message: Ajoutez un nouvel utilisateur
+  create_user_username_error: Un utilisateur avec username '%1' est déjà enregistré
+  create_user_email_error: Un utilisateur avec l'email %1 est déjà enregistré
+  create_user_success: Vous avez ajouté un utilisateur appelé '%1'
+  create_role_message: Ajoutez un nouveau rôle
+  create_role_error: Un rôle appelé '%1' existe déjà
+  create_role_success: Le rôle '%1' a été créé
   list_roles_message: !!pl
     0: Aucuns rôles ici
     1: Il y a un rôle

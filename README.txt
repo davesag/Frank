@@ -1,4 +1,4 @@
-You must remember this
+Background and History
 ----------------------
 
 This project started life, back in the first week of September 2010, as a test project for me to learning about GIT, Ruby, Sinatra, Active Record and the like.
@@ -33,14 +33,12 @@ Proposed Feature Set for v1
 *** but for large blocks of text, whole pages or emails, simply put the view templates into views/{location_code}/.. and they will be loaded
     automatically if they exist.
 * User roles (done)
-* Simple admin functions (almost done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple role editing now works)
+* Simple admin functions (almost done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple user and role creation, editing and deletion works.  There is still no UI for assigning/removing roles to/from a user, or assigning/removing users to/from roles.)
 
 TODO: V1.0
 ----------
-* admin function to create a user
-* admin function to create a role
-* more tests around editing of roles
 * UI to assign a role or roles to a user.
+* Pretty up the use of CSS
 
 Proposed features for v1.1
 --------------------------

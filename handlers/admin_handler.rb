@@ -17,7 +17,66 @@ class AdminHandler < Frank
     admin_required! "/"
     # an admin user can list everyone
     user_list = User.all
-    haml :'in/list_users', :locals => { :message => t.u.list_users_message(user_list.size), :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+    haml :'in/list_users', :locals => { :message => t.u.list_users_message(user_list.size),
+      :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+  end
+
+  #if logged in and if an admin then you may create a new user.
+  get '/user' do
+    admin_required! "/"
+    haml :'in/new_user', :locals => { :message => t.u.create_user_message,
+      :user => active_user, :nav_hint => "new_user" }
+  end
+
+  #if logged in and if an admin then you may create a new role.
+  get '/role' do
+    admin_required! "/"
+    haml :'in/new_role', :locals => { :message => t.u.create_role_message,
+      :user => active_user, :nav_hint => "new_role" }
+  end
+
+  #if logged in and if an admin then you may create a new role.
+  post '/role' do
+    admin_required! "/"
+    new_name = params[:new_name]
+    # check the role name doesn't already exist
+    if Role.find_by_name(new_name) != nil
+      haml :'in/new_role', :locals => { :message => t.u.create_role_error(new_name),
+        :user => active_user, :nav_hint => "new_role" }     
+    else
+      new_role = Role.create( :name => new_name )
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.create_role_success(new_name),
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+    end
+  end
+
+  #if logged in and if an admin then you may create a new user.
+  post '/user' do
+    admin_required! "/"
+    new_name = params[:username]
+    new_email = params[:email]
+    new_password = params[:password]
+    new_html_pref = params[:html_email]
+    new_locale = params[:_locale]
+
+    # check the user name doesn't already exist
+    if User.find_by_username(new_name) != nil
+      haml :'in/new_user', :locals => { :message => t.u.create_user_username_error(new_name),
+        :user => active_user, :nav_hint => "new_user" }     
+    elsif User.find_by_email(new_email) != nil
+      haml :'in/new_user', :locals => { :message => t.u.create_user_email_error(new_email),
+        :user => active_user, :nav_hint => "new_user" }           
+    else
+      new_user = User.create( :username => new_name, :password => new_password, :email => new_email )
+      new_user.set_preference('HTML_EMAIL', new_html_pref)
+      new_user.locale = new_locale
+      new_user.validated = true # lets not get fancy right now.
+      new_user.save!
+      user_list = User.all
+      haml :'in/list_users', :locals => { :message => t.u.create_user_success(new_name),
+        :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+    end
   end
 
   #if logged in and if an admin then you may show the user's details.
