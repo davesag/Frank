@@ -16,10 +16,12 @@ class HandlerTestBase < Test::Unit::TestCase
     @app ||= Rack::Builder.parse_file(File.join(Frank.root,"config.ru"))[0]
   end
 
-# see db/seeds.rb for the usename and password of the seeded 'root' user.
+# see db/seeds.rb for the usename and password of the seeded 'root' user and 'nobody' user.
   GOOD_USERNAME = "root"
   BAD_USERNAME = "bad"
   GOOD_PASSWORD = "password"
+  NOBODY_USERNAME = "nobody"
+  NOBODY_EMAIL = "Frank_nobody_user@davesag.com"
   BAD_PASSWORD = "dog no biscuit"
   GOOD_EMAIL = "Frank_root_user@davesag.com"
   BAD_EMAIL = "Frank_root_user@thisisnotavalidemailaddress.con"
@@ -38,6 +40,7 @@ class HandlerTestBase < Test::Unit::TestCase
    user.locale = "en"
    user.validated = true
    user.save!
+   return user
  end
  
  def teardown_dummy_user(name)

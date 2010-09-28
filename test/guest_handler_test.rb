@@ -20,7 +20,7 @@ class GuestHandlerTest < HandlerTestBase
   def test_login_guest_gives_login_screen
     get '/login'
     assert last_response.ok?
-    assert last_response.body.include?('Login to continue')    
+    assert last_response.body.include?('Login to continue')
   end
 
   def test_logout_guest_gives_login_screen

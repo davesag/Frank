@@ -1,9 +1,10 @@
 #user_list
+  %h2 #{message}
   %ol
-  - for a_user in user_list do
-    %li<
-      %a{:href => "/user/#{a_user.id}"}#{a_user.username}
-      - if !a_user.has_role?('admin')
-        (
-        %a{:href => "/user/edit/#{a_user.id}"}edit
-        )
+    - for a_user in user_list do
+      %li<
+        %a{:href => "/user/#{a_user.id}"}#{a_user.username}
+        - if !a_user.has_role?('admin')
+          (
+          %a{:href => "/user/edit/#{a_user.id}"}edit
+          )

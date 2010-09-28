@@ -10,7 +10,7 @@ require 'test/handler_test_base'
 class SelfDeletionTest < HandlerTestBase
 
   def test_self_deletion
-    setup_dummy_user("deleteme")
+    dummy_user = setup_dummy_user("deleteme")
 
     # first log in
     post '/login', { :username => "deleteme", :password => GOOD_PASSWORD }

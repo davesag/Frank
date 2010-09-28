@@ -22,9 +22,7 @@ class Frank < Sinatra::Base
   # each handler will subclass Frank, live in /handlers and be called *_handler.rb
   class << self
     def load_handlers
-      if @handlers_are_loaded
-        @@log.debug("Handlers were already loaded.")
-      else
+      if !@handlers_are_loaded
         raise "No handlers folder" unless File.directory? handlers
         Dir.glob("handlers/**_handler.rb"){ |handler| require handler }
         @@log.debug( "handers loaded" )
@@ -40,7 +38,8 @@ class Frank < Sinatra::Base
     @@log.level = Logger::DEBUG
     @@log.info("Frank walks onto the stage.")
 
-    ActiveRecord::Base.logger = @@log
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+    ActiveRecord::Base.logger.level = Logger::INFO
     ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
 
     @handlers_are_loaded = false
@@ -179,7 +178,7 @@ class Frank < Sinatra::Base
 
   # some other handy methods
   def admin_required!(bounce)
-    if ! is_logged_in? 
+    if !is_logged_in? 
       redirect '/login' 
     end
     if !active_user.has_role?('admin')
@@ -242,7 +241,7 @@ class Frank < Sinatra::Base
  
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
   def send_email_to_user(user, subject, body_template, template_locals)   
-    if user.get_preference("HTML_EMAIL").value == 'true'
+    if 'true' == user.get_preference("HTML_EMAIL").value
       email_body = haml(body_template, :locals => template_locals )
       type = 'text/html'
     else

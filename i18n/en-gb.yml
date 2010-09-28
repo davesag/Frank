@@ -101,9 +101,11 @@ u:
   show_user_message: User Details for %1.
   edit_user_message: Edit Details for %1.
   edit_user_success: User Details Saved
+  edit_user_error: Changes were not saved
   edit_user_error_email_clash: Somebody with email '%1' already exists
   edit_user_no_change: You made no changes
   error_cant_delete_superuser_message: You can not delete a superuser
+  error_user_unknown_message: The user code supplied was not recognised
   delete_user_success_message: User '%1' has been deleted
 
 r:

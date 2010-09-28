@@ -101,9 +101,11 @@ u:
   show_user_message: Petits groupes d'utilisateur pour %1.
   edit_user_message: Éditez les détails pour %1.
   edit_user_success: Petits groupes d'utilisateur sauvegardés
+  edit_user_error: Des modifications n'ont pas été sauvegardées
   edit_user_error_email_clash: Quelqu'un avec l'email '%1' existe déjà
   edit_user_no_change: Vous n'avez apporté aucune modification
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
+  error_user_unknown_message: L'identification de l'utilisateur fournie n'a pas été identifiée
   delete_user_success_message: L'utilisateur '%1' a été effacé
 
 r:

@@ -30,8 +30,8 @@ class UserHandler < Frank
   # a user can delete themselves.
   post '/delete_self' do    
     if is_logged_in?
-      @@log.warn("/delete_self called by #{active_user.username}.")
       if active_user.has_role?('admin')
+        @@log.error("/delete_self called by an admin. Admin's can't delete themselves. Check the UI and Navigation options in your templates.")
         # admin users can not delete themselves.  remove the user from admin role before trying to delete them
         haml :'in/profile', :locals => { :message => t.u.delete_me_error_admin, :user => active_user, :nav_hint => "profile" }
       else

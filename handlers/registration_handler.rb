@@ -19,7 +19,7 @@ class RegistrationHandler < Frank
       email = params['email']
       name = params['username']
       terms = params['terms']
-      if terms == 'false'
+      if 'true' != terms
     	  haml :register, :locals => { :message => t.u.register_error_terms, :name => name, :email => email, :nav_hint => "register" }        
       else
         if User.username_exists?(name)

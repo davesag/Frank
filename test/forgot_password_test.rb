@@ -11,7 +11,7 @@ class ForgotPasswordTest < HandlerTestBase
 
   def test_password_reset
     dummy_name = "resetmypassword"
-    setup_dummy_user(dummy_name)
+    dummy_user = setup_dummy_user(dummy_name)
 
     get '/forgot_password'
     assert last_response.ok?
@@ -32,6 +32,28 @@ class ForgotPasswordTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?("Your password has been reset")
 
+    new_token = User.find_by_username(dummy_name).validation_token
+    assert token != new_token
+    
+    # testing for malicious use prevention
+    # check coming in with the same token fails
+    get '/reset_password/' + token
+    assert last_response.ok?
+    assert last_response.body.include?('Token expired')
+
+    post '/reset_password', {:token => token, :password => "newpassword"}
+    assert last_response.ok?
+    assert last_response.body.include?('Token expired')
+
+    # and for the truly paranoid, say someone guessed the user's new token (or snooped it somehow?)
+    get '/reset_password/' + new_token
+    assert last_response.ok?
+    assert last_response.body.include?('Token expired')
+
+    post '/reset_password', {:token => new_token, :password => "newpassword"}
+    assert last_response.ok?
+    assert last_response.body.include?('Token expired')
+
     # now try logging in with the new password
     post '/login', {:username => dummy_name, :password => "newpassword" }
     assert last_response.ok?
@@ -39,6 +61,28 @@ class ForgotPasswordTest < HandlerTestBase
     assert last_response.body.include?(dummy_name)    
 
     teardown_dummy_user("resetmypassword")
+  end
+
+  def test_lost_password_while_logged_in_gives_error
+    post '/login', {:username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+    assert last_response.ok?
+
+    get '/forgot_password'
+    assert last_response.ok?
+    assert last_response.body.include?('You are still logged in as')
+
+    post '/forgot_password'
+    assert last_response.ok?
+    assert last_response.body.include?('You are still logged in as')
+    
+    get '/logout'
+    assert last_response.ok?    
+  end
+
+  def test_lost_password_wrong_email_gives_error
+    post '/forgot_password', { :email => BAD_EMAIL }
+    assert last_response.ok?
+    assert last_response.body.include?('That email address is unknown.')
   end
 
 end

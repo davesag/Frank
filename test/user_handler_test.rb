@@ -29,16 +29,110 @@ class UserHandlerTest < HandlerTestBase
     # first log in
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
+    # try going to '/'
+    get '/'
+    assert last_response.ok?
+    assert last_response.body.include?('Welcome back')
+
+    # try going to '/login' again
+    get '/login'
+    assert last_response.ok?
+    assert last_response.body.include?('Welcome back')
+
+    # try going to '/register' as a logged in user
+    get '/register'
+    assert last_response.ok?
+    assert last_response.body.include?('You are already logged in as')
+
     # then log out
     get '/logout'
     assert last_response.ok?
     assert last_response.body.include?('Login again to continue')    
+
+    # try going to '/register' as a logged out but remembered user
+    get '/register'
+    assert last_response.ok?
+    assert last_response.body.include?('Logout completely before trying to register a new user')
 
     # then log out again
     get '/logout'
     assert last_response.ok?
     assert last_response.body.include?('logged out completely')    
   end
+
+  def test_various_mixed_public_private_pages
+    # try going to '/terms' as a guest
+    get '/terms'
+    assert last_response.ok?
+    assert last_response.body.include?('Terms & Conditions')
+ 
+    # try going to '/privacy' as a guest
+    get '/privacy'
+    assert last_response.ok?
+    assert last_response.body.include?('Privacy is important')
+ 
+    # now log in and try again
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+    assert last_response.ok?
+
+    # try going to '/terms' as a logged in user
+    get '/terms'
+    assert last_response.ok?
+    assert last_response.body.include?('The Terms & Conditions you agreed to when you registered')
+
+    # try going to '/privacy' as a logged in user
+    get '/privacy'
+    assert last_response.ok?
+    assert last_response.body.include?('We take privacy seriously')
+
+    # then log out
+    get '/logout'
+    assert last_response.ok?
+    assert last_response.body.include?('Login again to continue')    
+
+  end
+
+  # there is a translation of the terms page for eu-au and en
+  # the en/terms.haml should load for a GB user and the en-au/terms.haml should load for an AU user.
+  def test_localised_template_loads
+    george = setup_dummy_user("George")
+    george.locale = 'en-GB'
+    george.save!
+
+    post '/login', { :username => george.username, :password => GOOD_PASSWORD }
+    assert last_response.ok?
+    
+    get '/terms'
+    assert last_response.ok?
+    assert last_response.body.include?('Demonstration Framework')  # 'en' locale version.
+    
+    get '/privacy'
+    assert last_response.ok?
+    assert last_response.body.include?('We will use best efforts to keep users data private')  # default version.
+    
+    get '/logout'
+    
+    mildred = setup_dummy_user("Mildred")
+    mildred.locale = 'en-AU'
+    mildred.save!
+
+    post '/login', { :username => mildred.username, :password => GOOD_PASSWORD }
+    assert last_response.ok?
+    
+    get '/terms'
+    assert last_response.ok?
+    assert last_response.body.include?('This website is a demo framework only')  # 'en-au' locale version.
+
+    get '/privacy'
+    assert last_response.ok?
+    assert last_response.body.include?("We'll use our very best efforts to keep our users' data private")  # 'en-au' locale version.
+    
+    get '/logout'
+
+    mildred.destroy
+    george.destroy
+  end
+
 
   # test that logged in users are allowed into userland
 
