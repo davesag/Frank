@@ -108,6 +108,7 @@ u:
   edit_user_error: Des modifications n'ont pas été sauvegardées
   edit_user_error_email_clash: Quelqu'un avec l'email '%1' existe déjà
   edit_user_no_change: Vous n'avez apporté aucune modification
+  edit_role_no_change: Vous n'avez pas changé le nom du rôle
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
   error_cant_edit_blessed_role_message: Vous ne pouvez pas éditer le rôle '%1'
   error_cant_delete_blessed_role_message: Vous ne pouvez pas effacer le rôle '%1'

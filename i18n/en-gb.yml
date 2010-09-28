@@ -108,6 +108,7 @@ u:
   edit_user_error: Changes were not saved
   edit_user_error_email_clash: Somebody with email '%1' already exists
   edit_user_no_change: You made no changes
+  edit_role_no_change: You made no changes
   error_cant_delete_superuser_message: You can not delete a superuser
   error_cant_edit_blessed_role_message: You can't edit the role '%1'
   error_cant_delete_blessed_role_message: You can't delete the role '%1'

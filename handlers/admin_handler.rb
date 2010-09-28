@@ -164,18 +164,23 @@ class AdminHandler < Frank
       role_list = Role.all
       haml :'in/list_roles', :locals => { :message => t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+    elsif new_name == target_role.name
+      # no changes.
+      role_list = Role.all
+      haml :'in/list_roles', :locals => { :message => t.u.edit_role_no_change,
+        :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
     elsif Role.find_by_name(new_name) != nil  # there's already a role called #{newname}
       # TODO: for now just call error but a better solution is to offer to merge the roles.
       #       Need to define business logic for that so it's beyond the scope of Frank.
       role_list = Role.all
-      haml :'in/list_roles', :locals => { :message => t.u.error_dupe_role_name_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
+      haml :'in/list_roles', :locals => { :message => t.u.error_dupe_role_name_message(new_name) + '. ' + t.u.list_roles_message(role_list.size),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
     else
       # change the name of the role.  How does this affect other users in that role? (TODO: test that)
       target_role.name = new_name
       target_role.save!
       role_list = Role.all
-      haml :'in/list_roles', :locals => { :message => t.u.edit_role_message(target_role.name),
+      haml :'in/list_roles', :locals => { :message => t.u.edit_role_success,
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
     end
   end
