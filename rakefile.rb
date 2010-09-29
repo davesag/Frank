@@ -3,7 +3,7 @@
 require 'active_record'
 require 'logger'
 require 'rake/testtask'
-require 'rcov/rcovtask'
+#require 'rcov/rcovtask'
 
 task :default => :test
 
@@ -39,12 +39,12 @@ end
 # note for some reason this task does not run but you can do this anyway by
 # % rcov test/*_test.rb
 # from the command line.
-desc "Run the rcov profiler to generate test coverage reports."
-task(:coverage => 'db:environment') do
-  Rcov::RcovTask.new do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/*_test.rb']
-    t.output_dir = "coverage"
-    t.verbose = true
-  end
+#desc "Run the rcov profiler to generate test coverage reports."
+#task(:coverage => 'db:environment') do
+#  Rcov::RcovTask.new do |t|
+#    t.libs << "test"
+#    t.test_files = FileList['test/*_test.rb']
+#    t.output_dir = "coverage"
+#    t.verbose = true
+#  end
 end
