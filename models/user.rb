@@ -64,6 +64,7 @@ class User < ActiveRecord::Base
     self.validation_token = self.generate_token(random_seed)
   end
 
+  # does this use have the named role?
   def has_role?(name)
     role = Role.find_by_name(name)
     # does the role even exist?
@@ -72,29 +73,41 @@ class User < ActiveRecord::Base
     return self.roles.first(:conditions => {:name => name}) != nil
   end
 
+  # add the named role.
   def add_role(name)
     role = Role.find_by_name(name)
     if role != nil
       # role exists
-      myrole = self.roles.find_by_name(name)
-      if myrole == nil  # add this role as we don't already have it.
-        self.roles << role
-      end
-    else
-      # oh dear, role #{name} doesn't exist.
-      # do nothing or return an error?  throw an exception?  What is the Ruby way?
-      puts "There is no such Role as '#{name}'"
+      self.roles << role unless self.roles.include?(role)
     end
   end
 
-# def remove_role(name)
-#   role = self.roles.first(:conditions => {:name => name})
-#   if role
-#     self.roles.remove(:name => name)
-#   else
-#     # all good, user doesn't have this role, should this throw a warning?
-#   end
-# end
+#  we don't need this
+#  # remove the named role.
+#  def remove_role(name)
+#    role = Role.find_by_name(name)
+#    if role != nil
+#      # role exists
+#      self.roles.delete(role)
+#    end
+#  end
+
+  # replaces the users roles with roles from the supplied array of role names.
+  def replace_roles(role_names)
+    removals = []
+    for role in self.roles do
+      if !role_names.include?(role.name)
+        removals << role 
+      else
+        role_names.delete(role.name)
+      end
+    end
+    self.roles = self.roles - removals
+    # all that's left in role_names now is the names of roles to add
+    for role_name in role_names do
+      add_role(role_name) unless role_name == ''
+    end
+  end
 
 end
 

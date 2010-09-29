@@ -72,6 +72,13 @@ class AdminHandler < Frank
       new_user.set_preference('HTML_EMAIL', new_html_pref)
       new_user.locale = new_locale
       new_user.validated = true # lets not get fancy right now.
+      # add the roles
+      new_roles = params[:roles]
+      if new_roles != nil
+        for role in new_roles do
+          new_user.add_role(role) unless role == ''
+        end
+      end
       new_user.save!
       user_list = User.all
       haml :'in/list_users', :locals => { :message => t.u.create_user_success(new_name),
@@ -121,7 +128,6 @@ class AdminHandler < Frank
       new_email = params['email']
       new_password = params['password']
       new_html_email_pref = params['html_email']
-      new_locale = params['_locale']  # note different to when editing one's own profile.
     
       user_changed = false
       error = false
@@ -150,10 +156,24 @@ class AdminHandler < Frank
           user_changed = true
         end
       end
-      locale_code = params['_locale']
+      new_locale = params['_locale']  # note different to when editing one's own profile.
       # just check the locale code provided is legit.
       if target_user.locale != new_locale && locale_available?(new_locale)
         target_user.locale = new_locale
+        user_changed = true
+      end
+      new_roles = params[:roles]
+      roles_changed = false
+      if new_roles.size != target_user.roles.size + 1 # remember the 'none' option.
+        roles_changed = true
+      else
+        # same number of roles so lets see if they actually match
+        for new_role in new_roles do
+          roles_changed &&= !target_user.has_role?(new_role)
+        end
+      end
+      if roles_changed
+        target_user.replace_roles(new_roles)
         user_changed = true
       end
       if error

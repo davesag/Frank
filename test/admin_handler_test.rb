@@ -82,33 +82,72 @@ class AdminHandlerTest < HandlerTestBase
     pref = george.get_preference('HTML_EMAIL').value
 
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
-      :html_email => pref }
+      :html_email => pref, :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("no changes")
     
     # try changing george's html email preference only
+    not_pref = pref == 'true' ? 'false' : 'true'
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
-      :html_email => pref == 'true' ? 'false' : 'true' }
+      :html_email => not_pref, :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("User Details Saved")
+    assert not_pref == george.get_preference('HTML_EMAIL').value
     
     # try changing george's email to mildred's
     post "/user/edit/#{george.id}", { :email => mildred.email, :password => "", :_locale => george.locale,
-      :html_email => pref }
+      :html_email => pref, :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("Changes were not saved")
     
     # try changing george's email to something nice
     post "/user/edit/#{george.id}", { :email => "testytestFrankFrank@davesag.com", :password => "", :_locale => george.locale,
-      :html_email => pref }
+      :html_email => pref, :roles => [''] }
     assert last_response.ok?
-    assert last_response.body.include?("User Details Saved")  # changing George's locale should not change the user's    
+    assert last_response.body.include?("User Details Saved")
+    george.reload
+    assert george.email == 'testytestFrankFrank@davesag.com'
     
     # try changing george's password and locale.
     post "/user/edit/#{george.id}", { :email => george.email, :password => "newpassword", :_locale => 'fr',
-      :html_email => pref }
+      :html_email => pref, :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("User Details Saved")  # changing George's locale should not change the user's    
+    george.reload
+    assert george.locale == 'fr'
+
+    # try making george a 'superuser' and a 'user'.
+    post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
+      :html_email => pref, :roles => ['superuser','user'] }
+    assert last_response.ok?
+    assert last_response.body.include?("User Details Saved") 
+    george.reload
+    assert george.has_role?('superuser')
+    assert george.has_role?('user')
+    assert !george.has_role?('admin')
+    assert george.locale == 'fr'
+ 
+    # try making george just a 'user'.
+    post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
+      :html_email => pref, :roles => ['user'] }
+    assert last_response.ok?
+    assert last_response.body.include?("User Details Saved") 
+    george.reload
+    assert !george.has_role?('superuser')
+    assert george.has_role?('user')
+    assert !george.has_role?('admin')
+    assert george.locale == 'fr'
+    
+    # now try making george an 'admin'
+    post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
+      :html_email => pref, :roles => ['admin'] }
+    assert last_response.ok?
+    assert last_response.body.include?("User Details Saved") 
+    george.reload
+    assert !george.has_role?('superuser')
+    assert !george.has_role?('user')
+    assert george.has_role?('admin')
+    assert george.locale == 'fr'
 
     get '/logout'
     
@@ -116,6 +155,7 @@ class AdminHandlerTest < HandlerTestBase
     post '/login', { :username => george.username, :password => "newpassword" }
     assert last_response.body.include?('Vous avez ouvert une session comme')    # we changed him to French.
     assert last_response.body.include?(george.username)    
+    assert last_response.body.include?('Utilisateurs de liste')                 # we made him an Admin
     
     # clean up database at the end of the test
     mildred.destroy
@@ -168,7 +208,7 @@ class AdminHandlerTest < HandlerTestBase
     assert last_response.body.include?("Add a new User")
     
     post '/user', { :username => "new_user", :password => GOOD_PASSWORD,
-      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true' }
+      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("You have added a user called 'new_user'")
     
@@ -191,12 +231,12 @@ class AdminHandlerTest < HandlerTestBase
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     post '/user', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD,
-      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true' }
+      :email => "new_user_Franktest@davesag.com", :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("A user with username '#{GOOD_USERNAME}' is already registered")
  
     post '/user', { :username => "new_username", :password => GOOD_PASSWORD,
-      :email => GOOD_EMAIL, :_locale => "en", :html_email => 'true' }
+      :email => GOOD_EMAIL, :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?
     assert last_response.body.include?("A user with email #{GOOD_EMAIL} is already registered")
  

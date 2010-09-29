@@ -32,6 +32,9 @@ labels:
   option_no: No Thanks
   option_terms_yes: Yes I have
   option_terms_no: No I haven't
+  choose: Choose
+  no_role: no role
+  none: None
   username_label: Username
   choose_username_label: Choose a Username
   email_label: Email
@@ -57,6 +60,9 @@ labels:
   create_user_password_label: User's password
   create_user_language_label: Language
   create_rolename_label: Role name
+  create_user_roles_label: Assign Roles
+  edit_user_roles_label: Change Roles
+  show_user_roles_label: Assigned Roles
 
 u:
   hello_message: Hello

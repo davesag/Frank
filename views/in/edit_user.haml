@@ -20,6 +20,14 @@
           #{t.labels.option_yes}
         %option{ :value => 'false', :selected => (target_user.get_preference('HTML_EMAIL').value == 'false' ? "selected" : nil)}<
           #{t.labels.option_no}
+    %p<
+      %label{ :for => "roles" }#{t.labels.create_user_roles_label}
+      %select{ :name => 'roles', :multiple => 'true', :size => Role.count < 6 ? Role.count + 1 : 6 }
+        %option(value='')<
+          #{t.labels.no_role}
+        - for role in Role.all do
+          %option{ :value => role.name, :selected => target_user.has_role?(role.name) }<
+            #{role.name}
     %input{ :type => "submit", :value => t.nav.update_user_button}
 #view_button
   [
