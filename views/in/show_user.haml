@@ -1,5 +1,5 @@
 #message_box
-  %p< #{message}
+  %h3< #{message}
 #user_details
   %table
     %tr<
@@ -21,10 +21,11 @@
           - for role in target_user.roles do
             %li>= role.name
 -if !target_user.has_role?('admin')
-  #edit_button
-    [
-    %a{ :href => "/user/edit/#{target_user.id}", :method => 'get'}#{t.nav.edit_user_button}
-    ]
-  #delete_button
-    %form{ :'accept-charset' => 'UTF-8', :action => "/user/delete/#{target_user.id}", :method => 'post'}
-      %input{ :type=>"submit", :value => t.nav.delete_user_button}
+  #user_buttons
+    #edit_button
+      [
+      %a{ :href => "/user/edit/#{target_user.id}", :method => 'get'}#{t.nav.edit_user_button}
+      ]
+    #delete_button
+      %form{ :'accept-charset' => 'UTF-8', :action => "/user/delete/#{target_user.id}", :method => 'post'}
+        %input{ :type=>"submit", :value => t.nav.delete_user_button}

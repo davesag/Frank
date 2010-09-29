@@ -2,16 +2,16 @@
 %html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "#{i18n.locale.code}", :lang => "#{i18n.locale.code}", :encoding =>'utf-8' }
   %head
     %meta{ :'http-equiv' => "Content-Type", :content => "text/html; charset=UTF-8"}
-      %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
-      %title #{message} #{user.username}
+    %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
+    %title #{message} #{user.username}
   %body
     #header
       / template header content goes here
       #welcome_message
         %p< #{t.g.you_are_logged_in_as(user.username)}
-        -if nav_hint != 'edit_profile' && nav_hint != 'edit_user' && nav_hint != 'new_user'
-          #locale_selector
-            =haml(:'chunks/change_locale_menu_form')
+      -if nav_hint != 'edit_profile' && nav_hint != 'edit_user' && nav_hint != 'new_user'
+        #locale_selector
+          =haml(:'chunks/change_locale_menu_form')
     #content
       = yield
     #footer
