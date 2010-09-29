@@ -1,6 +1,9 @@
+Current Status
+-------------
+Hovering around version 0.9.x.  See the TODO: lists below and in the body of the sourcecode.
+
 Background and History
 ----------------------
-
 This project started life, back in the first week of September 2010, as a test project for me to learning about GIT, Ruby, Sinatra, Active Record and the like.
 
 My original aim was to build a very simple web application that demonstrated a complete round-trip of user login, and log out.
@@ -27,47 +30,72 @@ Proposed Feature Set for v1
 * privacy policy (done - insert your own text here.)
 * Simple and consistent navigation system using haml layouts. (done)
 ** include examples of injecting chunks of haml into other haml templates.
-* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.)
+* Support for Internationalisation and Localisation using r18n. (mostly done - my French is poor. Added translations for en, en-GB, en-AU, en-US and fr and now save locale settings to the database if editing yourself, or registering.) Location codes are either like 'fr' or 'en-us' etc.
 ** You have two choices with localisation and I suggest you use both
 *** Firstly create locale specific yml files in i18n folder for the various small bits of text in the site.
-*** but for large blocks of text, whole pages or emails, simply put the view templates into views/{location_code}/.. and they will be loaded
+*** but for large blocks of text as haml for whole pages or html email and erb for plain-text emails, simply put the view templates into views/{location_code}/.. and they will be loaded
     automatically if they exist.
+*** EG if Frank is looking for haml template hello and the location is 'en-au', it will
+**** first look for 'views/en-au/hello.haml
+**** If that's not there it will look for 'views/en/hello.haml'
+**** and if that's no there it will load views/hello.haml as per normal for a Sinatra app.
 * User roles (done)
-* Simple admin functions (almost done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple user and role creation, editing and deletion works.  There is still no UI for assigning/removing roles to/from a user, or assigning/removing users to/from roles.)
+* Simple admin functions (done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple user and role creation, editing and deletion works.)
+* 100% test coverage of all handlers, models and views (done according to rcov.  Of course there may be missing features that are not being tested for, the unknown unknowns.)
+** though the localising of emailed erb plain text templates is not tested as we don't send email in tests. I know it works though.
 
 TODO: V1.0
 ----------
-* UI to assign a role or roles to a user.
 * Pretty up the use of CSS
+* explore the unknown unknowns
+* add form validations
+* code review and polish
+* flatten migrations for 1.0 release
+* packaging and deployment options
 
 Proposed features for v1.1
 --------------------------
 * oAuth authentication
-* RESTful API allowing logged in Admins to add, edit and delete Users and Roles.
+* RESTful API allowing logged in Admins to add, edit and delete Users and Roles via AJaX components.
   * safeguards preventing deletion of superuser by anyone
+
 Where are we now?
 -----------------
-
 The main application is a Sinatra app called frank.rb
 
-Frank in turn will refer to handlers in the /handlers folder
-This allows you to group your request handlers in smaller more modular files.
-Right now there are only two groups, guest (all guest functions live here), and user, where the various user functions live.
+Frank is in turn subclassed by various handlers in the /handlers folder
+This allows you to group your request handlers in smaller more modular files which run as Rack middleware components.
+To add new handlers you must remember to add their names to the list of middleware defined in config.ru
+
+the rake task db:seed will run the various migrations in db/migrate and execute the code in db/seeds.rb to create three standard roles, 'superuser', 'admin' and 'user'.
+Superuser and Admin are 'blessed' roles in that they may not be renamed or deleted.  You can use the admin screens to create new roles and users and assign roles to users.
+
+The views folder is broken down as follows
+	chunks/ 			# a special folder for translation independent haml chunks that can be injected into other haml templates without being wrapped in a layout.haml
+	en/						# 'plain' English translations
+	en-au/				# Australian English translations
+	fr/						# French translations (done by me using Google.  I don't speak French so please excuse me. If you do speak French and want to contribute better translations please fork and send me a pull request.)
+	in/						# templates in here are restricted to people who are logged in.  They use the 'logged in' layout.haml local to the 'in' folder.
+	mail/					# haml and erb templates used to construct email messages.  haml for HTML email and erb for plain text email.
+
+Within each translation file you may place further 'in/' and 'mail/' subfolders with their own localised versions of haml and erb templates.
 
 Running Frank
 -------------
-
 Frank runs as a Rack application. To run Frank do the following
 
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
 * Various gems: rack, sinatra, sintatra-r18n, haml, erb, active_record, bcrypt, logger, pony and of course rake.
+* If you want to use rcov install that too.
 
 Step 1. -  Get the code.
 ------------------------
 %cd src # or wherever it is you keep your source files
 % git clone git://github.com/davesag/Frank.git
+
+or fork it via GitHub.
 
 Step 2. Init the data
 ---------------------
@@ -81,6 +109,8 @@ Step 3. - Run the unit tests.
 Step 3.1 - If you are keen and have rcov installed run
 % rcov test/*_test.rb --exclude /gems/,/Library/,/usr/
 
+	(if anyone can tell me why the RCov task in my rakefile doesn't work I'd be happy to hear from them.)
+
 Step 4 - Run the app.
 ---------------------
 % rackup
@@ -89,11 +119,13 @@ then go to http://localhost:9292 with your favourite web browser
 
 It will present a login screen
 
-Enter 'root' and 'password' (without the quotes of course) and you will be logged in.  You can now log out.
+Enter 'root' and 'password' (without the quotes of course) and you will be logged in.  You can list and edit the default test users and roles, admire the privacy policy and legals, and log out.
 
-if you enter anything other credentials you get bounced with a polite message.
+Enter 'nobody' and 'password' and you will be logged in.  You can admire the privacy policy etc but nobody is not an admin and can't edit anything but themselves.
 
-You can register as a new user and an email will be sent with a verification link.  You can click that link (localhost only right now) and then log in.  You can then see your details and delete yourself.
+if you enter any other credentials you get bounced with a polite message.
+
+If you are logged out completely you can register as a new user and an email will be sent with a verification link.  You can click that link (localhost only right now) and then log in.  You can then see your details and delete yourself.
 
 If you try to register with an email address already in the system then that person will receive a warning email.
 
@@ -117,7 +149,6 @@ When you are logged in the haml template system will always use the layout in vi
 
 I want to be a part of it
 -------------------------
-
 So who is this project aimed at?  Me really, in that I need to build a web-app for a project I am doing and figure a great way to learn more about Sinatra and Ruby and so on is to polish up a more feature complete generic web app that does the very core of what I believe all 'user aware' web apps need to be able to do.
 
 If you'd like to collaborate with me on this then please get in touch
