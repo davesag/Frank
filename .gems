@@ -1,8 +1,8 @@
 sinatra
 sinatra-r18n
 haml
-active_record
 bcrypt
 logger
 pony
+activerecord
 rake
