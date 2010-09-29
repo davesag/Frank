@@ -3,6 +3,7 @@
 require 'active_record'
 require 'logger'
 require 'rake/testtask'
+require 'yaml'
 #require 'rcov/rcovtask'
 
 task :default => :test
@@ -10,7 +11,11 @@ task :default => :test
 namespace :db do
   desc "Set up the connection to the database"
   task :environment do
-    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'Frank_Test_data.db'
+    dbconfig = YAML.load(File.read('config/database.yml'))
+    # in frank.rb we configure for development only right now.
+    # will perfect this as we get greater understanding
+    #TODO: work out how to configure for 'test' and 'production.  How does the rakefile know?
+    ActiveRecord::Base.establish_connection dbconfig['development']
   end
 
   desc "Migrate the database by walking through the migrations in db/migrate"
