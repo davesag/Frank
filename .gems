@@ -1,0 +1,8 @@
+sinatra-base
+sintatra-r18n
+haml
+active_record
+bcrypt
+logger
+pony
+rake
