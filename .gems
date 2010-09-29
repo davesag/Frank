@@ -1,7 +1,7 @@
 sinatra
 sinatra-r18n
 haml
-bcrypt
+bcrypt-ruby
 logger
 pony
 activerecord
