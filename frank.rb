@@ -40,7 +40,7 @@ class Frank < Sinatra::Base
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
     ActiveRecord::Base.logger.level = Logger::INFO
-    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
+    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'Frank_Test_data.db'
 
     @handlers_are_loaded = false
     load_handlers

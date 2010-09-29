@@ -10,7 +10,7 @@ task :default => :test
 namespace :db do
   desc "Set up the connection to the database"
   task :environment do
-    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  '.FrankData.sqlite3.db'
+    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'Frank_Test_data.db'
   end
 
   desc "Migrate the database by walking through the migrations in db/migrate"
