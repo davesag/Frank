@@ -86,10 +86,12 @@ class Frank < Sinatra::Base
   before do
     session[:locale] = params[:locale] if params[:locale] #the r18n system will load it automatically
 
-    ## just debugging on Heroku.  Remove once it works.
-    @@log.debug("REQUEST Incoming: #{request.inspect}")
-    @@log.debug("REQUEST Methods: #{request.methods}")
-
+    ## just debugging on Heroku.  TODO: Remove once it works.
+    @@log.debug("REQUEST Incoming: #{request.class.name}")
+    @@log.debug("REQUEST is a #{request.class.name} #{request.public_methods.to_s.include?('host_with_port') ? "and includes" : "but does not include"} the 'host_with_port' method.")
+    if request.host_with_port
+      @@log.debug("request.host_with_port = #{request.host_with_port}")
+    end
 
     # expected behaviour
     # default local is English. 'en'
