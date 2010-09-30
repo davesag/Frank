@@ -1,4 +1,4 @@
-sinatra
+sinatra --version '>=1.0'
 sinatra-r18n
 haml
 bcrypt-ruby
