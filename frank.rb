@@ -31,18 +31,49 @@ class Frank < Sinatra::Base
     end
   end
 
-  # TODO: someone needs to work out how these work.
-  # I tried setting up a configure :test block but it was never called.
+  # configuration blocks are called depending on the value of ENV['RACK_ENV] #=> 'test', 'development', or 'production'
+  # on Heroku the default rack environment is 'production'.  Locally it's development.
+  # if you switch rack environments locally you will need to reseed the database as it uses different databases for each obviously.
   configure :development do  
     @@log = Logger.new(STDOUT)
     @@log.level = Logger::DEBUG
-    @@log.info("Frank walks onto the stage.")
+    @@log.info("Frank walks onto the stage to rehearse.")
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
     ActiveRecord::Base.logger.level = Logger::INFO
 
     dbconfig = YAML.load(File.read('config/database.yml'))
     ActiveRecord::Base.establish_connection dbconfig['development']
+
+    @handlers_are_loaded = false
+    load_handlers
+  end
+
+  configure :production do  
+    @@log = Logger.new(STDOUT)  # TODO: should look for a better option than this.
+    @@log.level = Logger::INFO
+    @@log.info("Frank walks onto the stage to perform.")
+
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+    ActiveRecord::Base.logger.level = Logger::WARN
+
+    dbconfig = YAML.load(File.read('config/database.yml'))
+    ActiveRecord::Base.establish_connection dbconfig['production']
+
+    @handlers_are_loaded = false
+    load_handlers
+  end
+
+  configure :test do  
+    @@log = Logger.new(STDOUT)
+    @@log.level = Logger::DEBUG
+    @@log.info("Frank clears his throat and does his scales in front of the mirror.")
+
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+    ActiveRecord::Base.logger.level = Logger::DEBUG
+
+    dbconfig = YAML.load(File.read('config/database.yml'))
+    ActiveRecord::Base.establish_connection dbconfig['test']
 
     @handlers_are_loaded = false
     load_handlers

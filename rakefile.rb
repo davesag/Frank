@@ -15,7 +15,7 @@ namespace :db do
     # in frank.rb we configure for development only right now.
     # will perfect this as we get greater understanding
     #TODO: work out how to configure for 'test' and 'production.  How does the rakefile know?
-    ActiveRecord::Base.establish_connection dbconfig['development']
+    ActiveRecord::Base.establish_connection dbconfig[ENV['RACK_ENV']||'development']
   end
 
   desc "Migrate the database by walking through the migrations in db/migrate"
@@ -34,6 +34,7 @@ end
 
 desc "run the tests"
 task(:test => 'db:environment') do
+  puts "Tests running in environment '#{ENV['RACK_ENV']}'"
   Rake::TestTask.new do |t|
     t.libs << "test"
     t.test_files = FileList['test/*_test.rb']
