@@ -53,7 +53,7 @@ class Frank < Sinatra::Base
   configure :production do  
     set :environment, :production
     @@log = Logger.new(STDOUT)  # TODO: should look for a better option than this.
-    @@log.level = Logger::INFO
+    @@log.level = Logger::DEBUG
     @@log.info("Frank walks onto the stage to perform.")
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
@@ -313,6 +313,7 @@ class Frank < Sinatra::Base
 
 # generate a confirmation url and email and send it to the user.
   def send_confirmation_to(user)
+    @@log.debug(request.inspect)
     token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user, t.u.mail_registration_confirmation_subject, :'mail/new_registration', template_locals)
