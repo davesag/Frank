@@ -89,7 +89,7 @@ class Frank < Sinatra::Base
     ## just debugging on Heroku.  TODO: Remove once it works.
     @@log.debug("REQUEST Incoming: #{request.class.name}")
     @@log.debug("REQUEST is a #{request.class.name} #{request.public_methods.to_s.include?('host_with_port') ? "and includes" : "but does not include"} the 'host_with_port' method.")
-    if request.host_with_port
+    if defined? request.host_with_port
       @@log.debug("request.host_with_port = #{request.host_with_port}")
     end
 
