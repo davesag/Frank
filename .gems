@@ -3,4 +3,4 @@ sinatra-r18n
 haml
 bcrypt-ruby
 pony
-active_record --version '>= 3.0.0'
+activerecord --version '>= 3.0.0'
