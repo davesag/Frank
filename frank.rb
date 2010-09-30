@@ -42,7 +42,7 @@ class Frank < Sinatra::Base
     @@log.info("Frank walks onto the stage to rehearse.")
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
-    ActiveRecord::Base.logger.level = Logger::INFO
+    ActiveRecord::Base.logger.level = Logger::INFO      #not interested in database stuff right now.
 
     dbconfig = YAML.load(File.read('config/database.yml'))
     ActiveRecord::Base.establish_connection dbconfig['development']
@@ -74,7 +74,7 @@ class Frank < Sinatra::Base
     @@log.info("Frank clears his throat and does his scales in front of the mirror.")
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
-    ActiveRecord::Base.logger.level = Logger::DEBUG
+    ActiveRecord::Base.logger.level = Logger::WARN      #not interested in database stuff right now.
 
     dbconfig = YAML.load(File.read('config/database.yml'))
     ActiveRecord::Base.establish_connection dbconfig['test']

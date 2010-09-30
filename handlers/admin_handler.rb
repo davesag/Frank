@@ -47,7 +47,7 @@ class AdminHandler < Frank
       new_role = Role.create( :name => new_name )
       @@log.debug("Created new role with name #{new_role.name}")
       role_list = Role.all
-      @@log.debug("There are now #{t.roles(Role.count)}")
+      @@log.debug("There are now #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => t.u.create_role_success(new_name),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
     end
@@ -82,7 +82,9 @@ class AdminHandler < Frank
         end
       end
       new_user.save!
+      @@log.debug("Created new user with username #{new_user.username}")
       user_list = User.all
+      @@log.debug("There are now #{t.users(user_list.size)}")
       haml :'in/list_users', :locals => { :message => t.u.create_user_success(new_name),
         :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
     end
@@ -179,9 +181,11 @@ class AdminHandler < Frank
         user_changed = true
       end
       if error
+        @@log.debug("Editing user with username #{target_user.username} but an error occured. #{message}")
         haml :'in/edit_user', :locals => { :message => message, :user => active_user, :target_user => target_user, :nav_hint => "edit_user" }
       elsif user_changed
         target_user.save!
+        @@log.debug("Edited user with username #{target_user.username}")
         haml :'in/show_user', :locals => { :message => message, :user => active_user, :target_user => target_user, :nav_hint => "show_user" }
       else
         haml :'in/show_user', :locals => { :message => t.u.edit_user_no_change, :user => active_user, :target_user => target_user, :nav_hint => "profile" }
@@ -204,7 +208,9 @@ class AdminHandler < Frank
     else
       tu_name = target_user.username
       target_user.destroy
+      @@log.debug("Deleted user with username #{tu_name}")
       user_list = User.all
+      @@log.debug("There are now #{t.users(user_list.size)}")
       haml :'in/list_users', :locals => { :message => t.u.delete_user_success_message(tu_name), :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
     end
   end
@@ -214,6 +220,7 @@ class AdminHandler < Frank
     admin_required! "/"
     # an admin user can list roles
     role_list = Role.all
+    @@log.debug("There are #{t.roles(role_list.size)}")
     haml :'in/list_roles', :locals => { :message => t.u.list_roles_message(role_list.size), :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
   end
   
@@ -222,6 +229,7 @@ class AdminHandler < Frank
     target_role = Role.find_by_name(params[:name])
     if target_role == nil
       role_list = Role.all
+      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
@@ -239,28 +247,34 @@ class AdminHandler < Frank
     target_role = Role.find_by_name(params[:name])
     if target_role == nil
       role_list = Role.all
+      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
       role_list = Role.all
+      @@log.debug("That role was 'blessed' and can't be changed. There are #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
     elsif new_name == target_role.name
       # no changes.
       role_list = Role.all
+      @@log.debug("That role name was not changed. There are #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => t.u.edit_role_no_change,
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
     elsif Role.find_by_name(new_name) != nil  # there's already a role called #{newname}
       # TODO: for now just call error but a better solution is to offer to merge the roles.
       #       Need to define business logic for that so it's beyond the scope of Frank.
       role_list = Role.all
+      @@log.debug("That is the name of an existing role. There are #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => t.u.error_dupe_role_name_message(new_name) + '. ' + t.u.list_roles_message(role_list.size),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
     else
       # change the name of the role.  How does this affect other users in that role? (TODO: test that)
       target_role.name = new_name
       target_role.save!
+      @@log.debug("Saved #{target_role.name}")
       role_list = Role.all
+      @@log.debug("There are now #{t.roles(role_list.size)}")
       haml :'in/list_roles', :locals => { :message => t.u.edit_role_success,
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
     end
@@ -271,15 +285,18 @@ class AdminHandler < Frank
       target_role = Role.find_by_name(params[:name])
       if target_role == nil
         role_list = Role.all
+        @@log.debug("That role was unknown. There are #{t.roles(role_list.size)}")
         haml :'in/list_roles', :locals => { :message => " #{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}",
           :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
       elsif is_blessed_role?(target_role)
         role_list = Role.all
+        @@log.debug("That role was 'blessed' and can't be deleted. There are #{t.roles(role_list.size)}")
         haml :'in/list_roles', :locals => { :message => t.u.error_cant_delete_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size),
           :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
       else
         target_role.destroy
         role_list = Role.all
+        @@log.debug("That role was deleted. There are #{t.roles(role_list.size)}")
         haml :'in/list_roles', :locals => { :message => t.u.delete_role_message(target_role.name), 
           :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
       end
