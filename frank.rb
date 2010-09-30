@@ -297,7 +297,7 @@ class Frank < Sinatra::Base
       type = 'text/plain'
     end
     
-    if options.environment == :development
+    if options.environment == :development                          # assumed to be on your local machine
       Pony.mail :to => user.email, :via =>:sendmail,
         :from => "frank_test@davesag.com", :subject => subject,
         :headers => { 'Content-Type' => type }, :body => email_body
