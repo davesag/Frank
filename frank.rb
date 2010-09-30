@@ -86,6 +86,11 @@ class Frank < Sinatra::Base
   before do
     session[:locale] = params[:locale] if params[:locale] #the r18n system will load it automatically
 
+    ## just debugging on Heroku.  Remove once it works.
+    @@log.debug("REQUEST Incoming: {request.inspect}")
+    @@log.debug("REQUEST Methods: {request.methods}")
+
+
     # expected behaviour
     # default local is English. 'en'
     # Also installed are Australian English (not recognised by R18n), British English and French.
@@ -313,7 +318,6 @@ class Frank < Sinatra::Base
 
 # generate a confirmation url and email and send it to the user.
   def send_confirmation_to(user)
-    @@log.debug(request.inspect)
     token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user, t.u.mail_registration_confirmation_subject, :'mail/new_registration', template_locals)
