@@ -1,5 +1,6 @@
 #!usr/bin/ruby
 
+require 'bundler/setup'
 require 'active_record'
 require 'logger'
 require 'rake/testtask'
