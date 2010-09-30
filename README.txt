@@ -87,8 +87,9 @@ Frank runs as a Rack application. To run Frank do the following
 Step 0. -  Check dependencies
 -----------------------------
 * Ruby 1.8.7 or higher
-* Various gems: rack, sinatra, sinatra-r18n, haml, erb, activerecord, bcrypt-ruby, logger, pony and of course rake.
+* Various gems: rack, sinatra, sinatra-r18n, haml, erb, activerecord (version 3.0.0 or better), bcrypt-ruby, logger, pony and of course rake.
 * If you want to use rcov install that too.
+# see the .gems file for the formal details we supply to Heroku.
 
 Step 1. -  Get the code.
 ------------------------
@@ -97,25 +98,31 @@ Step 1. -  Get the code.
 
 or fork it via GitHub.
 
-Step 2. Init the data
----------------------
+Step 2. Init the data in test and development databases.
+--------------------------------------------------------
 % cd Frank
 % rake db:seed
+% RACK_ENV=test rake db:seed
 
 Step 3. - Run the unit tests.
 -----------------------------
-% rake
+% RACK_ENV=test rake
 
 Step 3.1 - If you are keen and have rcov installed run
-% rcov test/*_test.rb --exclude /gems/,/Library/,/usr/
+% RACK_ENV=test rcov test/*_test.rb --exclude /gems/,/Library/,/usr/
 
 	(if anyone can tell me why the RCov task in my rakefile doesn't work I'd be happy to hear from them.)
 
-Step 4 - Run the app.
----------------------
+Step 4 - Run the app locally.
+-----------------------------
 % rackup
 
-then go to http://localhost:9292 with your favourite web browser
+Frank will run by default against the development database.  If you wish to run the webapp against production or test databases then set RACK_ENV=test or RACK_ENV=production when you rackup.
+eg
+% RACK_ENV=test rackup
+But ideally you won't do this.
+
+go to http://localhost:9292 with your favourite web browser
 
 It will present a login screen
 
@@ -146,6 +153,16 @@ If you have forgotten your password you can reset your password by entering your
 When the tests run the system doesn't bother sending out emails, but simply logs a debug message with who it constructed the message for, and what the subject was.
 
 When you are logged in the haml template system will always use the layout in views/in/ thus presenting consistent navigation options even for pages outside of userland.
+
+Step 5 - Push to Heroku (optional)
+----------------------------------
+If you have a Heroku account you can push this project to Heroku
+Assuming you've done that, seed the production database.  Note edit db/production_seeds.rb to change the default production data.
+%> heroku rake db:seed
+%> heroku open
+
+then log in as root and change your root password.  Then you should not have to run db:seed again.  If you add migrations run
+%> heroku rake db:migrate
 
 I want to be a part of it
 -------------------------

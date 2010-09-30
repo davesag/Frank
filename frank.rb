@@ -34,7 +34,8 @@ class Frank < Sinatra::Base
   # configuration blocks are called depending on the value of ENV['RACK_ENV] #=> 'test', 'development', or 'production'
   # on Heroku the default rack environment is 'production'.  Locally it's development.
   # if you switch rack environments locally you will need to reseed the database as it uses different databases for each obviously.
-  configure :development do  
+  configure :development do
+    set :environment, :development
     @@log = Logger.new(STDOUT)
     @@log.level = Logger::DEBUG
     @@log.info("Frank walks onto the stage to rehearse.")
@@ -50,6 +51,7 @@ class Frank < Sinatra::Base
   end
 
   configure :production do  
+    set :environment, :production
     @@log = Logger.new(STDOUT)  # TODO: should look for a better option than this.
     @@log.level = Logger::INFO
     @@log.info("Frank walks onto the stage to perform.")
@@ -65,6 +67,7 @@ class Frank < Sinatra::Base
   end
 
   configure :test do  
+    set :environment, :test
     @@log = Logger.new(STDOUT)
     @@log.level = Logger::DEBUG
     @@log.info("Frank clears his throat and does his scales in front of the mirror.")
@@ -276,7 +279,6 @@ class Frank < Sinatra::Base
     return ['admin', 'superuser'].include?(role.name)
   end
  
- 
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
   def send_email_to_user(user, subject, body_template, template_locals)   
     if 'true' == user.get_preference("HTML_EMAIL").value
@@ -286,7 +288,7 @@ class Frank < Sinatra::Base
       email_body = erb(body_template, :locals => template_locals)
       type = 'text/plain'
     end
-    if ENV['RACK_ENV'] != 'test' # TODO: find a cleaner way to achieve this.
+    if 'test' != options.environment
       Pony.mail :to => user.email,
         :from => "frank_test@davesag.com", :subject => subject,
         :headers => { 'Content-Type' => type }, :body => email_body

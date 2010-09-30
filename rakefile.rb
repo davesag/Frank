@@ -4,6 +4,7 @@ require 'active_record'
 require 'logger'
 require 'rake/testtask'
 require 'yaml'
+# TODO: why doesn't the rcov task run?
 #require 'rcov/rcovtask'
 
 task :default => :test
@@ -12,9 +13,14 @@ namespace :db do
   desc "Set up the connection to the database"
   task :environment do
     dbconfig = YAML.load(File.read('config/database.yml'))
-    # in frank.rb we configure for development only right now.
-    # will perfect this as we get greater understanding
-    #TODO: work out how to configure for 'test' and 'production.  How does the rakefile know?
+
+    # in frank.rb we configure for test, development and production only right now.
+    # and no matter what you sepcify, the tests are always run against the test database
+    # so be sure to seed all the databases before running this
+    # %> RACK_ENV=test rake db:seed
+    # %> RACK_ENV=development rake db:seed
+    # %> RACK_ENV=production rake db:seed
+    # Note also that, when pushed to Heroku, the databases will switch to PostGRES
     ActiveRecord::Base.establish_connection dbconfig[ENV['RACK_ENV']||'development']
   end
 
@@ -27,8 +33,17 @@ namespace :db do
   
   desc 'Load the seed data from db/seeds.rb'
   task(:seed => :migrate) do
-    seed_file = File.join('db', 'seeds.rb')
-    load(seed_file) if File.exist?(seed_file)
+    seed_file = File.join('db', "#{ENV['RACK_ENV']}_seeds.rb")
+    if File.exists?(seed_file)
+      load(seed_file)
+    else
+      seed_file = File.join('db', 'seeds.rb')
+      if File.exists?(seed_file)
+        load(seed_file)
+      else
+        puts "WARNING -- NO DATABASE SEED DATA FOUND."
+      end
+    end
   end
 end
 
@@ -43,13 +58,14 @@ task(:test => 'db:environment') do
 end
 
 # note for some reason this task does not run but you can do this anyway by
-# % rcov test/*_test.rb
+# % rcov test/*_test.rb --exclude /gems/,/Library/,/usr/
 # from the command line.
 #desc "Run the rcov profiler to generate test coverage reports."
 #task(:coverage => 'db:environment') do
 #  Rcov::RcovTask.new do |t|
 #    t.libs << "test"
 #    t.test_files = FileList['test/*_test.rb']
+#    t.exclude = ['/gems/','/Library/','/usr/']
 #    t.output_dir = "coverage"
 #    t.verbose = true
 #  end
