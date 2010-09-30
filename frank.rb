@@ -303,15 +303,15 @@ class Frank < Sinatra::Base
         :headers => { 'Content-Type' => type }, :body => email_body
       @@log.debug("Email sent via SendMail in local Developer environment.")
     elsif options.environment == :production                         # assumed to be Heroku
-      Pony.mail :to => user.email, :via => :smtp, :via_options => {
-        :address => 'smtp.sendgrid.net',
-        :port => 25,
-        :authentication => :plain,
-        :user_name => ENV['SENDGRID_USERNAME'],
-        :password => ENV['SENDGRID_PASSWORD'],
-        :domain => ENV['SENDGRID_DOMAIN'],
-        :from => "frank_demo@davesag.com", :subject => subject,
-        :headers => { 'Content-Type' => type }, :body => email_body }
+      Pony.mail :to => user.email, :from => "frank_demo@davesag.com", :subject => subject,
+        :headers => { 'Content-Type' => type }, :body => email_body :via => :smtp,
+        :via_options => {
+          :address => 'smtp.sendgrid.net',
+          :port => 25,
+          :authentication => :plain,
+          :user_name => ENV['SENDGRID_USERNAME'],
+          :password => ENV['SENDGRID_PASSWORD'],
+          :domain => ENV['SENDGRID_DOMAIN'] }
         @@log.debug("Email sent via SMTP in production environment on Heroku.")
     else
       @@log.debug("TESTING so I constructed, but did NOT actually send, an email to #{user.email} with subject '#{subject}' using template '#{body_template}'.")
