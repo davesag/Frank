@@ -45,7 +45,9 @@ class AdminHandler < Frank
         :user => active_user, :nav_hint => "new_role" }     
     else
       new_role = Role.create( :name => new_name )
+      @@log.debug("Created new role with name #{new_role.name}")
       role_list = Role.all
+      @@log.debug("There are now #{t.roles(Role.count)}")
       haml :'in/list_roles', :locals => { :message => t.u.create_role_success(new_name),
         :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
     end
