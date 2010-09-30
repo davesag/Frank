@@ -304,7 +304,7 @@ class Frank < Sinatra::Base
       @@log.debug("Email sent via SendMail in local Developer environment.")
     elsif options.environment == :production                         # assumed to be Heroku
       Pony.mail :to => user.email, :from => "frank_demo@davesag.com", :subject => subject,
-        :headers => { 'Content-Type' => type }, :body => email_body :via => :smtp,
+        :headers => { 'Content-Type' => type }, :body => email_body, :via => :smtp,
         :via_options => {
           :address => 'smtp.sendgrid.net',
           :port => 25,
