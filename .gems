@@ -3,4 +3,4 @@ sinatra-r18n
 haml
 bcrypt-ruby
 pony
-activerecord
+active_record
