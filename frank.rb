@@ -87,8 +87,8 @@ class Frank < Sinatra::Base
     session[:locale] = params[:locale] if params[:locale] #the r18n system will load it automatically
 
     ## just debugging on Heroku.  Remove once it works.
-    @@log.debug("REQUEST Incoming: {request.inspect}")
-    @@log.debug("REQUEST Methods: {request.methods}")
+    @@log.debug("REQUEST Incoming: #{request.inspect}")
+    @@log.debug("REQUEST Methods: #{request.methods}")
 
 
     # expected behaviour
