@@ -12,18 +12,29 @@ require 'models/preference'
 class GuestHandler < Frank
 
   get '/testing' do
+    roles = Role.all
+    users = User.all
+    @@log.debug("roles.size = #{roles.size}")
+    @@log.debug("users.size = #{users.size}")
     if is_logged_in?
-      haml :'testing', :locals => { :message => "Testing POST as logged in User", :user => active_user, :nav_hint => "home" }
+      haml :'testing', :locals => { :message => "Testing POST as logged in User", :user => active_user, :nav_hint => "testing",
+        :role_list => roles, :user_list => users }
     else
-  	  haml :testing, :locals => { :message =>"Testing POST as guest", :name => remembered_user_name, :nav_hint => "login" }
+  	  haml :testing, :locals => { :message =>"Testing POST as guest", :name => remembered_user_name, :nav_hint => "testing",
+  	    :role_list => roles, :user_list => users }
     end
   end
 
   post '/testing' do
+    roles = Role.all
+    users = User.all
+    
     if is_logged_in?
-      haml :'in/index', :locals => { :message => "Testing POST as logged in User", :user => active_user, :nav_hint => "home" }
+      haml :'testing', :locals => { :message => "POST accepted from logged in User", :user => active_user, :nav_hint => "testing",
+        :role_list => roles, :user_list => users }
     else
-  	  haml :login, :locals => { :message =>"Testing POST as guest", :name => remembered_user_name, :nav_hint => "login" }
+  	  haml :testing, :locals => { :message =>"POST accepted from guest", :name => remembered_user_name, :nav_hint => "testing",
+        :role_list => roles, :user_list => users }
     end
   end
 

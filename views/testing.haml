@@ -1,5 +1,16 @@
 #message_box
   %h3 #{message}
+#testareastuff
+  #user_list
+    %ol
+      - for a_user in user_list do
+        %li<
+          %a{:href => "/user/#{a_user.id}"}#{a_user.username}
+  #role_list
+    %ol
+      - for a_role in role_list do
+        %li<
+          #{a_role.name}
 #entry_form
   %form(accept-charset='UTF-8' action='/testing' method='post')
     %input{ :type => "submit", :value => "PUSH ME"}
