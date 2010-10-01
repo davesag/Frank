@@ -7,6 +7,7 @@ require 'active_record'
 require 'logger'
 
 require 'models/user'
+require 'models/role'
 require 'models/preference'
 
 class GuestHandler < Frank
@@ -29,12 +30,26 @@ class GuestHandler < Frank
     roles = Role.all
     users = User.all
     test_input = params[:test_input]
+    action_taken = ""
     
     if is_logged_in?
+      role_to_nuke = Role.find_by_name(test_input)
+      if role_to_nuke != nil
+        @@log.debug("I shall nuke the role #{test_input}")
+        role_to_nuke.destroy
+        action_taken = "A Role by that name was nuked."
+        roles = Role.all
+      else
+        @@log.debug("I shall create the role #{test_input}")
+        new_role = Role.create( :name => test_input )
+        new_role.save!
+        action_taken = "A Role by that name was created."
+        roles = Role.all
+      end
       haml :'testing', :locals => { :message => "POST of #{test_input} accepted from logged in User", :user => active_user, :nav_hint => "testing",
         :role_list => roles, :user_list => users }
     else
-  	  haml :testing, :locals => { :message =>"POST of #{test_input} accepted from guest", :name => remembered_user_name, :nav_hint => "testing",
+  	  haml :testing, :locals => { :message =>"POST of #{test_input} accepted from guest but no action taken.", :name => remembered_user_name, :nav_hint => "testing",
         :role_list => roles, :user_list => users }
     end
   end
