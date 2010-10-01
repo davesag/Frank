@@ -1,6 +1,6 @@
 require "frank"
 
-use GuestHandler
-use UserHandler
 use AdminHandler
-run RegistrationHandler
+use GuestHandler
+use RegistrationHandler
+run UserHandler
