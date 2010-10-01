@@ -43,15 +43,16 @@ Proposed Feature Set for v1
 * Simple admin functions (done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple user and role creation, editing and deletion works.)
 * 100% test coverage of all handlers, models and views (done according to rcov.  Of course there may be missing features that are not being tested for, the unknown unknowns.)
 ** though the localising of emailed erb plain text templates is not tested as we don't send email in tests. I know it works though.
+* Deploy to Heroku as http://frank-demo.heroku.com
 
 TODO: V1.0
 ----------
+* Work out new strategy to simplify frank.rb into multiple handlers.
 * Pretty up the use of CSS
 * explore the unknown unknowns
 * add form validations
 * code review and polish
 * flatten migrations for 1.0 release
-* packaging and deployment options
 
 Proposed features for v1.1
 --------------------------
@@ -63,11 +64,9 @@ Where are we now?
 -----------------
 The main application is a Sinatra app called frank.rb
 
-Frank is in turn subclassed by various handlers in the /handlers folder
-This allows you to group your request handlers in smaller more modular files which run as Rack middleware components.
-To add new handlers you must remember to add their names to the list of middleware defined in config.ru
+Run with RACK_ENV=test or normally the rake task db:seed will run the various migrations in db/migrate and execute the code in db/seeds.rb to create three standard roles, 'superuser', 'admin' and 'user'.
+Run with RACK_ENV=production db:seed will only create the root user.  This typically only gets run once (or after a hard db reset) on Heroku.
 
-the rake task db:seed will run the various migrations in db/migrate and execute the code in db/seeds.rb to create three standard roles, 'superuser', 'admin' and 'user'.
 Superuser and Admin are 'blessed' roles in that they may not be renamed or deleted.  You can use the admin screens to create new roles and users and assign roles to users.
 
 The views folder is broken down as follows
