@@ -42,7 +42,7 @@ class GuestHandler < Frank
       else
         @@log.debug("I shall create the role #{test_input}")
         new_role = Role.create( :name => test_input )
-        new_role.save!
+#        new_role.save!
         action_taken = "A Role by that name was created."
         roles = Role.all
       end
