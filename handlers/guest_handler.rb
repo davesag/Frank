@@ -37,17 +37,16 @@ class GuestHandler < Frank
       if role_to_nuke != nil
         @@log.debug("I shall nuke the role #{test_input}")
         role_to_nuke.destroy
-        action_taken = "A Role by that name was nuked."
+        action_taken = "A Role called #{test_input} was nuked."
         roles = Role.all
       else
         @@log.debug("I shall create the role #{test_input}")
         new_role = Role.create( :name => test_input )
-#        new_role.save!
-        action_taken = "A Role by that name was created."
+        action_taken = "A Role called #{test_input} was created."
         roles = Role.all
       end
-      haml :'testing', :locals => { :message => "POST of #{test_input} accepted from logged in User", :user => active_user, :nav_hint => "testing",
-        :role_list => roles, :user_list => users }
+      haml :'in/list_roles', :locals => { :message => action_taken,
+        :user => active_user, :role_list => roles, :nav_hint => "list_roles" }
     else
   	  haml :testing, :locals => { :message =>"POST of #{test_input} accepted from guest but no action taken.", :name => remembered_user_name, :nav_hint => "testing",
         :role_list => roles, :user_list => users }
