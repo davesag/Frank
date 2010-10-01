@@ -16,7 +16,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'in/index', :locals => { :message => t.u.welcome_in, :user => active_user, :nav_hint => "home" }
     else
-  	  haml :login, :locals => { :message => t.u.login_message, :name => active_username, :nav_hint => "login" }
+  	  haml :login, :locals => { :message => t.u.login_message, :name => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -25,7 +25,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'privacy', :locals => { :message => t.u.privacy_title_in, :user => active_user, :nav_hint => "privacy" }
     else
-  	  haml :privacy, :locals => { :message => t.u.privacy_title_out, :name => active_username, :nav_hint => "privacy" }
+  	  haml :privacy, :locals => { :message => t.u.privacy_title_out, :name => remembered_user_name, :nav_hint => "privacy" }
     end
   end
 
@@ -34,7 +34,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'terms', :locals => { :message => t.u.terms_title_in, :user => active_user, :nav_hint => "terms" }
     else
-  	  haml :terms, :locals => { :message => t.u.terms_title_out, :name => active_username, :nav_hint => "terms" }
+  	  haml :terms, :locals => { :message => t.u.terms_title_out, :name => remembered_user_name, :nav_hint => "terms" }
     end
   end
 
@@ -43,7 +43,7 @@ class GuestHandler < Frank
     if is_logged_in?
       haml :'in/index', :locals => { :message => t.u.welcome_in, :user => active_user, :nav_hint => "home" }
     else
-  	  haml :login, :locals => { :message => t.u.login_message, :name => active_username, :nav_hint => "login" }
+  	  haml :login, :locals => { :message => t.u.login_message, :name => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -53,20 +53,20 @@ class GuestHandler < Frank
     pass = params['password']
     entering_user = auth_user(name, pass)
     if entering_user != nil
-      log_user_in(entering_user)
+      log_user_in!(entering_user)
       haml :'in/index', :locals => { :message => t.u.login_success, :user => active_user, :nav_hint => "home" }
     else
-      haml :login, :locals => { :message => t.u.login_error, :name => active_username, :nav_hint => "login" }
+      haml :login, :locals => { :message => t.u.login_error, :name => remembered_user_name, :nav_hint => "login" }
     end
   end
-  
+
   # registration request - display registration form, or divert to user home if logged in
   get '/register' do
     if is_logged_in?
-      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_username), :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_user_name), :user => active_user, :nav_hint => "home" }
     elsif is_remembered_user?
       haml :login, :locals => { :message => t.u.register_error,
-         :name => active_username, :nav_hint => "login" }
+         :name => remembered_user_name, :nav_hint => "login" }
 	  else
   	  haml :register, :locals => { :message => t.u.register_message, :name => "", :email => "", :nav_hint => "register" }
     end
@@ -75,19 +75,19 @@ class GuestHandler < Frank
   # registration request - display registration form, or divert to user home if logged in
   get '/forgot_password' do
     if is_logged_in?
-      haml :'in/index', :locals => { :message => t.u.forgot_password_error_already_as(active_username), :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :message => t.u.forgot_password_error_already_as(active_user_name), :user => active_user, :nav_hint => "home" }
 	  else
-  	  haml :forgot_password, :locals => { :message => t.u.forgot_password, :name => active_username, :nav_hint => "forgot_password" }
+  	  haml :forgot_password, :locals => { :message => t.u.forgot_password, :name => remembered_user_name, :nav_hint => "forgot_password" }
     end
   end
 
   post '/forgot_password' do
     if is_logged_in?
-      haml :'in/index', :locals => { :message => t.u.forgot_password_error_already_as(active_username), :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :message => t.u.forgot_password_error_already_as(active_user_name), :user => active_user, :nav_hint => "home" }
 	  else
 	    user = User.find_by_email(params[:email])
 	    if user == nil
-        haml :forgot_password, :locals => { :message => t.u.forgot_password_error, :name => active_username, :nav_hint => "forgot_password" }	      
+        haml :forgot_password, :locals => { :message => t.u.forgot_password_error, :name => remembered_user_name, :nav_hint => "forgot_password" }	      
       else
         user.password_reset = true
         user.save!
@@ -121,8 +121,9 @@ class GuestHandler < Frank
                                     # password that was not requested to be reset.
       user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use.
       user.save!
-      nuke_session!
-      haml :login, :locals => { :message => t.u.forgot_password_success, :name => user.username, :nav_hint => "login" }
+#      nuke_session!
+      remember_user_name(user.username)
+      haml :login, :locals => { :message => t.u.forgot_password_success, :name => remembered_user_name, :nav_hint => "login" }
     end
   end
 end

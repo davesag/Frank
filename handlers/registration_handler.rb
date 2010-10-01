@@ -14,7 +14,7 @@ class RegistrationHandler < Frank
 # registration action - check username and email are unique and valid and display 'check your email' page
   post '/registration' do
     if is_logged_in?
-      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_username), :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :message => t.u.register_error_already_as(active_user_name), :user => active_user, :nav_hint => "home" }
     else
       email = params['email']
       name = params['username']
@@ -30,7 +30,7 @@ class RegistrationHandler < Frank
         else
           user = User.create(:username => name, :password => params['password'], :email => email)
           user.set_preference("HTML_EMAIL", "true")
-          locale_code = params['locale']
+          locale_code = params[:locale]
           # just check the locale code provided is legit.
           if !locale_available?(locale_code)
             @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
@@ -41,7 +41,7 @@ class RegistrationHandler < Frank
             session[:locale] = locale_code
           end
           user.save!
-          send_confirmation_to(user)
+          send_registration_confirmation_to(user)
           haml :login, :locals => { :message => t.u.register_success(email), :name => name, :nav_hint => "login" }
         end
       end

@@ -15,11 +15,11 @@ class UserHandler < Frank
   #logout action  - nuke user from session, display login form and thank user
   get '/logout' do
     if is_logged_in?
-      name = active_user.username
+      name = active_user_name
       log_user_out
       haml :login, :locals => { :message => t.u.logout_message(name), :name => "#{name}", :nav_hint => "login" }
     elsif is_remembered_user?
-      name = active_username
+      name = remembered_user_name
       log_user_out
       haml :login, :locals => { :message => t.u.logout_completely(name), :name => "", :nav_hint => "login" }
     else
@@ -84,11 +84,13 @@ class UserHandler < Frank
       user.set_preference('HTML_EMAIL', new_html_email_pref)
       user_changed = true
     end
+    
     # if the password is not '' then overwrite the password with the one supplied
     if new_password != ''
       user.password = new_password
       user_changed = true
     end
+    
     # if the email is new then deactivate and send a confirmation message
     if new_email != user.email
       if User.email_exists?(new_email)
@@ -103,19 +105,21 @@ class UserHandler < Frank
         user_changed = true
       end
     end
-    locale_code = params['locale']
+
     # just check the locale code provided is legit.
     if user.locale != new_locale && locale_available?(new_locale)
       user.locale = new_locale
       user_changed = true
     end
+    
     if error
+      # TODO: Rack provides a standard 'error' collection we can use to be much smarter about returning errors.
       haml :'in/edit_profile', :locals => { :message => message, :user => active_user, :nav_hint => "edit_profile" }
   	elsif user_changed
       user.save!
-      nuke_session!
-      user.reload
-      log_user_in(user) # puts the updated details back into the session.
+#      nuke_session!
+#      user.reload
+      refresh_active_user!
       haml :'in/profile', :locals => { :message => message, :user => active_user, :nav_hint => "profile" }
     else
       haml :'in/profile', :locals => { :message => t.u.profile_edit_no_change, :user => active_user, :nav_hint => "profile" }

@@ -16,8 +16,10 @@ class Frank < Sinatra::Base
   set :handlers, Proc.new { root && File.join(root, 'handlers') }
   register Sinatra::R18n
   
-  CURRENT_USER_KEY = 'ACTIVE_FRANK_USER'
-  LAST_USER_NAME_KEY = 'LAST_KNOWN_FRANK_USERNAME'
+  ACTIVE_USER_NAME_KEY = 'ACTIVE_FRANK_USERNAME'
+  REMEMBERED_USER_NAME_KEY = 'LAST_KNOWN_FRANK_USERNAME'
+
+  @active_user = nil         # the active user is reloaded on each request in the before method.
 
   # Externalise all of the various handlers into a /handlers folder
   # each handler will subclass Frank, live in /handlers and be called *_handler.rb
@@ -87,35 +89,15 @@ class Frank < Sinatra::Base
   before do
     session[:locale] = params[:locale] if params[:locale] #the r18n system will load it automatically
 
-    ## just debugging on Heroku.  TODO: Remove once it works.
-#    @@log.debug("REQUEST Incoming: #{request.class.name}")
-#    @@log.debug("REQUEST is a #{request.class.name} #{request.public_methods.to_s.include?('host_with_port') ? "and includes" : "but does not include"} the 'host_with_port' method.")
-#    if defined? request.host_with_port
-#      @@log.debug("request.host_with_port = #{request.host_with_port}")
-#    end
+    refresh_active_user!
 
-    # expected behaviour
-    # default local is English. 'en'
-    # Also installed are Australian English (not recognised by R18n), British English and French.
-    # by appending ?locale=fr for example you can switch the language to French.
-    # you are also be able to switch between British English, Australian English and a terser default English
-
-#    @@log.debug("Locale is '#{r18n.locale.code}' (#{r18n.locale.title})")   # show that the Locale is being set as expected.
-#    @@log.debug("Default Locale is '#{R18n::I18n.default}'")                # note the default code
-#                                                                            # step through all of the 'available' locales.
-#    r18n.available_locales.each do |locl|                                   # available means there is a {locale.code}.yml file in ROOT/i18n/
-#      default = R18n::I18n.default == locl.code ? ": Default" : ""          # is this the default locale? (in case the one we choose is unavailable).
-#      star = r18n.locale == locl ? " <== active" : ""                       # active means this is the locale we are currently using.
-#      supp = locl.supported? ? " and is supported   " : " but isn't supported" # supported means R18n::Locale.exists?(locl.code) == true
-#      @@log.debug("Available#{supp}: '#{locl.code}' (#{locl.title})#{default}#{star}")
-#    end
   end
 
   # we use haml to create HTML rendered email, in which case we need to avoid using the web-facing templates
   # if the user is logged in then use /in/layout.haml as a layout template.
   # all templates within /views/in/ need to use their local (ie /in/layout.haml) layout template.
+  # if it's not a chunk template then change the template path depending on avaialable locales.
   # however templates in the 'views/chunks' folder are just chunks and are only to be injected into other haml templates, so use no layout
-  # TODO: change the template path depending on avaialable locales.
   # TODO: as we add SaaS functions and REST interfaces we'll want to use other templates too, so edit here when the time comes.
   helpers do
     def haml(template, options = {}, *)
@@ -126,29 +108,29 @@ class Frank < Sinatra::Base
       template_name = template.to_s
       do_not_localise = false
       if template_name.include?('%')
-        @@log.debug("haml: Aboout to render a chunk of haml content")
+#        @@log.debug("haml: Aboout to render a chunk of haml content")
         # it's actually the template content we have here, not a template name
         super
       else
-        @@log.debug("haml: Aboout to render an haml template called #{template_name}")
+#        @@log.debug("haml: Aboout to render an haml template called #{template_name}")
         # it's a template name we have here.
         # note layout.haml files must never hold untranslated text
         if template_name.include?('chunks/')
           options[:layout] ||= false
           do_not_localise = true
-          @@log.debug("haml: It's a chunk so don't attempt to localise and don't use a layout.")
+#          @@log.debug("haml: It's a chunk so don't attempt to localise and don't use a layout.")
         elsif template_name.include?('mail/')
           options[:layout] ||= false
-          @@log.debug("haml: It's an email so don't use a layout.")
+#          @@log.debug("haml: It's an email so don't use a layout.")
         elsif is_logged_in? || template_name.include?('in/')
           options[:layout] ||= :'in/layout'
-          @@log.debug("haml: Use the logged in layout.")
+#          @@log.debug("haml: Use the logged in layout.")
         end
 
         # now if template_bits[0] is a locale code then just pass through
         if do_not_localise
           # "Don't bother localising chunks.
-          @@log.debug("haml: Nothing to localise so proceed as normal.")
+#          @@log.debug("haml: Nothing to localise so proceed as normal.")
           super
         else
           # there is no locale code in front of the template name
@@ -157,33 +139,35 @@ class Frank < Sinatra::Base
           if File.exists? local_template_file
             # Found a localised template so we'll use that one
             local_template = File.read(local_template_file)
-            @@log.debug("haml: found #{local_template_file} so will recurse and load that.")
+#            @@log.debug("haml: found #{local_template_file} so will recurse and load that.")
             return haml(local_template, options)
           elsif r18n.locale.sublocales != nil && r18n.locale.sublocales.size > 0
             # Couldn't find a template for that specific locale.
-            @@log.debug("haml: could not find anything called #{local_template_file} so will dig deeper.")
+#            @@log.debug("haml: could not find anything called #{local_template_file} so will dig deeper.")
             local_template_file = "views/#{r18n.locale.sublocales[0].downcase}/#{template_name}.haml"
             if File.exists? local_template_file
               # but there is a more generic language file so use that.
               # note if I really wanted to I could loop through in case sublocales[0] doesn't exist but other one does.
               # too complicated for now though and simply not needed.  TODO: polish this up later.
               local_template = File.read(local_template_file)
-              @@log.debug("haml: Found a more generic translation in #{local_template_file} so will recurse and use that.")
+#              @@log.debug("haml: Found a more generic translation in #{local_template_file} so will recurse and use that.")
               return haml(local_template, options)
             else
               # No localsied version of this template exists. Okay use the template we were supplied.
-              @@log.debug("haml: No localised versions of that template exist so use #{template_name}")
+#              @@log.debug("haml: No localised versions of that template exist so use #{template_name}")
               super
             end
           else
             # That locale has no sublocales so just use the template we were supplied.
-            @@log.debug("haml: That's as deep as we can look for a localised file.  Using #{template_name}")
+#            @@log.debug("haml: That's as deep as we can look for a localised file.  Using #{template_name}")
             super
           end
         end
       end
     end
 
+    # we use erb to create plain text rendered email and
+    # change the template path depending on the active locale.
     def erb(template, options = {}, *)
       # template will either be the name of a template or the body of a template.
       # if it's the body then it will contain a "%" symbol and so we can skip any processing
@@ -223,14 +207,18 @@ class Frank < Sinatra::Base
     end
   end
   
-  # some other handy methods
+  #################       LOGGING IN AND OUT AND SO FORTH     ###########################
+  
+  # bounces the user to the login page if they are not logged in.
   def login_required! 
     if ! is_logged_in? 
       redirect '/login' 
     end 
   end 
 
-  # some other handy methods
+  # bounces the user to the login page if they are not logged in,
+  # and to whichever path is supplied as a bounce path
+  # if they are logged in but not an Admin.
   def admin_required!(bounce)
     if !is_logged_in? 
       redirect '/login' 
@@ -240,50 +228,96 @@ class Frank < Sinatra::Base
     end
   end 
 
+  # ther user is logged in IF the @active_user != nil.
   def is_logged_in?
-    session[CURRENT_USER_KEY] != nil
+    @active_user != nil
   end
 
-  def log_user_in(user)
-    session[CURRENT_USER_KEY] = user
-    session[LAST_USER_NAME_KEY] = user.username
-    if user.locale != nil
-      session[:locale] = user.locale
+  # load the valid user with the supplied username into the @active_user instance attribute.
+  def log_user_in!(user)
+    if user == nil
+      @@log.error("Call to log_user_in!(nil).  This should never be th case.  Please check your handlers.")
+    else
+      @active_user = user
+      session[ACTIVE_USER_NAME_KEY] = user.username
+      session[REMEMBERED_USER_NAME_KEY] = user.username
+      if @active_user.locale != nil
+        session[:locale] = @active_user.locale
+      end
+      @@log.info("Logged in user called '#{user.username}'")
     end
   end
 
-  def log_user_out
-    if session[CURRENT_USER_KEY] != nil
-      # there is a currently logged in user
-      session[CURRENT_USER_KEY] = nil
+  # load the valid user with the supplied username into the @active_user instance attribute.
+  def log_username_in(username)
+    @active_user = User.find_by_username_and_validated(username, true)
+    if @active_user == nil
+      @@log.error("Call to log_username_in(#{username}) failed as either there was no user with that name, or that user was not validated and so can't log in.")
     else
+      @@log.debug("Logged in user called '#{username}'")
+      session[ACTIVE_USER_NAME_KEY] = username
+      session[REMEMBERED_USER_NAME_KEY] = username
+      if @active_user.locale != nil
+        session[:locale] = @active_user.locale
+      end
+    end
+  end
+
+  def refresh_active_user!
+    if session[ACTIVE_USER_NAME_KEY] != nil
+      # there is a currently logged in user so load her up
+      @active_user = User.find_by_username(session[ACTIVE_USER_NAME_KEY])
+      @@log.info("Loaded user #{@active_user.username}")
+    end
+  end
+
+  # if there is an active user then nil the @active_user and the session[ACTIVE_USER_NAME_KEY]
+  # else nil session[REMEMBERED_USER_NAME_KEY]
+  def log_user_out
+    if session[ACTIVE_USER_NAME_KEY] != nil
+      # there is a currently logged in user
+      session[ACTIVE_USER_NAME_KEY] = nil
+      @active_user = nil
+    else  #there is no active user, ie logout has been called before.
       # nuke the remembered username
-      session[LAST_USER_NAME_KEY] = nil
+      session[REMEMBERED_USER_NAME_KEY] = nil
     end
   end
 
   def nuke_session!
-    session[CURRENT_USER_KEY] = nil
-    session[LAST_USER_NAME_KEY] = nil
+    @@log.warn("You should really avoid calling nuke_session!")
+    session[ACTIVE_USER_NAME_KEY] = nil
+    session[REMEMBERED_USER_NAME_KEY] = nil
   end
 
   def active_user
-    session[CURRENT_USER_KEY]
+    return @active_user
   end
 
   def is_remembered_user?
-    session[LAST_USER_NAME_KEY] != nil
+    session[REMEMBERED_USER_NAME_KEY] != nil
   end
 
-  def active_username
-    if session[LAST_USER_NAME_KEY] == nil
+  def active_user_name
+    if session[ACTIVE_USER_NAME_KEY] == nil
       return ""
     end
-    return session[LAST_USER_NAME_KEY]
+    return session[ACTIVE_USER_NAME_KEY]
+  end
+
+  def remember_user_name(username)
+    session[REMEMBERED_USER_NAME_KEY] = username
+  end
+
+  def remembered_user_name
+    if session[REMEMBERED_USER_NAME_KEY] == nil
+      return ""
+    end
+    return session[REMEMBERED_USER_NAME_KEY]
   end
 
   def auth_user(username, password)
-    User.login(username, password)
+    return User.login(username, password)
   end
  
   def locale_available?(locale_code)
@@ -296,6 +330,8 @@ class Frank < Sinatra::Base
   def is_blessed_role?(role)
     return ['admin', 'superuser'].include?(role.name)
   end
+ 
+  #################       UTILITY METHODS FOR SENDING USER EMAILS     ###########################
  
 # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
   def send_email_to_user(user, subject, body_template, template_locals)   
@@ -343,7 +379,7 @@ class Frank < Sinatra::Base
   end
 
 # generate a confirmation url and email and send it to the user.
-  def send_confirmation_to(user)
+  def send_registration_confirmation_to(user)
     token_link = "http://" + request.host_with_port + "/validate/" + user.validation_token
     template_locals = { :user => user, :token_url => token_link}
     send_email_to_user(user, t.u.mail_registration_confirmation_subject, :'mail/new_registration', template_locals)
