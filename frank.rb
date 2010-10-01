@@ -267,7 +267,10 @@ class Frank < Sinatra::Base
     if session[ACTIVE_USER_NAME_KEY] != nil
       # there is a currently logged in user so load her up
       @active_user = User.find_by_username(session[ACTIVE_USER_NAME_KEY])
-      @@log.info("Loaded user #{@active_user.username}")
+      if @active_user.locale != nil
+        session[:locale] = @active_user.locale
+      end
+      @@log.info("Refreshed user #{@active_user.username}")
     end
   end
 
