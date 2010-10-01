@@ -11,6 +11,22 @@ require 'models/preference'
 
 class GuestHandler < Frank
 
+  get '/testing' do
+    if is_logged_in?
+      haml :'testing', :locals => { :message => "Testing POST as logged in User", :user => active_user, :nav_hint => "home" }
+    else
+  	  haml :testing, :locals => { :message =>"Testing POST as guest", :name => remembered_user_name, :nav_hint => "login" }
+    end
+  end
+
+  post '/testing' do
+    if is_logged_in?
+      haml :'in/index', :locals => { :message => "Testing POST as logged in User", :user => active_user, :nav_hint => "home" }
+    else
+  	  haml :login, :locals => { :message =>"Testing POST as guest", :name => remembered_user_name, :nav_hint => "login" }
+    end
+  end
+
   # home page - display login form, or divert to user home
   get '/' do
     if is_logged_in?
