@@ -10,7 +10,8 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
   validates_uniqueness_of :validation_token
   before_create :assign_validation_token
-  
+  before_save :downcase!
+
   @@CHARS = ("a".."z").to_a + ("A".."Z").to_a
   
 #  def haml_object_ref
@@ -42,7 +43,9 @@ class User < ActiveRecord::Base
     self.preferences.first(:conditions => {:name => name})
   end
 
-  # make sure we also create the validation_token.
+############### things that happen before create ########################
+
+  # make sure we also create a unique validation_token.
   def assign_validation_token
     if self.validation_token == nil || self.validation_token = ""
       self.validation_token = self.generate_token(self.username)
@@ -50,6 +53,7 @@ class User < ActiveRecord::Base
   end
 
   def generate_token(seed)
+    seed = random_seed unless seed != nil
     n = Digest::MD5.hexdigest(seed).hex
     token_array = []
     while n > 0
@@ -60,9 +64,20 @@ class User < ActiveRecord::Base
   end
 
   def shuffle_token!
-    random_seed = Array.new(9 + rand(6)).map { (65 + rand(58)).chr }.join
     self.validation_token = self.generate_token(random_seed)
   end
+
+  def random_seed
+    return Array.new(9 + rand(6)).map { (65 + rand(58)).chr }.join
+  end
+
+  ############### things that happen before save ########################
+  def downcase!
+    self.username.downcase!
+    self.email.downcase!
+  end
+
+  ######################### users have roles ############################
 
   # does this use have the named role?
   def has_role?(name)
@@ -82,7 +97,7 @@ class User < ActiveRecord::Base
     end
   end
 
-#  we don't need this
+#  we don't need this because when we set the user's roles again it's easier to call replace_roles
 #  # remove the named role.
 #  def remove_role(name)
 #    role = Role.find_by_name(name)
@@ -109,11 +124,27 @@ class User < ActiveRecord::Base
     end
   end
 
+  # some users can edit other users according to their roles
+  # a superuser can edit anyone
+  # an admin can edit anyone not a superuser or admin
+  def can_edit_user?(user)
+    if self.has_role?('superuser')
+      return true
+    elsif !self.has_role?('admin')
+      return false
+    end
+    return !(user.has_role?('superuser') || user.has_role?('admin'))
+  end
+
 end
 
 ######################### CLASS LEVEL METHODS ################################
-
+# defines the authentication rules.
+# in this case we match against either a username or supplied plaintext password using logic defined
+# by overriding the .password= method.  In the db we store only the password_hash
+# usernames and emails will always be stored as lower case so we downcase! the name/email before searching.
 def login(name_or_email, plain_password)
+  name_or_email.downcase!                 # 
   if name_or_email.include?("@")
     user = User.find_by_email(name_or_email)
   else
@@ -125,12 +156,14 @@ def login(name_or_email, plain_password)
   return user
 end
 
+# TODO: there is probably a better way to do this.
 def username_exists?(username)
-  return User.find_by_username(username) != nil
+  return User.find_by_username(username.downcase) != nil
 end
 
+# TODO: there is probably a better way to do this.
 def email_exists?(email)
-  return User.find_by_email(email) != nil
+  return User.find_by_email(email.downcase) != nil
 end
 
 public :login, :email_exists?, :username_exists?

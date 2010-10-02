@@ -26,6 +26,7 @@ nav:
   delete_role_button: Rôle d'effacement
   create_user_button: Ajoutez l'utilisateur
   create_role_button: Ajoutez le rôle
+  about_button: Au sujet de Frank
 
 labels:
   option_yes: Oui
@@ -94,6 +95,8 @@ u:
   privacy_title_out: L'intimité est importante
   terms_title_in: Les limites
   terms_title_out: Limites
+  about_title_in: Un peu plus au sujet de Frank
+  about_title_out: Au sujet de Frank
   delete_me_confirmation: Êtes-vous sûr ? Ceci ne peut pas être défait
   delete_me_success: Vous avez été effacé. Registre de nouveau à la procédure de connexion
   delete_me_error_login: Vous n'êtes pas ouvert une session
@@ -120,6 +123,7 @@ u:
   edit_user_success: Petits groupes d'utilisateur sauvegardés
   edit_user_error: Des modifications n'ont pas été sauvegardées
   edit_user_error_email_clash: Quelqu'un avec l'email '%1' existe déjà
+  edit_user_permission_error: Vous n'avez pas le droit d'éditer cet utilisateur
   edit_user_no_change: Vous n'avez apporté aucune modification
   edit_role_no_change: Vous n'avez pas changé le nom du rôle
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur

@@ -28,6 +28,11 @@
         -else
           %a{:href=>'/terms'}#{t.nav.terms_button}
         |
+        -if nav_hint == 'about'
+          #{t.nav.about_button}
+        -else
+          %a{:href=>'/about'}#{t.nav.about_button}
+        |
         -if nav_hint == 'login'
           #{t.nav.login_button}
         -else

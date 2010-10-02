@@ -10,6 +10,7 @@ gem 'rake'
 group :development do
 	gem 'sqlite3-ruby'
 	gem 'rack-test'
+	gem 'ruby-debug'
 end
 
 group :production do

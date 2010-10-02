@@ -19,10 +19,10 @@ class HandlerTestBase < Test::Unit::TestCase
   BAD_USERNAME = "bad"
   GOOD_PASSWORD = "password"
   NOBODY_USERNAME = "nobody"
-  NOBODY_EMAIL = "Frank_nobody_user@davesag.com"
+  NOBODY_EMAIL = "frank_nobody_user@davesag.com"
   BAD_PASSWORD = "dog no biscuit"
-  GOOD_EMAIL = "Frank_root_user@davesag.com"
-  BAD_EMAIL = "Frank_root_user@thisisnotavalidemailaddress.con"
+  GOOD_EMAIL = "frank_root_user@davesag.com"
+  BAD_EMAIL = "frank_root_user@thisisnotavalidemailaddress.con"
   GOOD_PREFERENCE_TOKEN = "HTML_EMAIL"
   GOOD_PREFERENCE_VALUE = "false"
   BAD_PREFERENCE_TOKEN = "some old nonsense"
@@ -33,7 +33,7 @@ class HandlerTestBase < Test::Unit::TestCase
  end
 
  def setup_dummy_user (name)
-   user = User.create( :username => name, :password => "password", :email => "Frank_Dummy_" + name + "@davesag.com")
+   user = User.create( :username => name, :password => "password", :email => "frank_dummy_" + name + "@davesag.com")
    user.set_preference("HTML_EMAIL", "true")
    user.locale = "en"
    user.validated = true
