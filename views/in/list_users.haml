@@ -4,11 +4,17 @@
   %ol
     - for a_user in user_list do
       %li<
-        %a{:href => "/user/#{a_user.id}"}#{a_user.username}
-        - if !a_user.has_role?('admin')
+        - if a_user.id == user.id
+          %a{:href => '/profile'}#{a_user.username} *
           (
-          %a{:href => "/user/edit/#{a_user.id}"}#{t.nav.edit_user_button}
+          %a{:href => "/profile/edit"}#{t.nav.edit_profile_button}
           )
+        - else
+          %a{:href => "/user/#{a_user.id}"}#{a_user.username}
+          - if !a_user.has_role?('admin')
+            (
+            %a{:href => "/user/edit/#{a_user.id}"}#{t.nav.edit_user_button}
+            )
 #user_buttons
   [
   %a{:href => '/user' }#{t.nav.create_user_button}
