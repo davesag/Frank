@@ -26,6 +26,7 @@ nav:
   delete_role_button: Delete Role
   create_user_button: Add User
   create_role_button: Add Role
+  about_button: About Frank
   
 labels:
   option_yes: Yep
@@ -81,7 +82,7 @@ u:
   register_error_email: Someone with email '%1' already exists
   register_error_terms: You've gotta accept the legals
   register_success: A confirmation email has been sent to %1. You'll not be able to log in until you confirm your email address
-  register_success_confirmed: Your rego's has been confirmed. You can log in now
+  register_success_confirmed: Your rego's been confirmed. You can log in now
   forgot_password: Gimme your email and we'll reset your password
   forgot_password_error: Sorry but I've no idea whose email address that is. Please try another one
   forgot_password_error_already_as: You're still logged in as %1
@@ -94,6 +95,8 @@ u:
   privacy_title_out: Privacy is important
   terms_title_in: The Legals you agreed to when you signed up
   terms_title_out: Legals
+  about_title_in: Some more about Frank
+  about_title_out: About Frank
   delete_me_confirmation: Are you sure you wanna delete yourself? This can't be undone
   delete_me_success: You are out of here like last year. You must register again to log in
   delete_me_error_login: You aren't logged in
@@ -120,6 +123,7 @@ u:
   edit_user_success: User Details Saved
   edit_user_error: Changes weren't saved
   edit_user_error_email_clash: Someone with email '%1' already exists
+  edit_user_permission_error: You do not have permission to edit that user
   edit_user_no_change: You made no changes
   edit_role_no_change: You made no changes
   error_cant_delete_superuser_message: You can not delete a superuser

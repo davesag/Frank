@@ -68,7 +68,7 @@ class Frank < Sinatra::Base
   configure :production do  
     set :environment, :production
     @@log = Logger.new(STDOUT)  # TODO: should look for a better option than this.
-    @@log.level = Logger::DEBUG
+    @@log.level = Logger::INFO
     @@log.info("Frank walks onto the stage to perform.")
 
     ActiveRecord::Base.logger = Logger.new(STDOUT)
@@ -230,48 +230,41 @@ class Frank < Sinatra::Base
 
   # bounces the user to the login page if they are not logged in,
   # and to whichever path is supplied as a bounce path
-  # if they are logged in but not an Admin.
+  # if they are logged in but not an admin or superuser.
   def admin_required!(bounce)
     if !is_logged_in? 
       redirect '/login' 
     end
-    if !active_user.has_role?('admin')
+    if !(active_user.has_role?('admin') || active_user.has_role?('superuser'))
       redirect bounce
     end
   end 
 
-  # ther user is logged in IF the @active_user != nil.
+  # bounces the user to the login page if they are not logged in,
+  # and to whichever path is supplied as a bounce path
+  # if they are logged in but not a superuser.
+#  def superuser_required!(bounce)
+#    if !is_logged_in? 
+#      redirect '/login' 
+#    end
+#    if !active_user.has_role?('superuser')
+#      redirect bounce
+#    end
+#  end 
+
+  # ther user is logged in if the @active_user != nil.
   def is_logged_in?
     @active_user != nil
   end
 
-  # load the valid user with the supplied username into the @active_user instance attribute.
+  # load the supplied user into the @active_user instance attribute.
+  # and set the various session keys and locale
   def log_user_in!(user)
-    if user == nil
-      @@log.error("Call to log_user_in!(nil).  This should never be the case.  Please check your route handlers in frank.rb.")
-    else
-      @active_user = user
-      session[ACTIVE_USER_NAME_KEY] = user.username
-      session[REMEMBERED_USER_NAME_KEY] = user.username
-      if @active_user.locale != nil
-        session[:locale] = @active_user.locale
-      end
-      @@log.info("Logged in user called '#{user.username}'")
-    end
-  end
-
-  # load the valid user with the supplied username into the @active_user instance attribute.
-  def log_username_in(username)
-    @active_user = User.find_by_username_and_validated(username, true)
-    if @active_user == nil
-      @@log.error("Call to log_username_in(#{username}) failed as either there was no user with that name, or that user was not validated and so can't log in.")
-    else
-      @@log.debug("Logged in user called '#{username}'")
-      session[ACTIVE_USER_NAME_KEY] = username
-      session[REMEMBERED_USER_NAME_KEY] = username
-      if @active_user.locale != nil
-        session[:locale] = @active_user.locale
-      end
+    @active_user = user
+    session[ACTIVE_USER_NAME_KEY] = user.username
+    session[REMEMBERED_USER_NAME_KEY] = user.username
+    if @active_user.locale != nil
+      session[:locale] = @active_user.locale
     end
   end
 
@@ -279,7 +272,6 @@ class Frank < Sinatra::Base
     if session[ACTIVE_USER_NAME_KEY] != nil
       # there is a currently logged in user so load her up
       @active_user = User.find_by_username(session[ACTIVE_USER_NAME_KEY])
-      @@log.info("Loaded user #{@active_user.username}")
     end
   end
 
@@ -294,12 +286,6 @@ class Frank < Sinatra::Base
       # nuke the remembered username
       session[REMEMBERED_USER_NAME_KEY] = nil
     end
-  end
-
-  def nuke_session!
-    @@log.warn("You should really avoid calling nuke_session!")
-    session[ACTIVE_USER_NAME_KEY] = nil
-    session[REMEMBERED_USER_NAME_KEY] = nil
   end
 
   def active_user
@@ -429,6 +415,15 @@ class Frank < Sinatra::Base
     end
   end
 
+  # about page - display about text
+  get '/about' do
+    if is_logged_in?
+      haml :'about', :locals => { :message => t.u.about_title_in, :user => active_user, :nav_hint => "about" }
+    else
+  	  haml :about, :locals => { :message => t.u.about_title_out, :name => remembered_user_name, :nav_hint => "about" }
+    end
+  end
+
   # privacy page - display privacy text
   get '/terms' do
     if is_logged_in?
@@ -485,7 +480,11 @@ class Frank < Sinatra::Base
     if is_logged_in?
       haml :'in/index', :locals => { :message => t.u.forgot_password_error_already_as(active_user_name), :user => active_user, :nav_hint => "home" }
 	  else
-	    user = User.find_by_email(params[:email])
+	    user = User.find_by_email(params[:email].downcase)
+
+#      require 'ruby-debug'
+#      debugger
+
 	    if user == nil
         haml :forgot_password, :locals => { :message => t.u.forgot_password_error, :name => remembered_user_name, :nav_hint => "forgot_password" }	      
       else
@@ -686,8 +685,6 @@ class Frank < Sinatra::Base
       haml :'in/edit_profile', :locals => { :message => message, :user => active_user, :nav_hint => "edit_profile" }
   	elsif user_changed
       user.save!
-      #      nuke_session!
-      #      user.reload
       refresh_active_user!
       haml :'in/profile', :locals => { :message => message, :user => active_user, :nav_hint => "profile" }
     else
@@ -810,19 +807,23 @@ class Frank < Sinatra::Base
     end
   end
 
-  #if logged in and if an admin then edit the user
+  #if logged in and if a superuser, or an admin (and the user is not super or admin) then edit the user
   post '/user/edit/:id' do
+#    require 'ruby-debug'
+#    debugger
+
     admin_required! "/"
-    # an admin user can edit anyone
+    # a superuser can edit anyone
+    # an admin user can edit anyone who is not a superuser or admin.
     target_user = User.find_by_id(params[:id])
     if target_user == nil
       user_list = User.all(:order => "LOWER(username) ASC")
       haml :'in/list_users', :locals => { :message => t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size),
         :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
-    else      
-      new_email = params['email']
-      new_password = params['password']
-      new_html_email_pref = params['html_email']
+    elsif active_user.can_edit_user?(target_user)
+      new_email = params[:email].downcase           # emails are always stored in lowercase so always compare as lowercase.
+      new_password = params[:password]
+      new_html_email_pref = params[:html_email]
   
       user_changed = false
       error = false
@@ -839,7 +840,7 @@ class Frank < Sinatra::Base
         target_user.password = new_password
         user_changed = true
       end
-      # if the email is new then deactivate and send a confirmation message
+      # if the email is new then silently update it, assuming no email clash
       if new_email != target_user.email
         if User.email_exists?(new_email)
           # don't bother to notify
@@ -863,8 +864,11 @@ class Frank < Sinatra::Base
         roles_changed = true
       else
         # same number of roles so lets see if they actually match
+#        require 'ruby-debug'
+#        debugger
+        new_roles.delete("")  # eliminate the NONE option.
         for new_role in new_roles do
-          roles_changed &&= !target_user.has_role?(new_role)
+          roles_changed ||= !target_user.has_role?(new_role)
         end
       end
       if roles_changed
@@ -881,10 +885,15 @@ class Frank < Sinatra::Base
       else
         haml :'in/show_user', :locals => { :message => t.u.edit_user_no_change, :user => active_user, :target_user => target_user, :nav_hint => "profile" }
       end
+    else
+      user_list = User.all(:order => "LOWER(username) ASC")
+      haml :'in/list_users', :locals => { :message => t.u.edit_user_permission_error + '. ' + t.u.list_users_message(user_list.size),
+        :user => active_user, :user_list => user_list, :nav_hint => "list_users" }  
     end
   end
 
-  #if logged in and if an admin then edit the user
+  #if logged in and if an admin or superuser then delete the user
+  # can't delete a superuser however.
   post '/user/delete/:id' do
     admin_required! "/"
     # an admin user can delete anyone

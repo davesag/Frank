@@ -26,6 +26,7 @@ nav:
   delete_role_button: Delete Role
   create_user_button: Add User
   create_role_button: Add Role
+  about_button: About Frank
 
 labels:
   option_yes: Yes Please
@@ -94,6 +95,8 @@ u:
   privacy_title_out: Privacy is important
   terms_title_in: The Terms and Conditions you agreed to when you registered
   terms_title_out: Terms and Conditions
+  about_title_in: A bit more about Frank
+  about_title_out: About Frank
   delete_me_confirmation: Are you sure you wish to delete yourself? This can not be undone
   delete_me_success: Your user record has been deleted. You must register again to log in
   delete_me_error_login: You are not logged in
@@ -120,6 +123,7 @@ u:
   edit_user_success: User Details Saved
   edit_user_error: Changes were not saved
   edit_user_error_email_clash: Somebody with email '%1' already exists
+  edit_user_permission_error: I'm sorry but you do not have permission to edit that user
   edit_user_no_change: You made no changes
   edit_role_no_change: You made no changes
   error_cant_delete_superuser_message: You can not delete a superuser

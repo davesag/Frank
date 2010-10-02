@@ -17,7 +17,7 @@ class ForgotPasswordTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?('Provide your email address')
     
-    post '/forgot_password', {:email => "Frank_Dummy_" + dummy_name + "@davesag.com"}
+    post '/forgot_password', {:email => "frank_dummy_" + dummy_name + "@davesag.com"}
     assert last_response.ok?
     assert last_response.body.include?('Check your email')
     
