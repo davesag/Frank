@@ -41,13 +41,13 @@ Proposed Feature Set for v1
 **** and if that's no there it will load views/hello.haml as per normal for a Sinatra app.
 * User roles (done)
 * Simple admin functions (done.  if you are logged in as an admin you can edit other users.  You can't delete any superusers though.  Simple user and role creation, editing and deletion works.)
-* 100% test coverage of all handlers, models and views (done according to rcov.  Of course there may be missing features that are not being tested for, the unknown unknowns.)
-** though the localising of emailed erb plain text templates is not tested as we don't send email in tests. I know it works though.
-* Deploy to Heroku as http://frank-demo.heroku.com
+* >90% test coverage of all handlers, models and views (done according to rcov.  Of course there may be missing features that are not being tested for, the unknown unknowns.)
+** localising of emailed erb plain text templates is not tested as we don't send email in tests. I know it works though.
+* Deploy to Heroku as http://frank-demo.heroku.com (done)
+* modularised handlers (done)
 
 TODO: V1.0
 ----------
-* Work out new strategy to simplify frank.rb into multiple handlers.
 * Pretty up the use of CSS
 * explore the unknown unknowns
 * add form validations
