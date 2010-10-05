@@ -15,25 +15,8 @@ class Frank < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :models, Proc.new { root && File.join(root, 'models') }
   register Sinatra::R18n
-  
-  ACTIVE_USER_NAME_KEY = 'ACTIVE_FRANK_USERNAME'
-  REMEMBERED_USER_NAME_KEY = 'LAST_KNOWN_FRANK_USERNAME'
 
   @active_user = nil         # the active user is reloaded on each request in the before method.
-
-  # No longer externalise all of the various handlers into a /handlers folder
-  # aas thi smodel was breaking when hosted on Heroku
-  # TODO: find a better way to achieve the splitting up of handlers.
-#  class << self
-#    def load_handlers
-#      if !@models_are_loaded
-#        raise "No handlers folder" unless File.directory? handlers
-#        Dir.glob("handlers/**_handler.rb"){ |handler| require handler }
-#        @@log.debug( "handers loaded" )
-#        @models_are_loaded = true
-#      end
-#    end
-#  end
 
   class << self
     def load_models
@@ -261,30 +244,30 @@ class Frank < Sinatra::Base
   # and set the various session keys and locale
   def log_user_in!(user)
     @active_user = user
-    session[ACTIVE_USER_NAME_KEY] = user.username
-    session[REMEMBERED_USER_NAME_KEY] = user.username
+    session[:user] = user.id
+    session[:remembered_username] = user.username
     if @active_user.locale != nil
       session[:locale] = @active_user.locale
     end
   end
 
   def refresh_active_user!
-    if session[ACTIVE_USER_NAME_KEY] != nil
+    if session[:user] != nil
       # there is a currently logged in user so load her up
-      @active_user = User.find_by_username(session[ACTIVE_USER_NAME_KEY])
+      @active_user = User.find_by_id(session[:user])
     end
   end
 
-  # if there is an active user then nil the @active_user and the session[ACTIVE_USER_NAME_KEY]
-  # else nil session[REMEMBERED_USER_NAME_KEY]
+  # if there is an active user then nil the @active_user and the session[:user]
+  # else nil session[:remembered_username]
   def log_user_out
-    if session[ACTIVE_USER_NAME_KEY] != nil
+    if session[:user] != nil
       # there is a currently logged in user
-      session[ACTIVE_USER_NAME_KEY] = nil
+      session[:user] = nil
       @active_user = nil
     else  #there is no active user, ie logout has been called before.
       # nuke the remembered username
-      session[REMEMBERED_USER_NAME_KEY] = nil
+      session[:remembered_username] = nil
     end
   end
 
@@ -293,25 +276,25 @@ class Frank < Sinatra::Base
   end
 
   def is_remembered_user?
-    session[REMEMBERED_USER_NAME_KEY] != nil
+    session[:remembered_username] != nil
   end
 
   def active_user_name
-    if session[ACTIVE_USER_NAME_KEY] == nil
+    if session[:user] == nil
       return ""
     end
-    return session[ACTIVE_USER_NAME_KEY]
+    return session[:user]
   end
 
   def remember_user_name(username)
-    session[REMEMBERED_USER_NAME_KEY] = username
+    session[:remembered_username] = username
   end
 
   def remembered_user_name
-    if session[REMEMBERED_USER_NAME_KEY] == nil
+    if session[:remembered_username] == nil
       return ""
     end
-    return session[REMEMBERED_USER_NAME_KEY]
+    return session[:remembered_username]
   end
 
   def auth_user(username, password)
@@ -771,7 +754,11 @@ class Frank < Sinatra::Base
       end
       new_user.save!
       @@log.debug("Created new user with username #{new_user.username}")
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => "LOWER(username) ASC")               # TODO: Redundant given that all usernames are lowercase.
+
+#      require 'ruby-debug'
+#      debugger
+
       @@log.debug("There are now #{t.users(user_list.size)}")
       haml :'in/list_users', :locals => { :message => t.u.create_user_success(new_name),
         :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
