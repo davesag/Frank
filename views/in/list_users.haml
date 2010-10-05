@@ -11,7 +11,7 @@
           )
         - else
           %a{:href => "/user/#{a_user.id}"}#{a_user.username}
-          - if user.has_role?('superuser') || !a_user.has_role?('admin')
+          - if user.can_edit_user?(a_user)
             (
             %a{:href => "/user/edit/#{a_user.id}"}#{t.nav.edit_user_button}
             )
