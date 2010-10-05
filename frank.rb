@@ -1,6 +1,5 @@
 #!usr/bin/ruby
 
-require 'rubygems'
 require 'bundler/setup'
 require 'sinatra/base'
 require 'sinatra/r18n'

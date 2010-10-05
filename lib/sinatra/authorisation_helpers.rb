@@ -1,14 +1,7 @@
 #!usr/bin/ruby
 
-require 'rubygems'
 require 'bundler/setup'
 require 'sinatra/base'
-require 'sinatra/r18n'
-require 'sinatra/template_helpers'
-require 'pony'
-require 'logger'
-require 'erb'
-require 'haml'
 
 module Sinatra
   module AuthorisationHelpers
