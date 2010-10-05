@@ -155,7 +155,7 @@ r:
 users: !!pl
   0: No Users
   1: One User
-  2: %1 Users
+  n: %1 Users
 
 people: !!pl
   0: No-one
