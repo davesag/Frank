@@ -10,8 +10,7 @@ module Sinatra
 
     #################       UTILITY METHODS FOR SENDING USER EMAILS     ###########################
 
-  # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
-    def send_email_to_user(user, subject, body_template, template_locals)   
+    def build_messge_for(user, body_template, template_locals)
       if 'true' == user.get_preference("HTML_EMAIL").value
         email_body = haml(body_template, :locals => template_locals )
         type = 'text/html'
@@ -19,15 +18,17 @@ module Sinatra
         email_body = erb(body_template, :locals => template_locals)
         type = 'text/plain'
       end
+      return email_body, type
+    end
 
+    def send_email(to,from,subject, type, message)
       if options.environment == :development                          # assumed to be on your local machine
-        Pony.mail :to => user.email, :via =>:sendmail,
-          :from => "frank_test@davesag.com", :subject => subject,
-          :headers => { 'Content-Type' => type }, :body => email_body
-#        @@log.debug("Email sent via SendMail in local Developer environment.")
+        Pony.mail :to => to, :via =>:sendmail,
+          :from => from, :subject => subject,
+          :headers => { 'Content-Type' => type }, :body => message
       elsif options.environment == :production                         # assumed to be Heroku
-        Pony.mail :to => user.email, :from => "frank_demo@davesag.com", :subject => subject,
-          :headers => { 'Content-Type' => type }, :body => email_body, :via => :smtp,
+        Pony.mail :to => to, :from => from, :subject => subject,
+          :headers => { 'Content-Type' => type }, :body => message, :via => :smtp,
           :via_options => {
             :address => 'smtp.sendgrid.net',
             :port => 25,
@@ -35,10 +36,15 @@ module Sinatra
             :user_name => ENV['SENDGRID_USERNAME'],
             :password => ENV['SENDGRID_PASSWORD'],
             :domain => ENV['SENDGRID_DOMAIN'] }
-#          @@log.debug("Email sent via SMTP in production environment on Heroku.")
-      else
-#        @@log.debug("TESTING so I constructed, but did NOT actually send, an email to #{user.email} with subject '#{subject}' using template '#{body_template}'.")
       end
+
+    end
+
+  # utility method to actually send the email. uses a haml template for HTML email and erb for plain text.
+    def send_email_to_user(user, subject, body_template, template_locals)   
+      email_body, type = build_messge_for(user,body_template,template_locals)
+
+      send_email(user.email,"frank_test@davesag.com",subject, type, email_body)
     end
 
   # notify the user with that email if new registration tries to use your email
@@ -74,6 +80,16 @@ module Sinatra
       send_email_to_user(user, t.u.mail_password_reset_subject, :'mail/reset_password', template_locals)
     end 
 
+    def send_message_to_webmaster(from, subject, message)
+      # in our case webmaster is root.
+      root = User.find_by_username('root')
+      template_locals = { :subject => subject, :message => message }
+      email_body, type = build_messge_for(root,:'mail/message_to_webmaster',template_locals)
+
+#      require 'ruby-debug'
+#      debugger
+      send_email(root.email,from, t.mail.to_webmaster(subject), type, email_body)
+    end
 
   end
 

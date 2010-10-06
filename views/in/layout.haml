@@ -17,6 +17,11 @@
     #footer
       %p<
         [
+        -if nav_hint == 'contact'
+          #{t.nav.contact_button}
+        -else
+          %a{:href=>'/contact'}#{t.nav.contact_button}
+        |
         -if nav_hint == 'privacy'
           #{t.nav.privacy_button}
         -else

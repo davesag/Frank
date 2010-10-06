@@ -153,6 +153,30 @@ class Frank < Sinatra::Base
     end
   end
 
+  # contact request - display contact form
+  get '/contact' do
+    if is_logged_in?
+      haml :contact, :locals => { :message => t.u.contact_title_in, :user => active_user, :nav_hint => "contact" }
+    else
+  	  haml :contact, :locals => { :message => t.u.contact_title_out, :name => remembered_user_name, :nav_hint => "contact" }
+    end
+  end
+
+  # handle contact request - send email to davesag@gmail.com and display a thanks message.
+  post '/contact' do
+    email_from = is_logged_in? ? active_user.email : params[:email]
+
+#    require 'ruby-debug'
+#    debugger
+
+    send_message_to_webmaster( email_from, params[:subject], params[:message])
+    if is_logged_in?
+      haml :message_only, :locals => { :message => t.u.contact_send_message_in, :detailed_message => t.u.contact_send_message_detailed_in, :user => active_user, :nav_hint => "contact" }
+    else
+  	  haml :message_only, :locals => { :message => t.u.contact_send_message_out, :detailed_message => t.u.contact_send_message_detailed_out, :name => remembered_user_name, :nav_hint => "contact" }
+    end
+  end
+
   # registration request - display registration form, or divert to user home if logged in
   get '/register' do
     if is_logged_in?

@@ -87,10 +87,10 @@ module Sinatra
     end
 
     def active_user_name
-      if session[:user] == nil
+      if @cative_user == nil
         return ""
       end
-      return session[:user]
+      return @active_user.username
     end
 
     def remember_user_name(username)

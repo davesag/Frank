@@ -27,6 +27,7 @@ nav:
   create_user_button: Ajoutez l'utilisateur
   create_role_button: Ajoutez le rôle
   about_button: Au sujet de Frank
+  contact_button: Contact
 
 labels:
   option_yes: Oui
@@ -64,6 +65,9 @@ labels:
   create_user_roles_label: Assignez les rôles
   edit_user_roles_label: Changez les rôles
   show_user_roles_label: Rôles assignés
+  subject_label: Sujet
+  message_label: Message
+  send_feedback_label: Envoyez au Webmaster
 
 u:
   hello_message: Salut
@@ -148,6 +152,12 @@ u:
   edit_role_message: Éditez le rôle '%1'.
   edit_role_success: Rôle sauvegardé
   delete_role_success_message: Le rôle '%1' a été effacé
+  contact_title_in: Obtenez dans le contact
+  contact_title_out: Détails de contact
+  contact_send_message_in: Votre message de priorité a été envoyé au Webmaster
+  contact_send_message_out: Votre message a été envoyé au Webmaster
+  contact_send_message_detailed_in: Il sera expédié à la personne appropriée immédiatement
+  contact_send_message_detailed_out: Il sera expédié aussitôt que possible à la personne appropriée
 
 r:
   edit_message: Éditez le nom de ce rôle
@@ -176,3 +186,6 @@ preferences: !!pl
   0: Aucunes préférences
   1: Une préférence
   n: %1 préférences
+
+  mail:
+    to_webmaster: Email par l'intermédiaire de Frank - %1

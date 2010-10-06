@@ -27,6 +27,7 @@ nav:
   create_user_button: Add User
   create_role_button: Add Role
   about_button: About
+  contact_button: Contact
 
 labels:
   option_yes: 'Yes'
@@ -64,6 +65,9 @@ labels:
   create_user_roles_label: Assign Roles
   edit_user_roles_label: Change Roles
   show_user_roles_label: Allocated Roles
+  subject_label: Subject
+  message_label: Message
+  send_feedback_label: Send to Webmaster
 
 u:
   hello_message: Howdy
@@ -148,6 +152,12 @@ u:
   edit_role_message: Edit Role '%1'.
   edit_role_success: Role Saved
   delete_role_success_message: Role '%1' has been deleted
+  contact_title_in: Get In Touch
+  contact_title_out: Contact Details
+  contact_send_message_in: Your priority message has been emailed to the Webmaster
+  contact_send_message_out: Your message has been emailed to the Webmaster
+  contact_send_message_detailed_in: It will be forwarded to the appropriate person immediately
+  contact_send_message_detailed_out: It will be forwarded to the appropriate person as soon as possible
 
 r:
   edit_message: You may edit this role's name
@@ -176,3 +186,6 @@ preferences: !!pl
   0: No Preferences
   1: One Preference
   n: %1 Preferences
+
+  mail:
+    to_webmaster: Email via Frank - %1

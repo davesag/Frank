@@ -71,6 +71,13 @@ class UserHandlerTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?('Privacy is important')
  
+    # try going to '/contact' as a guest
+    get '/contact'
+    assert last_response.ok?
+#    require 'ruby-debug'
+#    debugger
+    assert last_response.body.include?('Contact Details')
+
     # now log in and try again
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
@@ -85,10 +92,31 @@ class UserHandlerTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?('We take privacy seriously')
 
+    # try going to '/contact' as a logged in user
+    get '/contact'
+    assert last_response.ok?
+    assert last_response.body.include?('Get In Touch')
+
     # then log out
     get '/logout'
     assert last_response.ok?
     assert last_response.body.include?('Login again to continue')    
+
+  end
+
+  def test_contact_post
+    #test as guest (will request an email address)
+    post '/contact', { :subject => "testing", :email => "franktestguest@davesag.com", :message => "Hi there, you are awesome."}
+    assert last_response.ok?
+    assert last_response.body.include?('Your message has been emailed to the Webmaster')
+    
+    # then login
+    post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
+
+    # then test as user (will not have to ask for an email address)
+    post '/contact', { :subject => "testing", :email => "franktestguest@davesag.com", :message => "Hi there, you are awesome."}
+    assert last_response.ok?
+    assert last_response.body.include?('Your priority message has been emailed to the Webmaster')
 
   end
 
