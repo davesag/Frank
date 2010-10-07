@@ -6,82 +6,11 @@ h1, h2, h3, h4, h5, h6, p, pre, blockquote, label, ul, ol, dl, fieldset, address
 li, dd { margin-left:5%; }
 fieldset { padding: .5em; }
 select option{ padding:0 5px; }
-#header {
-	background: #Gainsboro;
-	width: 100%;
-	height: 50px;
-}
-
-#welcome_message {
-    float: left;
-	width: 50%;
-}
-
-#locale_selector {
-	font-size: smaller;
-    float: right;
-	width: 20%;
-}
-
-#content {
-    background: #GhostWhite;
-    clear: both;
-    margin: 20;
-    width: 100%;
-    height: 500px;
-}
-
-#message_box {
-	font-size: small;
-	background: #Gainsboro;
-}
-
-#login_form {
-	background: #Gainsboro;
-}
-
-#entry_form {
-	background: #Gainsboro;
-}
-
-#user_details {
-	background: #Gainsboro;
-}
-
-#user_buttons {
-	background: #Gainsboro;
-}
-
-#edit_button {
-	background: #Gainsboro;
-    float: left;
-}
-#edit_button {
-	background: #Gainsboro;
-}
-#self_destruct {
-	background: #red;
-}
-
-.warning {
-	font-color:#red;
-}
-#footer {
-	background: #Gainsboro;
-    clear: both;
-    top: 500px;
-    left: 0px;
-    width: 100%;
-    height: 50px;
-}
-
-a{ outline:none; }
-a img{ border:none; }
 
 body{
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-size:14px;
-  line-height:1.4;
+  font-size:90%;
+  line-height:1.125em;
 	color:#000066;
 	background-color: #DarkSlateGray;
 }
@@ -89,31 +18,172 @@ body{
 a{
   color:#0084bd;
   text-decoration:none;
+	outline:none;
 }
+
 a:visited{
   color:#0084bd;
 }
+
 a:hover{
   color:#6db4d3;
   text-decoration:underline;
 }
 
+a img{ border:none; }
+
 h1{
   margin:18px 0 0 0;
-  font-size:28px;
+  font-size:1.5em;
   font-weight:normal;
   color:#000;
 }
 
 h2{
-  font-size:22px;
+  font-size:1.35em;
   font-weight:normal;
   color:#000;
 }
 
 h3{
-  font-size:18px;
+  font-size:1.2em;
   font-weight:normal;
   color:#000;
 }
 
+
+#header {
+	background: #Gainsboro;
+	height: 20px;
+	width: 95%;
+	padding-top: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 60em;
+	min-width: 51.45em;
+}
+
+#welcome_message {
+	float: left;
+	width: 60%;
+}
+
+#welcome_message p{
+	margin:0px;
+}
+
+#locale_selector {
+	text-align: right;
+	font-size: .5em;
+	float: left;
+	width: 40%;
+}
+
+#locale_selector select{
+	font-size: .5em;
+	width: 150px;
+}
+
+#content {
+	height: 600px;
+	background: #GhostWhite;
+	clear: both;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 60em;
+	min-width: 51.45em;
+}
+
+#message_box {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#login_form {
+	background: #Gainsboro;
+	width: 250px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#entry_form {
+	background: #Gainsboro;
+	width: 450px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#details {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#user_details {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#user_list {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#role_list {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#user_buttons {
+	background: #Gainsboro;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#edit_button {
+	background: #Gainsboro;
+	float: left;
+}
+#edit_button {
+	background: #Gainsboro;
+}
+#self_destruct {
+	background: #red;
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.warning {
+	font-color:#red;
+}
+
+#footer {
+	background: #Gainsboro;
+	font-size: .7em;
+	clear: both;
+	height: 30px;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 85.71em;
+	min-width: 73.5em;
+}
+
+#footer p{
+	text-align: justify;
+	text-align-last: justify;
+	text-justify: distribute;
+	white-space:nowrap;
+}
