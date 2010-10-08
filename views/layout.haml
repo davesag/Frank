@@ -33,14 +33,20 @@
       -if nav_hint != 'register'
         #locale_selector
           =haml(:'chunks/change_locale_menu_form')
-    / any flash messages.  There will always be a flash[:message]
-    =styled_flash
     #content
+      / any flash messages.
+      =styled_flash
+      / the rest of the content goes here.
       = yield
     #footer
       / template footer content goes here
       %p<
         [
+        -if nav_hint == 'about'
+          #{t.nav.about_button}
+        -else
+          %a{:href=>'/about'}#{t.nav.about_button}
+        |
         -if nav_hint == 'contact'
           #{t.nav.contact_button}
         -else
@@ -55,9 +61,4 @@
           #{t.nav.terms_button}
         -else
           %a{:href=>'/terms'}#{t.nav.terms_button}
-        |
-        -if nav_hint == 'about'
-          #{t.nav.about_button}
-        -else
-          %a{:href=>'/about'}#{t.nav.about_button}
         ]

@@ -96,15 +96,31 @@ h3{
 
 #welcome_message {
 	float: left;
-	font-size: .5em;
-	width: 30%;
+	font-size: .7em;
+	width: 25%;
 }
 
 #navigation {
 	text-align: right;
 	float: left;
-	font-size: .5em;
-	width: 45%;
+	font-size: .7em;
+	width: 50%;
+}
+
+#navigation a{
+  color:#0084bd;
+  text-decoration:none;
+	outline:none;
+}
+
+#navigation a:visited{
+  color:#0084bd;
+}
+
+#navigation a:hover{
+  color:#Gainsboro;
+	background:#DarkSlateGray;
+  text-decoration:underline;
 }
 
 #locale_selector {
@@ -152,27 +168,6 @@ h3{
 	margin-right: auto;
 }
 
-#user_details {
-	background: #Gainsboro;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#user_list {
-	background: #Gainsboro;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#role_list {
-	background: #Gainsboro;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
 #user_buttons {
 	background: #Gainsboro;
 	width: 95%;
@@ -207,3 +202,20 @@ h3{
 	text-justify: distribute;
 	white-space:nowrap;
 }
+
+#footer a{
+  color:#0084bd;
+  text-decoration:none;
+	outline:none;
+}
+
+#footer a:visited{
+  color:#0084bd;
+}
+
+#footer a:hover{
+  color:#Gainsboro;
+	background:#DarkSlateGray;
+  text-decoration:underline;
+}
+
