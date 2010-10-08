@@ -74,7 +74,7 @@ u:
   welcome_in: Bienvenue en arrière
   welcome_out: Bienvenue
   login_message: Ouvrez une session pour continuer
-  login_success: Vous avez ouvert une session comme
+  login_success: Vous avez ouvert une session comme %1
   login_error: Combinaison inconnue d'utilisateur/mot de passe. Essayez s'il vous plaît de nouveau
   logout_message: Merci pour visiter la procédure de connexion %1. De nouveau pour continuer
   logout_error: Vous n'avez pas été ouvert une session. Ouvrez une session pour continuer

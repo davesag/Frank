@@ -1,5 +1,3 @@
-#message_box
-  %h3 #{message}
 #entry_form
   %form{ :'accept-charset' => 'UTF-8', :action => "/user/edit/#{target_user.id}", :method => 'post'}
     %p< 
@@ -29,7 +27,7 @@
           %option{ :value => role.name, :selected => target_user.has_role?(role.name) }<
             #{role.name}
     %input{ :type => "submit", :value => t.nav.update_user_button}
-#view_button
+#user_buttons
   [
   %a{ :href => "/user/#{target_user.id}", :method => 'get'}#{t.nav.view_user_button}
   ]

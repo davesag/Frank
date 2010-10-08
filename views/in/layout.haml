@@ -3,15 +3,46 @@
   %head
     %meta{ :'http-equiv' => "Content-Type", :content => "text/html; charset=UTF-8"}
     %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
-    %title #{message} #{user.username}
+    %title #{flash[:message]}#{flash[:warning]}#{flash[:error]}#{flash[:tip]} - User is #{user.username}
   %body
     #header
       / template header content goes here
       #welcome_message
         %p< #{t.g.you_are_logged_in_as(user.username)}
+      #navigation
+        %p<
+          [
+          -if nav_hint == 'profile'
+            #{t.nav.profile_button}
+          -else
+            %a{:href=>'/profile'}#{t.nav.profile_button}
+          |
+          -if nav_hint == 'edit_profile'
+            #{t.nav.edit_profile_button}
+          -else
+            %a{:href=>'/profile/edit'}#{t.nav.edit_profile_button}
+          |
+          -if user.has_role?('admin')
+            -if nav_hint == 'list_users'
+              #{t.nav.list_users_button}
+            -else
+              %a{:href=>'/users'}#{t.nav.list_users_button}
+            |
+            -if nav_hint == 'list_roles'
+              #{t.nav.list_roles_button}
+            -else
+              %a{:href=>'/roles'}#{t.nav.list_roles_button}
+            |
+          -if nav_hint == 'logout'
+            #{t.nav.logout_button}
+          -else
+            %a{ :href => "/logout" }#{t.nav.logout_button}         
+          ]
       -if nav_hint != 'edit_profile' && nav_hint != 'edit_user' && nav_hint != 'new_user'
         #locale_selector
           =haml(:'chunks/change_locale_menu_form')
+    / any flash messages.  There will always be a flash[:message]
+    =styled_flash
     #content
       = yield
     #footer
@@ -41,30 +72,4 @@
           #{t.nav.home_button}
         -else
           %a{:href=>'/'}#{t.nav.home_button}
-        |
-        -if nav_hint == 'profile'
-          #{t.nav.profile_button}
-        -else
-          %a{:href=>'/profile'}#{t.nav.profile_button}
-        |
-        -if nav_hint == 'edit_profile'
-          #{t.nav.edit_profile_button}
-        -else
-          %a{:href=>'/profile/edit'}#{t.nav.edit_profile_button}
-        |
-        -if user.has_role?('admin')
-          -if nav_hint == 'list_users'
-            #{t.nav.list_users_button}
-          -else
-            %a{:href=>'/users'}#{t.nav.list_users_button}
-          |
-          -if nav_hint == 'list_roles'
-            #{t.nav.list_roles_button}
-          -else
-            %a{:href=>'/roles'}#{t.nav.list_roles_button}
-          |
-        -if nav_hint == 'logout'
-          #{t.nav.logout_button}
-        -else
-          %a{ :href => "/logout" }#{t.nav.logout_button}
         ]

@@ -74,7 +74,7 @@ u:
   welcome_in: Welcome back
   welcome_out: Welcome
   login_message: Login to continue
-  login_success: You have logged in as
+  login_success: You have logged in as %1
   login_error: Unknown User/Password combination. Please try again
   logout_message: Thanks for visiting %1. Login again to continue
   logout_error: You were not logged in. Login to continue

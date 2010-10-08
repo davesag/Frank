@@ -323,6 +323,10 @@ class AdminHandlerTest < HandlerTestBase
     post '/user', { :username => "new_username", :password => GOOD_PASSWORD,
       :email => GOOD_EMAIL, :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?
+
+#    require 'ruby-debug'
+#    debugger
+
     assert last_response.body.include?("A user with email #{GOOD_EMAIL} is already registered")
  
   end

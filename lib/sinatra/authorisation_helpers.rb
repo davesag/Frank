@@ -59,9 +59,6 @@ module Sinatra
       if session[:user] != nil
         # there is a currently logged in user so load her up
         @active_user = User.find_by_id(session[:user])
-        if @active_user.locale != nil
-          session[:locale] = @active_user.locale
-        end
       end
     end
 
@@ -87,7 +84,7 @@ module Sinatra
     end
 
     def active_user_name
-      if @cative_user == nil
+      if @active_user == nil
         return ""
       end
       return @active_user.username

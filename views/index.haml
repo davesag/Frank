@@ -1,5 +1,3 @@
-#message_box
-  %h3 #{message} #{name}
 #details
   %h3 What is Frank?
   %p<
@@ -10,3 +8,7 @@
       %li< Haml,
       %li< Active Record, and
       %li< Heroku
+    %p<
+      see
+      %a{ :href => "/about" }#{t.nav.about_button}
+      for more details.

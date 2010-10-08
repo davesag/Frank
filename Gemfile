@@ -1,6 +1,7 @@
 source :rubygems
 gem 'sinatra','>=1.0'
 gem 'sinatra-r18n'
+gem 'sinatra-flash'
 gem 'haml'
 gem 'bcrypt-ruby'
 gem 'pony'

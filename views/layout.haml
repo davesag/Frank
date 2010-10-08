@@ -3,15 +3,38 @@
   %head
     %meta{ :'http-equiv' => "Content-Type", :content => "text/html; charset=UTF-8"}
     %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
-    %title #{message}
+    %title #{flash[:message]}#{flash[:warning]}#{flash[:error]}#{flash[:tip]}
   %body
     #header
       / template header content goes here
       #welcome_message
         %p< #{t.g.welcome}
+      #navigation
+        %p<
+          [
+          -if nav_hint == 'login'
+            #{t.nav.login_button}
+          -else
+            %a{:href=>'/'}#{t.nav.login_button}
+          |
+          -if nav_hint == 'forgot_password'
+            #{t.nav.forgot_password_button}
+          -else
+            %a{:href=>'/forgot_password'}#{t.nav.forgot_password_button}
+          -if name != '' && nav_hint != 'logout'
+            | #{t.nav.not_you(name)}
+            %a{:href=>'/logout'}#{t.nav.log_out_completely_button}
+          -elsif name == '' && nav_hint != 'register'
+            |
+            %a{:href=>'/register'}#{t.nav.register_button}
+          -elsif name == '' && nav_hint == 'register'
+            | #{t.nav.register_button}
+          ]
       -if nav_hint != 'register'
         #locale_selector
           =haml(:'chunks/change_locale_menu_form')
+    / any flash messages.  There will always be a flash[:message]
+    =styled_flash
     #content
       = yield
     #footer
@@ -37,22 +60,4 @@
           #{t.nav.about_button}
         -else
           %a{:href=>'/about'}#{t.nav.about_button}
-        |
-        -if nav_hint == 'login'
-          #{t.nav.login_button}
-        -else
-          %a{:href=>'/'}#{t.nav.login_button}
-        |
-        -if nav_hint == 'forgot_password'
-          #{t.nav.forgot_password_button}
-        -else
-          %a{:href=>'/forgot_password'}#{t.nav.forgot_password_button}
-        -if name != '' && nav_hint != 'logout'
-          | #{t.nav.not_you(name)}
-          %a{:href=>'/logout'}#{t.nav.log_out_completely_button}
-        -elsif name == '' && nav_hint != 'register'
-          |
-          %a{:href=>'/register'}#{t.nav.register_button}
-        -elsif name == '' && nav_hint == 'register'
-          | #{t.nav.register_button}
         ]
