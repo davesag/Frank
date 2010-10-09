@@ -21,13 +21,13 @@
             #{t.nav.forgot_password_button}
           -else
             %a{:href=>'/forgot_password'}#{t.nav.forgot_password_button}
-          -if name != '' && nav_hint != 'logout'
-            | #{t.nav.not_you(name)}
+          -if remembered_user_name != '' && nav_hint != 'logout'
+            | #{t.nav.not_you(remembered_user_name)}
             %a{:href=>'/logout'}#{t.nav.log_out_completely_button}
-          -elsif name == '' && nav_hint != 'register'
+          -elsif remembered_user_name == '' && nav_hint != 'register'
             |
             %a{:href=>'/register'}#{t.nav.register_button}
-          -elsif name == '' && nav_hint == 'register'
+          -elsif remembered_user_name == '' && nav_hint == 'register'
             | #{t.nav.register_button}
           ]
       -if nav_hint != 'register'

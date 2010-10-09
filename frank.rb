@@ -106,7 +106,7 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
     else
       flash.now[:message] = t.u.login_message
-  	  haml :login, :locals => { :name => remembered_user_name, :nav_hint => "login" }
+  	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -117,7 +117,7 @@ class Frank < Sinatra::Base
       haml :'privacy', :locals => { :user => active_user, :nav_hint => "privacy" }
     else
       flash.now[:message] = t.u.privacy_title_out
-  	  haml :privacy, :locals => { :name => remembered_user_name, :nav_hint => "privacy" }
+  	  haml :privacy, :locals => { :nav_hint => "privacy" }
     end
   end
 
@@ -128,7 +128,7 @@ class Frank < Sinatra::Base
       haml :'about', :locals => { :user => active_user, :nav_hint => "about" }
     else
       flash.now[:message] = t.u.about_title_out
-  	  haml :about, :locals => { :name => remembered_user_name, :nav_hint => "about" }
+  	  haml :about, :locals => { :nav_hint => "about" }
     end
   end
 
@@ -139,7 +139,7 @@ class Frank < Sinatra::Base
       haml :'terms', :locals => { :user => active_user, :nav_hint => "terms" }
     else
       flash.now[:message] = t.u.terms_title_out
-  	  haml :terms, :locals => { :name => remembered_user_name, :nav_hint => "terms" }
+  	  haml :terms, :locals => { :nav_hint => "terms" }
     end
   end
 
@@ -150,7 +150,7 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
     else
       flash.now[:message] = t.u.login_message
-  	  haml :login, :locals => { :name => remembered_user_name, :nav_hint => "login" }
+  	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -165,7 +165,7 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
     else
       flash.now[:error] = t.u.login_error
-      haml :login, :locals => { :name => remembered_user_name, :nav_hint => "login" }
+      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -176,7 +176,7 @@ class Frank < Sinatra::Base
       haml :contact, :locals => { :user => active_user, :nav_hint => "contact" }
     else
       flash.now[:message] = t.u.contact_title_out
-  	  haml :contact, :locals => { :name => remembered_user_name, :nav_hint => "contact" }
+  	  haml :contact, :locals => { :nav_hint => "contact" }
     end
   end
 
@@ -189,7 +189,7 @@ class Frank < Sinatra::Base
       haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_in, :user => active_user, :nav_hint => "contact" }
     else
       flash.now[:message] = t.u.contact_send_message_out
-  	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :name => remembered_user_name, :nav_hint => "contact" }
+  	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :nav_hint => "contact" }
     end
   end
 
@@ -200,10 +200,10 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
     elsif is_remembered_user?
       flash.now[:error] = t.u.register_error
-      haml :login, :locals => { :name => remembered_user_name, :nav_hint => "login" }
+      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
 	  else
       flash.now[:message] = t.u.register_message
-  	  haml :register, :locals => { :name => "", :email => "", :nav_hint => "register" }
+  	  haml :register, :locals => { :username => '', :email => '', :nav_hint => "register" }
     end
   end
 
@@ -214,7 +214,7 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
 	  else
       flash.now[:message] = t.u.forgot_password
-  	  haml :forgot_password, :locals => { :name => remembered_user_name, :nav_hint => "forgot_password" }
+  	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
 
@@ -230,14 +230,13 @@ class Frank < Sinatra::Base
 
 	    if user == nil
         flash.now[:error] = t.u.forgot_password_error
-        haml :forgot_password, :locals => {:name => remembered_user_name, :nav_hint => "forgot_password" }	      
+        haml :forgot_password, :locals => {:nav_hint => "forgot_password" }	      
       else
         user.password_reset = true
         user.save!
         send_password_reset_to(user)
         flash.now[:tip] = t.u.forgot_password_instruction
-    	  haml :message_only, :locals => { :detailed_message => t.u.forgot_password_instruction_detail, 
-    	    :name => user.username, :nav_hint => "forgot_password" }
+    	  haml :message_only, :locals => { :detailed_message => t.u.forgot_password_instruction_detail, :nav_hint => "forgot_password" }
       end
     end
   end
@@ -246,10 +245,10 @@ class Frank < Sinatra::Base
     user = User.find_by_validation_token(params[:token])
     if user == nil || !user.password_reset?
       flash.now[:error] = t.u.token_expired_error
-      haml :login, :locals => { :name => "", :nav_hint => "login"}
+      haml :login, :locals => { :username => "", :nav_hint => "login"}
     else
       flash.now[:tip] = t.u.forgot_password_instruction_email
-      haml :reset_password, :locals => { :name => user.username, :validation_token => user.validation_token, :nav_hint => "forgot_password" }
+      haml :reset_password, :locals => { :validation_token => user.validation_token, :nav_hint => "forgot_password" }
     end
   end
 
@@ -257,7 +256,7 @@ class Frank < Sinatra::Base
     user = User.find_by_validation_token(params[:token])
     if user == nil || !user.password_reset?
       flash.now[:error] = t.u.token_expired_error
-      haml :login, :locals => { :name => "", :nav_hint => "login"}
+      haml :login, :locals => { :username => "", :nav_hint => "login"}
     else
       # actually change the password (note this is stored as a bcrypted string, not in clear text)
       user.password = params[:password]
@@ -268,7 +267,7 @@ class Frank < Sinatra::Base
 #      nuke_session!
       remember_user_name(user.username)
       flash.now[:tip] = t.u.forgot_password_success
-      haml :login, :locals => { :name => remembered_user_name, :nav_hint => "login" }
+      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
     end
   end
 
@@ -285,15 +284,15 @@ class Frank < Sinatra::Base
       terms = params['terms']
       if 'true' != terms
         flash.now[:error] = t.u.register_error_terms
-    	  haml :register, :locals => { :name => name, :email => email, :nav_hint => "register" }        
+    	  haml :register, :locals => { :username => name, :email => email, :nav_hint => "register" }        
       else
         if User.username_exists?(name)
           flash.now[:error] = t.u.register_error_username(name)
-      	  haml :register, :locals => { :name => "", :email => email, :nav_hint => "register" }
+      	  haml :register, :locals => { :username => "", :email => email, :nav_hint => "register" }
         elsif User.email_exists?(email)
       	  notify_user_of_registration_overlap_attempt!(email,name)
           flash.now[:error] = t.u.register_error_email(email)
-      	  haml :register, :locals => { :name => name, :email => "", :nav_hint => "register" }
+      	  haml :register, :locals => { :username => name, :email => "", :nav_hint => "register" }
         else
           user = User.create(:username => name, :password => params['password'], :email => email)
           user.set_preference("HTML_EMAIL", "true")
@@ -310,7 +309,7 @@ class Frank < Sinatra::Base
           user.save!
           send_registration_confirmation_to(user)
           flash.now[:tip] = t.u.register_success(email)
-          haml :login, :locals => { :name => name, :nav_hint => "login" }
+          haml :login, :locals => { :username => name, :nav_hint => "login" }
         end
       end
     end
@@ -321,13 +320,13 @@ class Frank < Sinatra::Base
     user = User.find_by_validation_token(params[:token])
     if user == nil || user.validated?
       flash.now[:error] = t.u.token_expired_error
-      haml :index, :locals => { :name => "", :nav_hint => "home"}
+      haml :index, :locals => { :username => "", :nav_hint => "home"}
     else
       user.validated = true
       user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use to prevent reuse.
       user.save!
       flash.now[:tip] = t.u.register_success_confirmed
-      haml :login, :locals => { :name => user.username, :nav_hint => "login" }
+      haml :login, :locals => { :username => user.username, :nav_hint => "login" }
     end
   end
 
@@ -340,16 +339,16 @@ class Frank < Sinatra::Base
       name = active_user_name
       log_user_out
       flash.now[:message] = t.u.logout_message(name)
-      haml :login, :locals => { :name => "#{name}", :nav_hint => "login" }
+      haml :login, :locals => { :username => name, :nav_hint => "login" }
     elsif is_remembered_user?
 #      @@log.debug("Logging out #{remembered_user_name} completely")
       name = remembered_user_name
       log_user_out
       flash.now[:message] = t.u.logout_completely(name)
-      haml :login, :locals => { :name => "", :nav_hint => "login" }
+      haml :login, :locals => { :username => "", :nav_hint => "login" }
     else
       flash.now[:error] = t.u.logout_error
-      haml :login, :locals => { :name => "", :nav_hint => "login" }
+      haml :login, :locals => { :username => "", :nav_hint => "login" }
     end
   end
 
@@ -369,7 +368,7 @@ class Frank < Sinatra::Base
           log_user_out
           log_user_out # do it twice
           flash.now[:tip] = t.u.delete_me_success
-          haml :register, :locals => { :name => "", :email => "", :nav_hint => "register" }
+          haml :register, :locals => { :username => "", :email => "", :nav_hint => "register" }
         else
           # throw up a warning screen.
           flash.now[:warning] = t.u.delete_me_confirmation
@@ -379,7 +378,7 @@ class Frank < Sinatra::Base
     else
       @@log.error("/delete_self called but no-one was logged in. Check the UI and Navigation options in your templates.")
       flash.now[:message] = t.u.delete_me_error_login
-      haml :login, :locals => { :name => active_user, :nav_hint => "login" }
+      haml :login, :locals => { :username => active_user_name, :nav_hint => "login" }
     end
   end
 
@@ -699,9 +698,9 @@ class Frank < Sinatra::Base
     haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
   end
 
-  get '/role/edit/:name' do
+  get '/role/edit/:username' do
     admin_required! "/"
-    target_role = Role.find_by_name(params[:name])
+    target_role = Role.find_by_name(params[:username])
     if target_role == nil
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
@@ -717,10 +716,10 @@ class Frank < Sinatra::Base
     end
   end
 
-  post '/role/edit/:name' do
+  post '/role/edit/:username' do
     admin_required! "/"
     new_name = params[:new_name]
-    target_role = Role.find_by_name(params[:name])
+    target_role = Role.find_by_name(params[:username])
     if target_role == nil
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
