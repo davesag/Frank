@@ -103,7 +103,7 @@ class Frank < Sinatra::Base
   get '/' do
     if is_logged_in?
       flash.now[:message] = t.u.welcome_in
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
     else
       flash.now[:message] = t.u.login_message
   	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
@@ -114,7 +114,7 @@ class Frank < Sinatra::Base
   get '/privacy' do
     if is_logged_in?
       flash.now[:message] = t.u.privacy_title_in
-      haml :'privacy', :locals => { :user => active_user, :nav_hint => "privacy" }
+      haml :'privacy', :locals => { :nav_hint => "privacy" }
     else
       flash.now[:message] = t.u.privacy_title_out
   	  haml :privacy, :locals => { :nav_hint => "privacy" }
@@ -125,7 +125,7 @@ class Frank < Sinatra::Base
   get '/about' do
     if is_logged_in?
       flash.now[:message] = t.u.about_title_in
-      haml :'about', :locals => { :user => active_user, :nav_hint => "about" }
+      haml :'about', :locals => { :nav_hint => "about" }
     else
       flash.now[:message] = t.u.about_title_out
   	  haml :about, :locals => { :nav_hint => "about" }
@@ -136,7 +136,7 @@ class Frank < Sinatra::Base
   get '/terms' do
     if is_logged_in?
       flash.now[:message] = t.u.terms_title_in
-      haml :'terms', :locals => { :user => active_user, :nav_hint => "terms" }
+      haml :'terms', :locals => { :nav_hint => "terms" }
     else
       flash.now[:message] = t.u.terms_title_out
   	  haml :terms, :locals => { :nav_hint => "terms" }
@@ -147,7 +147,7 @@ class Frank < Sinatra::Base
   get '/login' do
     if is_logged_in?
       flash.now[:message] = t.u.welcome_in
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
     else
       flash.now[:message] = t.u.login_message
   	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
@@ -162,7 +162,7 @@ class Frank < Sinatra::Base
     if entering_user != nil
       log_user_in!(entering_user)
       flash.now[:tip] = t.u.login_success(active_user_name)
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
     else
       flash.now[:error] = t.u.login_error
       haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
@@ -173,7 +173,7 @@ class Frank < Sinatra::Base
   get '/contact' do
     if is_logged_in?
       flash.now[:message] = t.u.contact_title_in
-      haml :contact, :locals => { :user => active_user, :nav_hint => "contact" }
+      haml :contact, :locals => { :nav_hint => "contact" }
     else
       flash.now[:message] = t.u.contact_title_out
   	  haml :contact, :locals => { :nav_hint => "contact" }
@@ -186,7 +186,7 @@ class Frank < Sinatra::Base
     send_message_to_webmaster( email_from, params[:subject], params[:message])
     if is_logged_in?
       flash.now[:message] = t.u.contact_send_message_in
-      haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_in, :user => active_user, :nav_hint => "contact" }
+      haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_in, :nav_hint => "contact" }
     else
       flash.now[:message] = t.u.contact_send_message_out
   	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :nav_hint => "contact" }
@@ -197,7 +197,7 @@ class Frank < Sinatra::Base
   get '/register' do
     if is_logged_in?
       flash.now[:error] = t.u.register_error_already_as(active_user_name)
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
     elsif is_remembered_user?
       flash.now[:error] = t.u.register_error
       haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
@@ -211,7 +211,7 @@ class Frank < Sinatra::Base
   get '/forgot_password' do
     if is_logged_in?
       flash.now[:error] = t.u.forgot_password_error_already_as(active_user_name)
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
 	  else
       flash.now[:message] = t.u.forgot_password
   	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
@@ -221,7 +221,7 @@ class Frank < Sinatra::Base
   post '/forgot_password' do
     if is_logged_in?
       flash.now[:error] = t.u.forgot_password_error_already_as(active_user_name)
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
 	  else
 	    user = User.find_by_email(params[:email].downcase)
 
@@ -277,7 +277,7 @@ class Frank < Sinatra::Base
   post '/registration' do
     if is_logged_in?
       flash.now[:error] = t.u.register_error_already_as(active_user_name)
-      haml :'in/index', :locals => { :user => active_user, :nav_hint => "home" }
+      haml :'in/index', :locals => { :nav_hint => "home" }
     else
       email = params['email']
       name = params['username']
@@ -359,7 +359,7 @@ class Frank < Sinatra::Base
         @@log.error("/delete_self called by an admin. Admin's can't delete themselves. Check the UI and Navigation options in your templates.")
         # admin users can not delete themselves.  remove the user from admin role before trying to delete them
         flash.now[:error] = t.u.delete_me_error_admin
-        haml :'in/profile', :locals => { :user => active_user, :nav_hint => "profile" }
+        haml :'in/profile', :locals => { :nav_hint => "profile" }
       else
         force = params['frankie_says_force_it']
         if force == 'true'
@@ -372,7 +372,7 @@ class Frank < Sinatra::Base
         else
           # throw up a warning screen.
           flash.now[:warning] = t.u.delete_me_confirmation
-          haml :'in/confirm_delete_self', :locals => {:user => active_user, :nav_hint => "" }
+          haml :'in/confirm_delete_self', :locals => {:nav_hint => "" }
         end
       end
     else
@@ -386,14 +386,14 @@ class Frank < Sinatra::Base
   get '/profile' do
     login_required!
     flash.now[:message] = t.u.profile_message
-    haml :'in/profile', :locals => { :user => active_user, :nav_hint => "profile" }
+    haml :'in/profile', :locals => { :nav_hint => "profile" }
   end
 
   # the edit the current logged in user's details page
   get '/profile/edit' do
     login_required!
     flash.now[:message] = t.u.profile_edit_message
-    haml :'in/edit_profile', :locals => { :user => active_user, :nav_hint => "edit_profile" }
+    haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
   end
 
   post '/profile/edit' do
@@ -445,15 +445,15 @@ class Frank < Sinatra::Base
     if error
       # TODO: Rack provides a standard 'error' collection we can use to be much smarter about returning errors.
       flash.now[:error] = message
-      haml :'in/edit_profile', :locals => { :user => active_user, :nav_hint => "edit_profile" }
+      haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
   	elsif user_changed
       user.save!
       refresh_active_user!
       flash.now[:message] = message
-      haml :'in/profile', :locals => { :user => active_user, :nav_hint => "profile" }
+      haml :'in/profile', :locals => { :nav_hint => "profile" }
     else
       flash.now[:warning] = t.u.profile_edit_no_change
-      haml :'in/profile', :locals => { :user => active_user, :nav_hint => "profile" }
+      haml :'in/profile', :locals => { :nav_hint => "profile" }
     end
   end
 
@@ -461,7 +461,7 @@ class Frank < Sinatra::Base
   get '/in/*' do
     login_required!
     flash.now[:message] = t.u.hello_message
-    haml :'in/index', :locals => {:user => active_user, :nav_hint => "home" }
+    haml :'in/index', :locals => {:nav_hint => "home" }
   end
 
 ###################### AMINISTRATION ROUTES #############################
@@ -472,21 +472,21 @@ class Frank < Sinatra::Base
     # an admin user can list everyone
     user_list = User.all(:order => "LOWER(username) ASC")
     flash.now[:message] = t.u.list_users_message(user_list.size)
-    haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+    haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
   end
 
   #if logged in and if an admin then you may create a new user.
   get '/user' do
     admin_required! "/"
     flash.now[:message] = t.u.create_user_message
-    haml :'in/new_user', :locals => { :user => active_user, :nav_hint => "new_user" }
+    haml :'in/new_user', :locals => { :nav_hint => "new_user" }
   end
 
   #if logged in and if an admin then you may create a new role.
   get '/role' do
     admin_required! "/"
     flash.now[:message] = t.u.create_role_message
-    haml :'in/new_role', :locals => { :user => active_user, :nav_hint => "new_role" }
+    haml :'in/new_role', :locals => { :nav_hint => "new_role" }
   end
 
   #if logged in and if an admin then you may create a new role.
@@ -496,14 +496,14 @@ class Frank < Sinatra::Base
     # check the role name doesn't already exist
     if Role.find_by_name(new_name) != nil
       flash.now[:error] = t.u.create_role_error(new_name)
-      haml :'in/new_role', :locals => { :user => active_user, :nav_hint => "new_role" }     
+      haml :'in/new_role', :locals => { :nav_hint => "new_role" }     
     else
       new_role = Role.create( :name => new_name )
 #      @@log.debug("Created new role with name #{new_role.name}")
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("There are now #{t.roles(role_list.size)}")
       flash.now[:tip] = t.u.create_role_success(new_name)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     end
   end
 
@@ -519,10 +519,10 @@ class Frank < Sinatra::Base
     # check the user name doesn't already exist
     if User.find_by_username(new_name) != nil
       flash.now[:error] = t.u.create_user_username_error(new_name)
-      haml :'in/new_user', :locals => { :user => active_user, :nav_hint => "new_user" }     
+      haml :'in/new_user', :locals => { :nav_hint => "new_user" }     
     elsif User.find_by_email(new_email) != nil
       flash.now[:error] = t.u.create_user_email_error(new_email)
-      haml :'in/new_user', :locals => { :user => active_user, :nav_hint => "new_user" }           
+      haml :'in/new_user', :locals => { :nav_hint => "new_user" }           
     else
       new_user = User.create( :username => new_name, :password => new_password, :email => new_email )
       new_user.set_preference('HTML_EMAIL', new_html_pref)
@@ -544,7 +544,7 @@ class Frank < Sinatra::Base
 
 #      @@log.debug("There are now #{t.users(user_list.size)}")
       flash.now[:tip] = t.u.create_user_success(new_name)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     end
   end
 
@@ -556,10 +556,10 @@ class Frank < Sinatra::Base
     if target_user == nil
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
       flash.now[:message] =  t.u.show_user_message(target_user.username)
-      haml :'in/show_user', :locals => { :user => active_user, :target_user => target_user, :nav_hint => "show_user" }
+      haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "show_user" }
     end
   end
 
@@ -572,10 +572,10 @@ class Frank < Sinatra::Base
     if target_user == nil
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
       flash.now[:message] =  t.u.edit_user_message(target_user.username)
-      haml :'in/edit_user', :locals => { :user => active_user, :target_user => target_user, :nav_hint => "edit_user" }
+      haml :'in/edit_user', :locals => { :target_user => target_user, :nav_hint => "edit_user" }
     end
   end
 
@@ -587,7 +587,7 @@ class Frank < Sinatra::Base
     if target_user == nil
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     elsif active_user.can_edit_user?(target_user)
       new_email = params[:email].downcase           # emails are always stored in lowercase so always compare as lowercase.
       new_password = params[:password]
@@ -646,20 +646,20 @@ class Frank < Sinatra::Base
       if error
 #        @@log.debug("Editing user with username #{target_user.username} but an error occured. #{message}")
         flash.now[:error] =  message
-        haml :'in/edit_user', :locals => { :user => active_user, :target_user => target_user, :nav_hint => "edit_user" }
+        haml :'in/edit_user', :locals => { :target_user => target_user, :nav_hint => "edit_user" }
       elsif user_changed
         target_user.save!
 #        @@log.debug("Edited user with username #{target_user.username}")
         flash.now[:tip] =  message
-        haml :'in/show_user', :locals => { :user => active_user, :target_user => target_user, :nav_hint => "show_user" }
+        haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "show_user" }
       else
         flash.now[:warning] =  t.u.edit_user_no_change
-        haml :'in/show_user', :locals => { :user => active_user, :target_user => target_user, :nav_hint => "profile" }
+        haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "profile" }
       end
     else
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.edit_user_permission_error + '. ' + t.u.list_users_message(user_list.size)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }  
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }  
     end
   end
 
@@ -672,11 +672,11 @@ class Frank < Sinatra::Base
     if target_user == nil
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     elsif target_user.has_role?('superuser')
       user_list = User.all(:order => "LOWER(username) ASC")
       flash.now[:error] =  t.u.error_cant_delete_superuser_message
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
       tu_name = target_user.username
       target_user.destroy
@@ -684,7 +684,7 @@ class Frank < Sinatra::Base
       user_list = User.all(:order => "LOWER(username) ASC")
 #      @@log.debug("There are now #{t.users(user_list.size)}")
       flash.now[:tip] =  t.u.delete_user_success_message(tu_name)
-      haml :'in/list_users', :locals => { :user => active_user, :user_list => user_list, :nav_hint => "list_users" }
+      haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     end
   end
 
@@ -695,7 +695,7 @@ class Frank < Sinatra::Base
     role_list = Role.all(:order => "LOWER(name)")
 #    @@log.debug("There are #{t.roles(role_list.size)}")
     flash.now[:message] =  t.u.list_roles_message(role_list.size)
-    haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+    haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
   end
 
   get '/role/edit/:username' do
@@ -705,14 +705,14 @@ class Frank < Sinatra::Base
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  "#{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}"
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
       role_list = Role.all(:order => "LOWER(name)")
       flash.now[:error] =  t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
     else
       flash.now[:message] =  t.u.edit_role_message(target_role.name)
-      haml :'in/edit_role', :locals => { :user => active_user, :target_role => target_role, :nav_hint => "edit_role" }
+      haml :'in/edit_role', :locals => { :target_role => target_role, :nav_hint => "edit_role" }
     end
   end
 
@@ -724,25 +724,25 @@ class Frank < Sinatra::Base
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  "#{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}"
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That role was 'blessed' and can't be changed. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif new_name == target_role.name
       # no changes.
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That role name was not changed. There are #{t.roles(role_list.size)}")
       flash.now[:warning] =  t.u.edit_role_no_change
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }            
     elsif Role.find_by_name(new_name) != nil  # there's already a role called #{newname}
       # TODO: for now just call error but a better solution is to offer to merge the roles.
       #       Need to define business logic for that so it's beyond the scope of Frank.
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That is the name of an existing role. There are #{t.roles(role_list.size)}")
       flash.now[:error] =   t.u.error_dupe_role_name_message(new_name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }            
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }            
     else
       # change the name of the role.  How does this affect other users in that role? (TODO: test that)
       target_role.name = new_name
@@ -751,7 +751,7 @@ class Frank < Sinatra::Base
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("There are now #{t.roles(role_list.size)}")
       flash.now[:tip] =  t.u.edit_role_success
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
     end
   end
 
@@ -762,18 +762,18 @@ class Frank < Sinatra::Base
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That role was unknown. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  "#{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}"
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That role was 'blessed' and can't be deleted. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  t.u.error_cant_delete_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
     else
       target_role.destroy
       role_list = Role.all(:order => "LOWER(name)")
 #      @@log.debug("That role was deleted. There are #{t.roles(role_list.size)}")
       flash.now[:message] =  t.u.delete_role_message(target_role.name)
-      haml :'in/list_roles', :locals => { :user => active_user, :role_list => role_list, :nav_hint => "list_roles" }      
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
     end
   end
 

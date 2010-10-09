@@ -2,14 +2,14 @@
   %ol
     - for a_user in user_list do
       %li<
-        - if a_user.id == user.id
+        - if a_user.id == active_user.id
           %a{:href => '/profile'}#{a_user.username} *
           (
           %a{:href => "/profile/edit"}#{t.nav.edit_profile_button}
           )
         - else
           %a{:href => "/user/#{a_user.id}"}#{a_user.username}
-          - if user.can_edit_user?(a_user)
+          - if active_user.can_edit_user?(a_user)
             (
             %a{:href => "/user/edit/#{a_user.id}"}#{t.nav.edit_user_button}
             )

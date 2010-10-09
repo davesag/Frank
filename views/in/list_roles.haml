@@ -3,7 +3,7 @@
     - for a_role in role_list do
       %li<
         #{a_role.name}
-        - if (user.has_role?('admin') && !is_blessed_role?(a_role))
+        - if (active_user.has_role?('admin') && !is_blessed_role?(a_role))
           (
           %a{:href => "/role/edit/#{a_role.name}"}< #{t.nav.edit_role_button}
           |

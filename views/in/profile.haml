@@ -3,17 +3,17 @@
   %table
     %tr<
       %th> #{t.labels.username_label}
-      %td #{user.username}
+      %td #{active_user_name}
     %tr<
       %th> #{t.labels.email_label}
-      %td #{user.email}
+      %td #{active_user.email}
     %tr<
-      %th{ :colspan => "2" }#{t.preferences(user.preferences.size)}
-    - for pref in user.preferences
+      %th{ :colspan => "2" }#{t.preferences(active_user.preferences.size)}
+    - for pref in active_user.preferences
       %tr<
         %th>= pref.name
         %td= pref.value
--if !user.has_role?('admin')
+-if !active_user.has_role?('admin')
   #self_destruct
     %form(accept-charset='UTF-8' action='/delete_self' method='post')
       %input{ :type=>"submit", :value => t.nav.delete_me_button}

@@ -3,12 +3,12 @@
   %head
     %meta{ :'http-equiv' => "Content-Type", :content => "text/html; charset=UTF-8"}
     %link{ :href => "/css/style.css", :rel => "stylesheet", :type => "text/css" }
-    %title #{flash[:message]}#{flash[:warning]}#{flash[:error]}#{flash[:tip]} - User is #{user.username}
+    %title #{flash[:message]}#{flash[:warning]}#{flash[:error]}#{flash[:tip]} - User is #{active_user_name}
   %body
     #header
       / template header content goes here
       #welcome_message
-        %p< #{t.g.you_are_logged_in_as(user.username)}
+        %p< #{t.g.you_are_logged_in_as(active_user_name)}
       #navigation
         %p<
           [
@@ -22,7 +22,7 @@
           -else
             %a{:href=>'/profile/edit'}#{t.nav.edit_profile_button}
           |
-          -if user.has_role?('admin')
+          -if active_user.has_role?('admin')
             -if nav_hint == 'list_users'
               #{t.nav.list_users_button}
             -else
