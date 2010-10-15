@@ -45,6 +45,7 @@ Proposed Feature Set for v1
 ** localising of emailed erb plain text templates is not tested as we don't send email in tests. I know it works though.
 * Deploy to Heroku as http://frank-demo.heroku.com (done)
 * modularised handlers (done)
+* simple form validations (doing it)
 
 TODO: V1.0
 ----------
