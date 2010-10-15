@@ -15,6 +15,7 @@ require 'sinatra/template_helpers'
 require 'sinatra/email_helpers'
 require 'sinatra/authorisation_helpers'
 require 'sinatra/common_helpers'
+require 'sinatra/form_helpers'
 
 class Frank < Sinatra::Base
   enable  :sessions
@@ -26,6 +27,7 @@ class Frank < Sinatra::Base
   helpers Sinatra::EmailHelpers
   helpers Sinatra::AuthorisationHelpers
   helpers Sinatra::CommonHelpers
+  helpers Sinatra::FormHelpers
 
   @active_user = nil         # the active user is reloaded on each request in the before method.
 
@@ -97,7 +99,35 @@ class Frank < Sinatra::Base
     refresh_active_user!
   end
   
-######################   GUEST ROUTES   #################################
+######################   TEST ROUTES   #################################
+
+  get '/form_test' do
+    flash.now[:message] = "This is a test of an active form"
+    clear_form
+    add_field("testfield1", "test 1", "text", true, nil, "name", nil )
+    add_field("testfield2", "test@test.test", "text", true, 'email', "Email", nil )
+    add_field("testfield3", '', "password", false, nil, "Password", nil )
+    add_field("testfield4", 'test 3 is the most wonderful test of all.', "textarea", true, nil, "Blurb", nil )
+    add_field("testfield5", 'false', "select", true, nil, "Happy?", [{ :value => 'true', :text => 'Yes'}, { :value => 'false', :text => 'No'}] )
+#    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
+    haml :active_form_test, :locals => { :nav_hint => "test" }
+  end
+
+  post '/form_test' do
+    update_form
+    if form_okay?
+      if form_changed?
+        flash.now[:tip] = "Your changes were saved"
+      else
+        flash.now[:warning] = "There were no changes."
+      end
+    else
+      flash.now[:error] = "There were errors in your form"
+    end
+    haml :active_form_test, :locals => { :nav_hint => "test" }
+  end
+
+  ######################   GUEST ROUTES   #################################
 
   # home page - display login form, or divert to user home
   get '/' do

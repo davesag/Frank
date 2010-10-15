@@ -219,3 +219,6 @@ h3{
   text-decoration:underline;
 }
 
+.required {
+	border: 1px solid #green;
+}
