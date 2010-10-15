@@ -13,6 +13,10 @@ class GuestHandlerTest < HandlerTestBase
 
   def test_default_guest_gives_login_screen
     get '/'
+    assert last_response.redirect?
+    follow_redirect!
+
+    assert last_request.url.ends_with?("/login")
     assert last_response.ok?
     assert last_response.body.include?('Login to continue')
   end
@@ -33,6 +37,7 @@ class GuestHandlerTest < HandlerTestBase
 
   def test_guest_access_to_userland_gives_login_screen
     get '/in/index'
+    assert last_response.redirect?
     follow_redirect!
 
     assert last_request.url.ends_with?("/login")

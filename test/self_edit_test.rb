@@ -14,6 +14,7 @@ class SelfEditTest < HandlerTestBase
     mildred = setup_dummy_user("mildred")
     
     # first log in george
+    get '/login'
     post '/login', { :username => "george", :password => GOOD_PASSWORD }
  
     # check the edit screen works

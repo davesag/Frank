@@ -14,6 +14,14 @@ module Sinatra
       return false
     end
 
+    def language_options
+      lo = []
+      r18n.available_locales.each do |locl|
+        lo << { :value => locl.code, :text => locl.title }
+      end
+      return lo
+     end
+
     def is_blessed_role?(role)
       return ['admin', 'superuser'].include?(role.name)
     end

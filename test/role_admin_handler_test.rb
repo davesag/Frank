@@ -18,6 +18,7 @@ class RoleAdminHandlerTest < HandlerTestBase
   # test a user who is not an admin can't list roles
   def test_non_admin_cant_list_roles
     # first log in
+    get '/login'
     post '/login', { :username => NOBODY_USERNAME, :password => GOOD_PASSWORD }
 
     get '/roles'
@@ -27,6 +28,7 @@ class RoleAdminHandlerTest < HandlerTestBase
   # test an admin can list users
   def test_logged_in_admin_can_list_roles
     # first log in
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     get '/roles'
@@ -37,6 +39,7 @@ class RoleAdminHandlerTest < HandlerTestBase
   # test an admin can edit a specific user's details.
   def test_admin_can_edit_a_role
     # first log in
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # ensure a request to edit and unknown ID is bounced.
@@ -85,6 +88,7 @@ class RoleAdminHandlerTest < HandlerTestBase
     role = Role.create( :name => "dummy_role")
     
     # first log in
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     post "/role/delete/#{role.name}"
@@ -103,6 +107,7 @@ class RoleAdminHandlerTest < HandlerTestBase
     super_role = Role.find_by_name('superuser')
     admin_role = Role.find_by_name('admin')
 
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     post "/role/delete/#{super_role.name}"
@@ -122,6 +127,7 @@ class RoleAdminHandlerTest < HandlerTestBase
     super_role = Role.find_by_name('superuser')
     admin_role = Role.find_by_name('admin')
 
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     get "/role/edit/#{super_role.name}"
@@ -146,6 +152,7 @@ class RoleAdminHandlerTest < HandlerTestBase
   end
 
   def test_admin_can_create_role
+    get '/login'
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
  
     get '/role'

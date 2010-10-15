@@ -19,6 +19,7 @@ class AdminHandlerTest < HandlerTestBase
   # test a user who is not an admin can't list users
   def test_non_admin_user_cant_list_users
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => NOBODY_USERNAME, :password => GOOD_PASSWORD }
 
     get '/users'
@@ -28,6 +29,7 @@ class AdminHandlerTest < HandlerTestBase
   # test an admin can list users
   def test_logged_in_admin_can_list_users
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     get '/users'
@@ -38,6 +40,7 @@ class AdminHandlerTest < HandlerTestBase
   # test an admin can show a specific user's details.
   def test_admin_can_show_user
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     user_id = User.find_by_username(NOBODY_USERNAME).id
@@ -62,6 +65,7 @@ class AdminHandlerTest < HandlerTestBase
     ann_admin.save!
     
     # log ann_admin in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => 'anneadmin', :password => GOOD_PASSWORD }
 
     # ensure a request to edit and unknown ID is bounced.
@@ -165,6 +169,7 @@ class AdminHandlerTest < HandlerTestBase
     get '/logout'
     
     # try logging george in with his new password
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => george.username, :password => "newpassword" }
     assert last_response.body.include?('Vous avez ouvert une session comme')    # we changed him to French.
     assert last_response.body.include?(george.username)    
@@ -253,6 +258,7 @@ class AdminHandlerTest < HandlerTestBase
     george = setup_dummy_user("george")
     
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     user_id = User.find_by_username("george").id
@@ -274,6 +280,7 @@ class AdminHandlerTest < HandlerTestBase
     super_george.add_role('superuser')
     super_george.save!
 
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     post "/user/delete/#{super_george.id}"
@@ -286,6 +293,7 @@ class AdminHandlerTest < HandlerTestBase
   end
   
   def test_admin_can_create_user
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     get '/user'
@@ -313,8 +321,10 @@ class AdminHandlerTest < HandlerTestBase
   end
 
   def test_created_user_dupe_username_password
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
+    get '/user'  # need to do this to set up the form container.
     post '/user', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD,
       :email => "new_user_franktest@davesag.com", :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?

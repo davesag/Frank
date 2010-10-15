@@ -12,6 +12,8 @@ class UserHandlerTest < HandlerTestBase
    # test for user login with good credentials
 
   def test_login_attempt_good__username_and_password_gives_user_home_screen
+    get '/login'  # need to do this to set up the form container.
+    assert last_response.ok?
     post '/login', {:username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
     assert last_response.body.include?('You are logged in as')    
@@ -19,6 +21,8 @@ class UserHandlerTest < HandlerTestBase
   end
 
   def test_login_attempt_good_email_and_password_gives_user_home_screen
+    get '/login'  # need to do this to set up the form container.
+    assert last_response.ok?
     post '/login', {:username => GOOD_EMAIL, :password => GOOD_PASSWORD }
     assert last_response.ok?
     assert last_response.body.include?('You are logged in as')    
@@ -27,6 +31,8 @@ class UserHandlerTest < HandlerTestBase
 
   def test_logout_user_gives_home_screen
     # first log in
+    get '/login'  # need to do this to set up the form container.
+    assert last_response.ok?
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # try going to '/'
@@ -79,6 +85,8 @@ class UserHandlerTest < HandlerTestBase
     assert last_response.body.include?('Contact Details')
 
     # now log in and try again
+    get '/login'  # need to do this to set up the form container.
+    assert last_response.ok?
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
 
@@ -106,14 +114,18 @@ class UserHandlerTest < HandlerTestBase
 
   def test_contact_post
     #test as guest (will request an email address)
+    get '/contact'
     post '/contact', { :subject => "testing", :email => "franktestguest@davesag.com", :message => "Hi there, you are awesome."}
     assert last_response.ok?
     assert last_response.body.include?('Your message has been emailed to the Webmaster')
     
     # then login
+    get '/login'  # need to do this to set up the form container.
+    assert last_response.ok?
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # then test as user (will not have to ask for an email address)
+    get '/contact'
     post '/contact', { :subject => "testing", :email => "franktestguest@davesag.com", :message => "Hi there, you are awesome."}
     assert last_response.ok?
     assert last_response.body.include?('Your priority message has been emailed to the Webmaster')
@@ -127,6 +139,7 @@ class UserHandlerTest < HandlerTestBase
     george.locale = 'en-GB'
     george.save!
 
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => george.username, :password => GOOD_PASSWORD }
     assert last_response.ok?
     
@@ -144,6 +157,7 @@ class UserHandlerTest < HandlerTestBase
     mildred.locale = 'en-AU'
     mildred.save!
 
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => mildred.username, :password => GOOD_PASSWORD }
     assert last_response.ok?
     
@@ -166,6 +180,7 @@ class UserHandlerTest < HandlerTestBase
 
   def test_logged_in_user_access_to_userland_approved
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # then specifically request the index page in userland
@@ -179,6 +194,7 @@ class UserHandlerTest < HandlerTestBase
 
   def test_users_preferences
     # first log in
+    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     # the show user page dumps all of the preferences.

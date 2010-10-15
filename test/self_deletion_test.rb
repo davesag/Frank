@@ -13,6 +13,7 @@ class SelfDeletionTest < HandlerTestBase
     dummy_user = setup_dummy_user("deleteme")
 
     # first log in
+    get '/login'
     post '/login', { :username => "deleteme", :password => GOOD_PASSWORD }
     
     post '/delete_self'    
@@ -29,6 +30,7 @@ class SelfDeletionTest < HandlerTestBase
   def test_cant_delete_root
 
     # first log in as root (an admin user - see db/seeds.rb)
+    get '/login'
     post '/login', { :username => "root", :password => GOOD_PASSWORD }
     
     post '/delete_self'

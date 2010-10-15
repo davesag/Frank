@@ -1,13 +1,2 @@
-#login_form
-  %form(accept-charset='UTF-8' action='/contact' method='post')
-    %p< 
-      %label{ :for => "subject" }#{t.labels.subject_label}
-      %input(name='subject' type='text')
-    %p<
-    - if !is_logged_in?
-      %label{ :for => "email" }#{t.labels.email_label}
-      %input(name='email' type='text')
-    %p< 
-      %label{ :for => "message" }#{t.labels.message_label}
-      %textarea(name='message')
-    %input{ :type => "submit", :value =>t.labels.send_feedback_label}
+#entry_form
+  =haml :'chunks/active_form', :locals => { :form_action => "/contact", :submit_label => t.labels.send_feedback_label }

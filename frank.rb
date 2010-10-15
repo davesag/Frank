@@ -131,46 +131,27 @@ class Frank < Sinatra::Base
 
   # home page - display login form, or divert to user home
   get '/' do
-    if is_logged_in?
-      flash.now[:message] = t.u.welcome_in
-      haml :'in/index', :locals => { :nav_hint => "home" }
-    else
-      flash.now[:message] = t.u.login_message
-  	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
-    end
+    login_required! 
+    flash.now[:message] = t.u.welcome_in
+    haml :'in/index', :locals => { :nav_hint => "home" }
   end
 
   # privacy page - display privacy text
   get '/privacy' do
-    if is_logged_in?
-      flash.now[:message] = t.u.privacy_title_in
-      haml :'privacy', :locals => { :nav_hint => "privacy" }
-    else
-      flash.now[:message] = t.u.privacy_title_out
-  	  haml :privacy, :locals => { :nav_hint => "privacy" }
-    end
+    flash.now[:message] = is_logged_in? ? t.u.privacy_title_in : t.u.privacy_title_out
+    haml :'privacy', :locals => { :nav_hint => "privacy" }
   end
 
   # about page - display about text
   get '/about' do
-    if is_logged_in?
-      flash.now[:message] = t.u.about_title_in
-      haml :'about', :locals => { :nav_hint => "about" }
-    else
-      flash.now[:message] = t.u.about_title_out
-  	  haml :about, :locals => { :nav_hint => "about" }
-    end
+    flash.now[:message] = is_logged_in? ? t.u.about_title_in : t.u.about_title_out
+  	haml :about, :locals => { :nav_hint => "about" }
   end
 
   # privacy page - display privacy text
   get '/terms' do
-    if is_logged_in?
-      flash.now[:message] = t.u.terms_title_in
-      haml :'terms', :locals => { :nav_hint => "terms" }
-    else
-      flash.now[:message] = t.u.terms_title_out
-  	  haml :terms, :locals => { :nav_hint => "terms" }
-    end
+    flash.now[:message] = is_logged_in? ? t.u.terms_title_in : t.u.terms_title_out
+  	haml :terms, :locals => { :nav_hint => "terms" }
   end
 
   # login request - display login form, or divert to user home
@@ -179,6 +160,9 @@ class Frank < Sinatra::Base
       flash.now[:message] = t.u.welcome_in
       haml :'in/index', :locals => { :nav_hint => "home" }
     else
+      clear_form
+      add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
       flash.now[:message] = t.u.login_message
   	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
     end
@@ -186,41 +170,58 @@ class Frank < Sinatra::Base
 
   #login action - check credentials and load user into session
   post '/login' do
-    name = params['username']
-    pass = params['password']
-    entering_user = auth_user(name, pass)
-    if entering_user != nil
-      log_user_in!(entering_user)
-      flash.now[:tip] = t.u.login_success(active_user_name)
-      haml :'in/index', :locals => { :nav_hint => "home" }
+    update_form
+    if form_okay?
+      name = params['username']
+      pass = params['password']
+      entering_user = auth_user(name, pass)
+      if entering_user != nil
+        log_user_in!(entering_user)
+        flash.now[:tip] = t.u.login_success(active_user_name)
+        haml :'in/index', :locals => { :nav_hint => "home" }
+      else
+        flash.now[:error] = t.u.login_error
+        haml :login, :locals => { :nav_hint => "login" }
+      end
     else
-      flash.now[:error] = t.u.login_error
-      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
+      flash.now[:error] = "There were errors in your form"
+      haml :login, :locals => { :nav_hint => "login" }
     end
   end
 
   # contact request - display contact form
   get '/contact' do
+    clear_form
+    add_field('subject', '', 'text', "required", nil, 'Subject', nil )
+    #    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
     if is_logged_in?
       flash.now[:message] = t.u.contact_title_in
-      haml :contact, :locals => { :nav_hint => "contact" }
     else
       flash.now[:message] = t.u.contact_title_out
-  	  haml :contact, :locals => { :nav_hint => "contact" }
+      add_field('email', '', 'text', "required", 'email', 'Email', nil )
     end
+    add_field('message', '', 'textarea', "required", nil, 'Message', nil )
+    haml :contact, :locals => { :nav_hint => "contact" }
   end
 
   # handle contact request - send email to davesag@gmail.com and display a thanks message.
   post '/contact' do
-    email_from = is_logged_in? ? active_user.email : params[:email]
-    send_message_to_webmaster( email_from, params[:subject], params[:message])
-    if is_logged_in?
-      flash.now[:message] = t.u.contact_send_message_in
-      haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_in, :nav_hint => "contact" }
+    update_form
+    if form_okay?
+      email_from = is_logged_in? ? active_user.email : params[:email]
+      send_message_to_webmaster( email_from, params[:subject], params[:message])
+      if is_logged_in?
+        flash.now[:message] = t.u.contact_send_message_in
+        haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_in, :nav_hint => "contact" }
+      else
+        flash.now[:message] = t.u.contact_send_message_out
+    	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :nav_hint => "contact" }
+      end
     else
-      flash.now[:message] = t.u.contact_send_message_out
-  	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :nav_hint => "contact" }
+      flash.now[:error] = "There were errors in your form"
+      haml :contact, :locals => { :nav_hint => "contact" }
     end
+
   end
 
   # registration request - display registration form, or divert to user home if logged in
@@ -230,10 +231,20 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :nav_hint => "home" }
     elsif is_remembered_user?
       flash.now[:error] = t.u.register_error
-      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
+      clear_form
+      add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      haml :login, :locals => { :nav_hint => "login" }
 	  else
       flash.now[:message] = t.u.register_message
-  	  haml :register, :locals => { :username => '', :email => '', :nav_hint => "register" }
+      clear_form
+      add_field('email', '', 'text', true, 'email', t.labels.choose_email_label, nil )
+      add_field('username', '', 'text', true, nil, t.labels.choose_username_label, nil )
+      add_field('password', '', 'password', true, nil, t.labels.choose_password_label, nil )
+      add_field('locale', i18n.locale, 'select', false, nil, t.labels.choose_language_label, language_options )
+      add_field('terms', 'true', "select", false, nil, t.labels.read_and_agree_label,
+        [{ :value => 'true', :text => t.labels.option_terms_yes}, { :value => 'false', :text => t.labels.option_terms_no }] )
+  	  haml :register, :locals => { :nav_hint => "register" }
     end
   end
 
@@ -307,40 +318,53 @@ class Frank < Sinatra::Base
   post '/registration' do
     if is_logged_in?
       flash.now[:error] = t.u.register_error_already_as(active_user_name)
+      clear_form
       haml :'in/index', :locals => { :nav_hint => "home" }
     else
-      email = params['email']
-      name = params['username']
-      terms = params['terms']
-      if 'true' != terms
-        flash.now[:error] = t.u.register_error_terms
-    	  haml :register, :locals => { :username => name, :email => email, :nav_hint => "register" }        
-      else
-        if User.username_exists?(name)
-          flash.now[:error] = t.u.register_error_username(name)
-      	  haml :register, :locals => { :username => "", :email => email, :nav_hint => "register" }
-        elsif User.email_exists?(email)
-      	  notify_user_of_registration_overlap_attempt!(email,name)
-          flash.now[:error] = t.u.register_error_email(email)
-      	  haml :register, :locals => { :username => name, :email => "", :nav_hint => "register" }
+      update_form
+      if form_okay?
+        email = params['email']
+        name = params['username']
+        terms = params['terms']
+        if 'true' != terms
+          flash.now[:error] = t.u.register_error_terms
+          add_error('terms', t.u.register_error_terms)
+      	  haml :register, :locals => { :nav_hint => "register" }        
         else
-          user = User.create(:username => name, :password => params['password'], :email => email)
-          user.set_preference("HTML_EMAIL", "true")
-          locale_code = params[:locale]
-          # just check the locale code provided is legit.
-          if !locale_available?(locale_code)
-            @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
-            user.locale = R18n::I18n.default
+          if User.username_exists?(name)
+            flash.now[:error] = t.u.register_error_username(name)
+            add_error('username', t.u.register_error_username(name))
+        	  haml :register, :locals => { :nav_hint => "register" }
+          elsif User.email_exists?(email)
+        	  notify_user_of_registration_overlap_attempt!(email,name)
+            flash.now[:error] = t.u.register_error_email(email)
+            add_error('username', t.u.register_error_email(email))
+        	  haml :register, :locals => { :nav_hint => "register" }
           else
-            user.locale = locale_code
-            # and set the local
-            session[:locale] = locale_code
+            user = User.create(:username => name, :password => params['password'], :email => email)
+            user.set_preference("HTML_EMAIL", "true")
+            locale_code = params[:locale]
+            # just check the locale code provided is legit.
+            if !locale_available?(locale_code)
+              @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
+              user.locale = R18n::I18n.default
+            else
+              user.locale = locale_code
+              # and set the local
+              session[:locale] = locale_code
+            end
+            user.save!
+            send_registration_confirmation_to(user)
+            flash.now[:tip] = t.u.register_success(email)
+            clear_form
+            add_field('username', name, 'text', "required", nil, t.labels.username_label, nil )
+            add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+            haml :login, :locals => { :nav_hint => "login" }
           end
-          user.save!
-          send_registration_confirmation_to(user)
-          flash.now[:tip] = t.u.register_success(email)
-          haml :login, :locals => { :username => name, :nav_hint => "login" }
         end
+      else
+        flash.now[:error] = "There were errors in your form"
+        haml :register, :locals => { :nav_hint => "register" }
       end
     end
   end
@@ -365,21 +389,18 @@ class Frank < Sinatra::Base
   #logout action  - nuke user from session, display login form and thank user
   get '/logout' do
     if is_logged_in?
-#      @@log.debug("Logging out #{active_user_name}")
-      name = active_user_name
       log_user_out
-      flash.now[:message] = t.u.logout_message(name)
-      haml :login, :locals => { :username => name, :nav_hint => "login" }
+      flash.now[:message] = t.u.logout_message(active_user_name)
     elsif is_remembered_user?
-#      @@log.debug("Logging out #{remembered_user_name} completely")
-      name = remembered_user_name
       log_user_out
-      flash.now[:message] = t.u.logout_completely(name)
-      haml :login, :locals => { :username => "", :nav_hint => "login" }
+      flash.now[:message] = t.u.logout_completely(remembered_user_name)
     else
       flash.now[:error] = t.u.logout_error
-      haml :login, :locals => { :username => "", :nav_hint => "login" }
     end
+    clear_form
+    add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
+    add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+    haml :login, :locals => {:nav_hint => "login" }
   end
 
   # a user can delete themselves.

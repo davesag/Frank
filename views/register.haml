@@ -1,24 +1,2 @@
 #entry_form
-  %form(accept-charset='UTF-8' action='/registration' method='post')
-    %p< 
-      %label{ :for => "email" }#{t.labels.choose_email_label}
-      %input(name='email' type='text' value='#{email}')
-    %p< 
-      %label{ :for => "username" }#{t.labels.choose_username_label}
-      %input(name='username' type='text' value='#{username}')
-    %p<
-      %label{ :for => "password" }#{t.labels.choose_password_label}
-      %input(name='password' type='password')
-    %p<
-      %label{ :for => "locale"}#{t.labels.choose_language_label}
-      %select{ :name => "locale" }
-        - for locl in r18n.available_locales do
-          %option{:value=> "#{locl.code}", :selected => i18n.locale == locl ? "selected" : nil }#{locl.title}
-    %p<
-      %label{ :for => "terms" }<
-        #{t.labels.read_and_agree_label}
-        %a{:href=>"/terms", :target => "_blank"}< #{t.nav.terms_button}
-      %select(name='terms')
-        %option(value="true" selected="selected")< #{t.labels.option_terms_yes}
-        %option(value="false")< #{t.labels.option_terms_no}
-    %input{ :type => "submit", :value => t.labels.register_me_label}
+  =haml :'chunks/active_form', :locals => { :form_action => '/registration', :submit_label => t.labels.register_me_label }

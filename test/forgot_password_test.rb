@@ -64,6 +64,7 @@ class ForgotPasswordTest < HandlerTestBase
   end
 
   def test_lost_password_while_logged_in_gives_error
+    get '/login'  # need to do this to set up the form container.
     post '/login', {:username => GOOD_USERNAME, :password => GOOD_PASSWORD }
     assert last_response.ok?
 

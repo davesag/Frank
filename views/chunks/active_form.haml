@@ -1,4 +1,4 @@
-%form{ :method => 'POST', :action => '/form_test', :'accept-charset' => 'UTF-8', :onsubmit => "check_required(this); check_valid(this);" }
+%form{ :method => 'POST', :action => "#{form_action}", :'accept-charset' => 'UTF-8', :onsubmit => "check_required(this); check_valid(this);" }
   -for field in active_form do
     %p{  :class => field_okay?(field[:name]) ? (field[:required] ? 'required' : nil ) : 'error' }<
       %label{ :for => field[:name]}#{field[:label_text] }
@@ -7,11 +7,11 @@
       -if field[:type] == 'textarea'
         %textarea{ :name => field[:name], :onchange => build_validation_call(field) }#{field[:value]}
       -if field[:type] == 'password'
-        %input{ :name => field[:name], :value => field[:value], :onchange => build_validation_call(field), :type => 'password'}
+        %input{ :name => field[:name], :value => '', :onchange => build_validation_call(field), :type => 'password'}
       -if field[:type] == 'select'
         %select{ :name => field[:name], :onchange => build_validation_call(field)}
           -for opt in field[:options] do
             %option{ :value => opt[:value], :selected => (opt[:value] == field[:value]) }#{opt[:text]}
       -if !field_okay?(field[:name])
         #{error_message(field[:name])}
-  %input{ :type => 'submit', :value => 'submit'}
+  %input{ :type => 'submit', :value => "#{submit_label}"}

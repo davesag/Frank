@@ -1,2 +1,2 @@
 #entry_form
-  =haml(:'chunks/active_form_dump')
+  =haml :'chunks/active_form', :locals => { :form_action => '/form_test', :submit_label => 'Submit' }
