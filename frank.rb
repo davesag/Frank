@@ -255,6 +255,8 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :nav_hint => "home" }
 	  else
       flash.now[:message] = t.u.forgot_password
+      clear_form
+      add_field('email', '', 'text', true, 'email', t.labels.email_label, nil )
   	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
@@ -264,51 +266,71 @@ class Frank < Sinatra::Base
       flash.now[:error] = t.u.forgot_password_error_already_as(active_user_name)
       haml :'in/index', :locals => { :nav_hint => "home" }
 	  else
-	    user = User.find_by_email(params[:email].downcase)
+      update_form
+      if form_okay?
+  	    user = User.find_by_email(params[:email].downcase)
 
-#      require 'ruby-debug'
-#      debugger
-
-	    if user == nil
-        flash.now[:error] = t.u.forgot_password_error
-        haml :forgot_password, :locals => {:nav_hint => "forgot_password" }	      
+  	    if user == nil
+          flash.now[:error] = t.u.forgot_password_error
+          add_error('email', t.u.forgot_password_error)
+          haml :forgot_password, :locals => {:nav_hint => "forgot_password" }	      
+        else
+          user.password_reset = true
+          user.save!
+          send_password_reset_to(user)
+          flash.now[:tip] = t.u.forgot_password_instruction
+      	  haml :message_only, :locals => { :detailed_message => t.u.forgot_password_instruction_detail, :nav_hint => "forgot_password" }
+        end
       else
-        user.password_reset = true
-        user.save!
-        send_password_reset_to(user)
-        flash.now[:tip] = t.u.forgot_password_instruction
-    	  haml :message_only, :locals => { :detailed_message => t.u.forgot_password_instruction_detail, :nav_hint => "forgot_password" }
+        flash.now[:error] = "There were errors in your form"
+    	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
       end
     end
   end
 
   get '/reset_password/:token' do
+    clear_form
     user = User.find_by_validation_token(params[:token])
     if user == nil || !user.password_reset?
       flash.now[:error] = t.u.token_expired_error
-      haml :login, :locals => { :username => "", :nav_hint => "login"}
+      add_field('username', '', 'text', "required", nil, t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      haml :login, :locals => {:nav_hint => "login"}
     else
       flash.now[:tip] = t.u.forgot_password_instruction_email
-      haml :reset_password, :locals => { :validation_token => user.validation_token, :nav_hint => "forgot_password" }
+      add_field('token', user.validation_token, 'hidden', "required", nil, t.labels.password_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      haml :reset_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
 
   post '/reset_password' do
-    user = User.find_by_validation_token(params[:token])
-    if user == nil || !user.password_reset?
-      flash.now[:error] = t.u.token_expired_error
-      haml :login, :locals => { :username => "", :nav_hint => "login"}
+    update_form
+    if form_okay?
+      user = User.find_by_validation_token(params[:token])
+      if user == nil || !user.password_reset?
+        flash.now[:error] = t.u.token_expired_error
+        clear_form
+        add_field('username', '', 'text', "required", nil, t.labels.username_label, nil )
+        add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+        haml :login, :locals => { :nav_hint => "login"}
+      else
+        # actually change the password (note this is stored as a bcrypted string, not in clear text)
+        user.password = params[:password]
+        user.password_reset = false   # this is a secuity measure to prevent  someone with a matching token resetting a
+                                      # password that was not requested to be reset.
+        user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use.
+        user.save!
+        remember_user_name(user.username)
+        flash.now[:tip] = t.u.forgot_password_success
+        clear_form
+        add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
+        add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+        haml :login, :locals => { :nav_hint => "login" }
+      end
     else
-      # actually change the password (note this is stored as a bcrypted string, not in clear text)
-      user.password = params[:password]
-      user.password_reset = false   # this is a secuity measure to prevent  someone with a matching token resetting a
-                                    # password that was not requested to be reset.
-      user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use.
-      user.save!
-#      nuke_session!
-      remember_user_name(user.username)
-      flash.now[:tip] = t.u.forgot_password_success
-      haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
+      flash.now[:error] = "There were errors in your form"
+  	  haml :reset_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
 
@@ -371,16 +393,19 @@ class Frank < Sinatra::Base
 
   # checks the user against the validation token.
   get '/validate/:token' do
+    clear_form
     user = User.find_by_validation_token(params[:token])
     if user == nil || user.validated?
       flash.now[:error] = t.u.token_expired_error
-      haml :index, :locals => { :username => "", :nav_hint => "home"}
+      haml :index, :locals => { :nav_hint => "home"}
     else
       user.validated = true
       user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use to prevent reuse.
       user.save!
       flash.now[:tip] = t.u.register_success_confirmed
-      haml :login, :locals => { :username => user.username, :nav_hint => "login" }
+      add_field('username', user.username, 'text', "required", nil, t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      haml :login, :locals => { :nav_hint => "login" }
     end
   end
 

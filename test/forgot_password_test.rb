@@ -81,6 +81,7 @@ class ForgotPasswordTest < HandlerTestBase
   end
 
   def test_lost_password_wrong_email_gives_error
+    get '/forgot_password'
     post '/forgot_password', { :email => BAD_EMAIL }
     assert last_response.ok?
     assert last_response.body.include?('That email address is unknown.')
