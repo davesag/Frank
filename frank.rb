@@ -339,37 +339,30 @@ class Frank < Sinatra::Base
           add_error('terms', t.u.register_error_terms, 'must_be_true')
       	  haml :register, :locals => { :nav_hint => "register" }        
         else
-          if User.username_exists?(name)
-            flash.now[:error] = t.u.register_error_username(name)
-            add_error('username', t.u.register_error_username(name), 'unique')
-        	  haml :register, :locals => { :nav_hint => "register" }
-          elsif User.email_exists?(email)
-        	  notify_user_of_registration_overlap_attempt!(email,name)
-            flash.now[:error] = t.u.register_error_email(email)
-            add_error('username', t.u.register_error_email(email), 'unique')
-        	  haml :register, :locals => { :nav_hint => "register" }
+          user = User.create(:username => name, :password => params['password'], :email => email)
+          user.set_preference("HTML_EMAIL", "true")
+          locale_code = params[:locale]
+          # just check the locale code provided is legit.
+          if !locale_available?(locale_code)
+            @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
+            user.locale = R18n::I18n.default
           else
-            user = User.create(:username => name, :password => params['password'], :email => email)
-            user.set_preference("HTML_EMAIL", "true")
-            locale_code = params[:locale]
-            # just check the locale code provided is legit.
-            if !locale_available?(locale_code)
-              @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
-              user.locale = R18n::I18n.default
-            else
-              user.locale = locale_code
-              # and set the local
-              session[:locale] = locale_code
-            end
-            user.save!
-            send_registration_confirmation_to(user)
-            flash.now[:tip] = t.u.register_success(email)
-            prep_login_form name
-            haml :login, :locals => { :nav_hint => "login" }
+            user.locale = locale_code
+            # and set the local
+            session[:locale] = locale_code
           end
+          user.save!
+          send_registration_confirmation_to(user)
+          flash.now[:tip] = t.u.register_success(email)
+          prep_login_form name
+          haml :login, :locals => { :nav_hint => "login" }
         end
       else
         flash.now[:error] = "There were errors in your form"
+        # was it the uniqueness of the email?
+        if active_error_flags['email'] == 'unique'
+          notify_user_of_registration_overlap_attempt!(params['email'],params['username'])
+    	  end
         haml :register, :locals => { :nav_hint => "register" }
       end
     end

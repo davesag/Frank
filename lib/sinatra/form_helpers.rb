@@ -54,7 +54,7 @@ module Sinatra
               error = true
             end
             if fv.end_with?('unique') && !validate_username_is_unique(new_value)
-              add_error(field[:name], "#{new_value} was not a unique username", 'unique')
+              add_error(field[:name], t.u.register_error_username(new_value), 'unique')
               error = true
             end
           when fv == 'password'
@@ -194,8 +194,8 @@ module Sinatra
 
     def prep_registration_form
       clear_form
-      add_field('email', '', 'text', true, 'email', t.labels.choose_email_label, nil )
-      add_field('username', '', 'text', true, 'username', t.labels.choose_username_label, nil )
+      add_field('email', '', 'text', true, 'email, unique', t.labels.choose_email_label, nil )
+      add_field('username', '', 'text', true, 'username, unique', t.labels.choose_username_label, nil )
       add_field('password', '', 'password', true, 'password', t.labels.choose_password_label, nil )
       add_field('locale', i18n.locale, 'select', false, nil, t.labels.choose_language_label, language_options )
       add_field('terms', 'true', "select", false, nil, t.labels.read_and_agree_label,
