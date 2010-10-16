@@ -263,7 +263,7 @@ class Frank < Sinatra::Base
 
   	    if user == nil
           flash.now[:error] = t.u.forgot_password_error
-          add_error('email', t.u.forgot_password_error)
+          add_error('email', t.u.forgot_password_error, 'missing')
           haml :forgot_password, :locals => {:nav_hint => "forgot_password" }	      
         else
           user.password_reset = true
@@ -336,17 +336,17 @@ class Frank < Sinatra::Base
         terms = params['terms']
         if 'true' != terms
           flash.now[:error] = t.u.register_error_terms
-          add_error('terms', t.u.register_error_terms)
+          add_error('terms', t.u.register_error_terms, 'must_be_true')
       	  haml :register, :locals => { :nav_hint => "register" }        
         else
           if User.username_exists?(name)
             flash.now[:error] = t.u.register_error_username(name)
-            add_error('username', t.u.register_error_username(name))
+            add_error('username', t.u.register_error_username(name), 'unique')
         	  haml :register, :locals => { :nav_hint => "register" }
           elsif User.email_exists?(email)
         	  notify_user_of_registration_overlap_attempt!(email,name)
             flash.now[:error] = t.u.register_error_email(email)
-            add_error('username', t.u.register_error_email(email))
+            add_error('username', t.u.register_error_email(email), 'unique')
         	  haml :register, :locals => { :nav_hint => "register" }
           else
             user = User.create(:username => name, :password => params['password'], :email => email)
@@ -453,7 +453,7 @@ class Frank < Sinatra::Base
     login_required!
     flash.now[:message] = t.u.profile_edit_message
     clear_form
-    add_field('email', active_user.email, 'text', true, 'email', t.labels.edit_email_label, nil )
+    add_field('email', active_user.email, 'text', true, 'email, unique', t.labels.edit_email_label, nil )
     add_field('password', '', 'password', false, 'new_password', t.labels.edit_password_label, nil )
     add_field('locale',active_user.locale, 'select', false, nil, t.labels.edit_language_label, language_options )
     add_field('html_email', active_user.get_preference('HTML_EMAIL').value, "select", false, nil, t.labels.edit_html_email_label,
@@ -472,7 +472,6 @@ class Frank < Sinatra::Base
       new_locale = params[:locale]
   
       user_changed = false
-      error = false
       message = t.u.profile_edit_success
   
       old_html_email_pref = user.get_preference('HTML_EMAIL').value
@@ -490,18 +489,11 @@ class Frank < Sinatra::Base
   
       # if the email is new then deactivate and send a confirmation message
       if new_email != user.email
-        if User.email_exists?(new_email)
-      	  notify_user_of_email_change_overlap_attempt!(new_email, user.username)
-      	  message = t.u.profile_edit_error
-      	  error = true
-      	  add_error('email', t.u.profile_edit_error_email_clash(new_email))
-        else
-          user.email = new_email
-          user.validated = false
-          send_email_update_confirmation_to(user)
-          message = t.u.profile_edit_success_email_confirmation(new_email)
-          user_changed = true
-        end
+        user.email = new_email
+        user.validated = false
+        send_email_update_confirmation_to(user)
+        message = t.u.profile_edit_success_email_confirmation(new_email)
+        user_changed = true
       end
 
       # just check the locale code provided is legit and skip it if not.
@@ -510,10 +502,7 @@ class Frank < Sinatra::Base
         user_changed = true
       end
   
-      if error
-        flash.now[:error] = message
-        haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
-    	elsif user_changed
+      if user_changed
         user.save!
         refresh_active_user!
         flash.now[:message] = message
@@ -523,7 +512,11 @@ class Frank < Sinatra::Base
         haml :'in/profile', :locals => { :nav_hint => "profile" }
       end
     else
-      flash.now[:error] = "There were errors in your form"
+      flash.now[:error] = t.u.profile_edit_error
+      # if the uniqueness of the email field was violated then notify user and report error
+      if active_error_flags['email'] == 'unique'
+        notify_user_of_email_change_overlap_attempt!(params['email'], user.username)
+      end
       haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
     end
   end

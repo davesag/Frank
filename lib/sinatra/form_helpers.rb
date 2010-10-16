@@ -17,6 +17,7 @@ module Sinatra
       session[:active_form] = []
       session[:active_form_changed?] = false
       session[:active_form_errors] = Hash.new
+      session[:active_form_error_flags] = Hash.new
     end
 
     # compare what is in the income request params with what is in the form fields,
@@ -25,50 +26,51 @@ module Sinatra
     def update_form
       session[:active_form_changed?] = false
       session[:active_form_errors] = Hash.new
+      session[:active_form_error_flags] = Hash.new
       for field in active_form do
         old_value = field[:value]
         new_value = params[:"#{field[:name]}"]
         error = false
         # do validations
         if field[:required] && new_value ==  '' && field[:validation] != 'new_password'
-          add_error(field[:name], "Required field was missing")
+          add_error(field[:name], "Required field was missing", 'missing')
           error = true
-        elsif field[:validation] != nil
+        elsif field[:validation] != nil && new_value != old_value   # only validate fields that have changed.
           # we support email[, unique], username[, unique], password or username_or_email validation
           fv = field[:validation]
           case
           when fv.start_with?('email')
             if !validate_email(new_value)
-              add_error(field[:name], "#{new_value} was not a valid email")
+              add_error(field[:name], "#{new_value} was not a valid email", 'invalid')
               error = true
             end
             if fv.end_with?('unique') && !validate_email_is_unique(new_value)
-              add_error(field[:name], "#{new_value} was not a unique email")
+              add_error(field[:name], t.u.profile_edit_error_email_clash(new_value), 'unique')
               error = true
             end
           when fv.start_with?('username') && fv != 'username_or_email'
             if !validate_username(new_value)
-              add_error(field[:name], "A username may not contain spaces and must be less than 20 characters long")
+              add_error(field[:name], "A username may not contain spaces and must be less than 20 characters long", 'invalid')
               error = true
             end
             if fv.end_with?('unique') && !validate_username_is_unique(new_value)
-              add_error(field[:name], "#{new_value} was not a unique username")
+              add_error(field[:name], "#{new_value} was not a unique username", 'unique')
               error = true
             end
           when fv == 'password'
             if !validate_password(new_value)
-              add_error(field[:name], "Your password must be between 4 and 20 characters long")
+              add_error(field[:name], "Your password must be between 4 and 20 characters long", 'invalid')
               error = true
             end            
           when fv == 'new_password'
             return true unless new_value != ''
             if !validate_password(new_value)
-              add_error(field[:name], "The new password must be between 4 and 20 characters long")
+              add_error(field[:name], "The new password must be between 4 and 20 characters long", 'invalid')
               error = true
             end
           when fv == 'username_or_email'
             if !(validate_username(new_value) || validate_email(new_value))
-              add_error(field[:name], "You must supply a valid username or email")
+              add_error(field[:name], "You must supply a valid username or email", 'invalid')
               error = true
             end            
           else
@@ -91,15 +93,20 @@ module Sinatra
       return session[:active_form_changed?]
     end
 
-    # return the current active container
+    # return the current active form container
     def active_form
       clear_form unless session[:active_form]
       return session[:active_form]
     end
 
-    # return the current active container
+    # return the current active error container
     def active_errors
       return session[:active_form_errors]
+    end
+
+    # return the current active error container
+    def active_error_flags
+      return session[:active_form_error_flags]
     end
 
     # validation => 'email', or 'username', or 'password', or 'usernameoremail'
@@ -109,10 +116,10 @@ module Sinatra
       return f
     end
 
-    def add_error(name, message)
-      e = active_errors
-      e[name] = message
-      return e
+    def add_error(name, message, flag)
+      active_errors[name] = message
+      active_error_flags[name] = flag
+      return active_errors
     end
 
     def error_message(name)
