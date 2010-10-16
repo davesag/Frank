@@ -9,14 +9,19 @@ module Sinatra
   # the idea is that in an MVC system there needs to be some sort of container object in the session
   # that holds a map of the form to be displayed, with meta information about the form elements
   # such that a smart chunk of haml script can build the form automagically.
+  # TODO: i18n the literal strings
   module FormHelpers
 
+    # reset the form and its associated error fields and flags.
     def clear_form
       session[:active_form] = []
       session[:active_form_changed?] = false
       session[:active_form_errors] = Hash.new
     end
 
+    # compare what is in the income request params with what is in the form fields,
+    # test for any required fields and run any simple validations.
+    # and if the field is then okay move the param into the field.
     def update_form
       session[:active_form_changed?] = false
       session[:active_form_errors] = Hash.new
@@ -25,19 +30,50 @@ module Sinatra
         new_value = params[:"#{field[:name]}"]
         error = false
         # do validations
-        if field[:required] && new_value ==  ''
+        if field[:required] && new_value ==  '' && field[:validation] != 'new_password'
           add_error(field[:name], "Required field was missing")
           error = true
         elsif field[:validation] != nil
-          # we only support email validation right now
+          # we support email[, unique], username[, unique], password or username_or_email validation
           fv = field[:validation]
-          if fv == 'email'
+          case
+          when fv.start_with?('email')
             if !validate_email(new_value)
-              add_error(field[:name], "Not a valid email")
+              add_error(field[:name], "#{new_value} was not a valid email")
               error = true
             end
+            if fv.end_with?('unique') && !validate_email_is_unique(new_value)
+              add_error(field[:name], "#{new_value} was not a unique email")
+              error = true
+            end
+          when fv.start_with?('username') && fv != 'username_or_email'
+            if !validate_username(new_value)
+              add_error(field[:name], "A username may not contain spaces and must be less than 20 characters long")
+              error = true
+            end
+            if fv.end_with?('unique') && !validate_username_is_unique(new_value)
+              add_error(field[:name], "#{new_value} was not a unique username")
+              error = true
+            end
+          when fv == 'password'
+            if !validate_password(new_value)
+              add_error(field[:name], "Your password must be between 4 and 20 characters long")
+              error = true
+            end            
+          when fv == 'new_password'
+            return true unless new_value != ''
+            if !validate_password(new_value)
+              add_error(field[:name], "The new password must be between 4 and 20 characters long")
+              error = true
+            end
+          when fv == 'username_or_email'
+            if !(validate_username(new_value) || validate_email(new_value))
+              add_error(field[:name], "You must supply a valid username or email")
+              error = true
+            end            
           else
-            # some other validation
+            # we don't recognise any other validations right now.
+            @@log.error "Validation type '#{fv}' was not recognised."
           end
         end
 
@@ -57,9 +93,7 @@ module Sinatra
 
     # return the current active container
     def active_form
-      if session[:active_form] == nil
-        clear_form
-      end
+      clear_form unless session[:active_form]
       return session[:active_form]
     end
 
@@ -68,7 +102,7 @@ module Sinatra
       return session[:active_form_errors]
     end
 
-    # validation => { :size => ">3", allowed =>"[a..z]"}}    
+    # validation => 'email', or 'username', or 'password', or 'usernameoremail'
     def add_field(name, value, type, required, validation, label_text, options )
       f = active_form
       f << { :name => name, :value => value, :type => type, :required => required, :validation => validation, :label_text => label_text, :options => options }
@@ -106,23 +140,56 @@ module Sinatra
 
     # validations
     
+    # a valid email has a '@' in it.
     def validate_email(email)
+      return false unless email != nil
       return email.include? '@'
+    end
+
+    # check to see if the email already exists
+    def validate_email_is_unique(email)
+      return false unless email != nil
+      return !User.email_exists?(email)
+    end
+
+    # a valid username has no whitespace and is less than 20 characters
+    def validate_username(username)
+      return false unless username != nil
+      if username.length > 19
+        return false
+      end
+      stripped = username.gsub(/[ &=+-?]/,'')
+      return username == stripped
+    end
+
+    # check to see if the username already exists
+    def validate_username_is_unique(username)
+      return false unless username != nil
+      return !User.username_exists?(username)
+    end
+
+    #a valid password is longer than 3 characters and less than 20 characters
+    def validate_password(password)
+      return false unless password != nil
+      if password.length < 4 || password.length > 19
+        return false
+      end
+      return true
     end
 
     # specific form field configurations
     
     def prep_login_form(default_name)
       clear_form
-      add_field('username', default_name, 'text', "required", nil, t.labels.username_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      add_field('username', default_name, 'text', "required", 'username_or_email', t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", 'password', t.labels.password_label, nil )
     end
 
     def prep_registration_form
       clear_form
       add_field('email', '', 'text', true, 'email', t.labels.choose_email_label, nil )
-      add_field('username', '', 'text', true, nil, t.labels.choose_username_label, nil )
-      add_field('password', '', 'password', true, nil, t.labels.choose_password_label, nil )
+      add_field('username', '', 'text', true, 'username', t.labels.choose_username_label, nil )
+      add_field('password', '', 'password', true, 'password', t.labels.choose_password_label, nil )
       add_field('locale', i18n.locale, 'select', false, nil, t.labels.choose_language_label, language_options )
       add_field('terms', 'true', "select", false, nil, t.labels.read_and_agree_label,
         [{ :value => 'true', :text => t.labels.option_terms_yes}, { :value => 'false', :text => t.labels.option_terms_no }] )

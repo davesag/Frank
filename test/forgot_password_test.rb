@@ -41,9 +41,10 @@ class ForgotPasswordTest < HandlerTestBase
     assert last_response.ok?
     assert last_response.body.include?('Token expired')
 
+    # posting with a made up token won't work as you have to brig up the get screen first to prep the form container.
     post '/reset_password', {:token => token, :password => "newpassword"}
     assert last_response.ok?
-    assert last_response.body.include?('Token expired')
+    assert last_response.body.include?('There were errors in your form')
 
     # and for the truly paranoid, say someone guessed the user's new token (or snooped it somehow?)
     get '/reset_password/' + new_token
@@ -52,7 +53,7 @@ class ForgotPasswordTest < HandlerTestBase
 
     post '/reset_password', {:token => new_token, :password => "newpassword"}
     assert last_response.ok?
-    assert last_response.body.include?('Token expired')
+    assert last_response.body.include?('There were errors in your form')
 
     # now try logging in with the new password
     post '/login', {:username => dummy_name, :password => "newpassword" }

@@ -452,67 +452,79 @@ class Frank < Sinatra::Base
   get '/profile/edit' do
     login_required!
     flash.now[:message] = t.u.profile_edit_message
+    clear_form
+    add_field('email', active_user.email, 'text', true, 'email', t.labels.edit_email_label, nil )
+    add_field('password', '', 'password', false, 'new_password', t.labels.edit_password_label, nil )
+    add_field('locale',active_user.locale, 'select', false, nil, t.labels.edit_language_label, language_options )
+    add_field('html_email', active_user.get_preference('HTML_EMAIL').value, "select", false, nil, t.labels.edit_html_email_label,
+      [{ :value => 'true', :text => t.labels.option_yes}, { :value => 'false', :text => t.labels.option_no }] )
     haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
   end
 
   post '/profile/edit' do
     login_required!
     user = active_user
-    new_email = params['email']
-    new_password = params['password']
-    new_html_email_pref = params['html_email']
-    new_locale = params[:locale]
+    update_form
+    if form_okay?
+      new_email = params['email']
+      new_password = params['password']
+      new_html_email_pref = params['html_email']
+      new_locale = params[:locale]
   
-    user_changed = false
-    error = false
-    message = t.u.profile_edit_success
+      user_changed = false
+      error = false
+      message = t.u.profile_edit_success
   
-    old_html_email_pref = user.get_preference('HTML_EMAIL').value
+      old_html_email_pref = user.get_preference('HTML_EMAIL').value
 
-    if old_html_email_pref != new_html_email_pref
-      user.set_preference('HTML_EMAIL', new_html_email_pref)
-      user_changed = true
-    end
-  
-    # if the password is not '' then overwrite the password with the one supplied
-    if new_password != ''
-      user.password = new_password
-      user_changed = true
-    end
-  
-    # if the email is new then deactivate and send a confirmation message
-    if new_email != user.email
-      if User.email_exists?(new_email)
-    	  notify_user_of_email_change_overlap_attempt!(new_email, user.username)
-    	  message = t.u.profile_edit_error_email_clash(new_email) + t.u.profile_edit_error
-    	  error = true
-      else
-        user.email = new_email
-        user.validated = false
-        send_email_update_confirmation_to(user)
-        message = t.u.profile_edit_success_email_confirmation(new_email)
+      if old_html_email_pref != new_html_email_pref
+        user.set_preference('HTML_EMAIL', new_html_email_pref)
         user_changed = true
       end
-    end
-
-    # just check the locale code provided is legit.
-    if user.locale != new_locale && locale_available?(new_locale)
-      user.locale = new_locale
-      user_changed = true
-    end
   
-    if error
-      # TODO: Rack provides a standard 'error' collection we can use to be much smarter about returning errors.
-      flash.now[:error] = message
-      haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
-  	elsif user_changed
-      user.save!
-      refresh_active_user!
-      flash.now[:message] = message
-      haml :'in/profile', :locals => { :nav_hint => "profile" }
+      # if the password is not '' then overwrite the password with the one supplied
+      if new_password != ''
+        user.password = new_password
+        user_changed = true
+      end
+  
+      # if the email is new then deactivate and send a confirmation message
+      if new_email != user.email
+        if User.email_exists?(new_email)
+      	  notify_user_of_email_change_overlap_attempt!(new_email, user.username)
+      	  message = t.u.profile_edit_error
+      	  error = true
+      	  add_error('email', t.u.profile_edit_error_email_clash(new_email))
+        else
+          user.email = new_email
+          user.validated = false
+          send_email_update_confirmation_to(user)
+          message = t.u.profile_edit_success_email_confirmation(new_email)
+          user_changed = true
+        end
+      end
+
+      # just check the locale code provided is legit and skip it if not.
+      if user.locale != new_locale && locale_available?(new_locale)
+        user.locale = new_locale
+        user_changed = true
+      end
+  
+      if error
+        flash.now[:error] = message
+        haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
+    	elsif user_changed
+        user.save!
+        refresh_active_user!
+        flash.now[:message] = message
+        haml :'in/profile', :locals => { :nav_hint => "profile" }
+      else
+        flash.now[:warning] = t.u.profile_edit_no_change
+        haml :'in/profile', :locals => { :nav_hint => "profile" }
+      end
     else
-      flash.now[:warning] = t.u.profile_edit_no_change
-      haml :'in/profile', :locals => { :nav_hint => "profile" }
+      flash.now[:error] = "There were errors in your form"
+      haml :'in/edit_profile', :locals => { :nav_hint => "edit_profile" }
     end
   end
 

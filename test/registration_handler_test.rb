@@ -34,7 +34,7 @@ class RegistrationHandlerTest < HandlerTestBase
     post '/login', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD }
 
     get '/register'
-    post '/registration', { :username => "any", :password => "any", :terms => 'true', :locale => 'en', :email => "any@any.any" }
+    post '/registration', { :username => "anyuser", :password => "anypass", :terms => 'true', :locale => 'en', :email => "any@any.any" }
     assert last_response.ok?
     assert last_response.body.include?('You are already logged in')
   end
@@ -42,7 +42,7 @@ class RegistrationHandlerTest < HandlerTestBase
   # test user registration of a user with a known username gives an error and shows registration page again
   def test_register_known_username_gives_error
     get '/register'
-    post '/registration', { :username => GOOD_USERNAME, :password => "any", :terms => 'true', :locale => 'en', :email => "any@any.any" }
+    post '/registration', { :username => GOOD_USERNAME, :password => "anypass", :terms => 'true', :locale => 'en', :email => "any@any.any" }
     assert last_response.ok?
     assert last_response.body.include?(GOOD_USERNAME + "' already exists")
   end
@@ -50,7 +50,7 @@ class RegistrationHandlerTest < HandlerTestBase
   # test user registration of a user with a known email gives an error and shows registration page again
   def test_register_known_email_gives_error
     get '/register'
-    post '/registration', { :username => "any", :password => "any", :terms => 'true', :locale => 'en', :email => GOOD_EMAIL }
+    post '/registration', { :username => "anyuser", :password => "anypass", :terms => 'true', :locale => 'en', :email => GOOD_EMAIL }
     assert last_response.ok?
     assert last_response.body.include?(GOOD_EMAIL + "' already exists")
   end

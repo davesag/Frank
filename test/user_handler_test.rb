@@ -25,6 +25,10 @@ class UserHandlerTest < HandlerTestBase
     assert last_response.ok?
     post '/login', {:username => GOOD_EMAIL, :password => GOOD_PASSWORD }
     assert last_response.ok?
+    
+#    require 'ruby-debug'
+#    debugger
+    
     assert last_response.body.include?('You are logged in as')    
     assert last_response.body.include?(GOOD_USERNAME)    
   end
@@ -80,8 +84,6 @@ class UserHandlerTest < HandlerTestBase
     # try going to '/contact' as a guest
     get '/contact'
     assert last_response.ok?
-#    require 'ruby-debug'
-#    debugger
     assert last_response.body.include?('Contact Details')
 
     # now log in and try again
