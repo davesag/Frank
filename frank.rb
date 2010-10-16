@@ -109,6 +109,7 @@ class Frank < Sinatra::Base
     add_field("testfield3", '', "password", false, nil, "Password", nil )
     add_field("testfield4", 'test 3 is the most wonderful test of all.', "textarea", true, nil, "Blurb", nil )
     add_field("testfield5", 'false', "select", true, nil, "Happy?", [{ :value => 'true', :text => 'Yes'}, { :value => 'false', :text => 'No'}] )
+    add_field("testfield6", 'some value', 'hidden', true, nil, nil, nil)
 #    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
     haml :active_form_test, :locals => { :nav_hint => "test" }
   end
@@ -160,11 +161,9 @@ class Frank < Sinatra::Base
       flash.now[:message] = t.u.welcome_in
       haml :'in/index', :locals => { :nav_hint => "home" }
     else
-      clear_form
-      add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
       flash.now[:message] = t.u.login_message
-  	  haml :login, :locals => { :username => remembered_user_name, :nav_hint => "login" }
+      prep_login_form remembered_user_name
+  	  haml :login, :locals => { :nav_hint => "login" }
     end
   end
 
@@ -231,19 +230,11 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :nav_hint => "home" }
     elsif is_remembered_user?
       flash.now[:error] = t.u.register_error
-      clear_form
-      add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      prep_login_form remembered_user_name
       haml :login, :locals => { :nav_hint => "login" }
 	  else
       flash.now[:message] = t.u.register_message
-      clear_form
-      add_field('email', '', 'text', true, 'email', t.labels.choose_email_label, nil )
-      add_field('username', '', 'text', true, nil, t.labels.choose_username_label, nil )
-      add_field('password', '', 'password', true, nil, t.labels.choose_password_label, nil )
-      add_field('locale', i18n.locale, 'select', false, nil, t.labels.choose_language_label, language_options )
-      add_field('terms', 'true', "select", false, nil, t.labels.read_and_agree_label,
-        [{ :value => 'true', :text => t.labels.option_terms_yes}, { :value => 'false', :text => t.labels.option_terms_no }] )
+      prep_registration_form
   	  haml :register, :locals => { :nav_hint => "register" }
     end
   end
@@ -289,15 +280,14 @@ class Frank < Sinatra::Base
   end
 
   get '/reset_password/:token' do
-    clear_form
     user = User.find_by_validation_token(params[:token])
     if user == nil || !user.password_reset?
       flash.now[:error] = t.u.token_expired_error
-      add_field('username', '', 'text', "required", nil, t.labels.username_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      prep_login_form ''
       haml :login, :locals => {:nav_hint => "login"}
     else
       flash.now[:tip] = t.u.forgot_password_instruction_email
+      clear_form
       add_field('token', user.validation_token, 'hidden', "required", nil, t.labels.password_label, nil )
       add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
       haml :reset_password, :locals => { :nav_hint => "forgot_password" }
@@ -310,9 +300,7 @@ class Frank < Sinatra::Base
       user = User.find_by_validation_token(params[:token])
       if user == nil || !user.password_reset?
         flash.now[:error] = t.u.token_expired_error
-        clear_form
-        add_field('username', '', 'text', "required", nil, t.labels.username_label, nil )
-        add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+        prep_login_form ''
         haml :login, :locals => { :nav_hint => "login"}
       else
         # actually change the password (note this is stored as a bcrypted string, not in clear text)
@@ -323,9 +311,7 @@ class Frank < Sinatra::Base
         user.save!
         remember_user_name(user.username)
         flash.now[:tip] = t.u.forgot_password_success
-        clear_form
-        add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
-        add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+        prep_login_form remembered_user_name
         haml :login, :locals => { :nav_hint => "login" }
       end
     else
@@ -378,9 +364,7 @@ class Frank < Sinatra::Base
             user.save!
             send_registration_confirmation_to(user)
             flash.now[:tip] = t.u.register_success(email)
-            clear_form
-            add_field('username', name, 'text', "required", nil, t.labels.username_label, nil )
-            add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+            prep_login_form name
             haml :login, :locals => { :nav_hint => "login" }
           end
         end
@@ -393,18 +377,17 @@ class Frank < Sinatra::Base
 
   # checks the user against the validation token.
   get '/validate/:token' do
-    clear_form
     user = User.find_by_validation_token(params[:token])
     if user == nil || user.validated?
       flash.now[:error] = t.u.token_expired_error
+      clear_form                    # a security precaution.
       haml :index, :locals => { :nav_hint => "home"}
     else
       user.validated = true
       user.shuffle_token!           # we can't delete a token and they must be unique so we shuffle it after use to prevent reuse.
       user.save!
       flash.now[:tip] = t.u.register_success_confirmed
-      add_field('username', user.username, 'text', "required", nil, t.labels.username_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      prep_login_form user.username
       haml :login, :locals => { :nav_hint => "login" }
     end
   end
@@ -422,9 +405,7 @@ class Frank < Sinatra::Base
     else
       flash.now[:error] = t.u.logout_error
     end
-    clear_form
-    add_field('username', remembered_user_name, 'text', "required", nil, t.labels.username_label, nil )
-    add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+    prep_login_form remembered_user_name
     haml :login, :locals => {:nav_hint => "login" }
   end
 
@@ -444,6 +425,7 @@ class Frank < Sinatra::Base
           log_user_out
           log_user_out # do it twice
           flash.now[:tip] = t.u.delete_me_success
+          prep_registration_form          
           haml :register, :locals => { :username => "", :email => "", :nav_hint => "register" }
         else
           # throw up a warning screen.
@@ -454,6 +436,7 @@ class Frank < Sinatra::Base
     else
       @@log.error("/delete_self called but no-one was logged in. Check the UI and Navigation options in your templates.")
       flash.now[:message] = t.u.delete_me_error_login
+      prep_login_form active_user_name
       haml :login, :locals => { :username => active_user_name, :nav_hint => "login" }
     end
   end

@@ -110,6 +110,24 @@ module Sinatra
       return email.include? '@'
     end
 
+    # specific form field configurations
+    
+    def prep_login_form(default_name)
+      clear_form
+      add_field('username', default_name, 'text', "required", nil, t.labels.username_label, nil )
+      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+    end
+
+    def prep_registration_form
+      clear_form
+      add_field('email', '', 'text', true, 'email', t.labels.choose_email_label, nil )
+      add_field('username', '', 'text', true, nil, t.labels.choose_username_label, nil )
+      add_field('password', '', 'password', true, nil, t.labels.choose_password_label, nil )
+      add_field('locale', i18n.locale, 'select', false, nil, t.labels.choose_language_label, language_options )
+      add_field('terms', 'true', "select", false, nil, t.labels.read_and_agree_label,
+        [{ :value => 'true', :text => t.labels.option_terms_yes}, { :value => 'false', :text => t.labels.option_terms_no }] )
+    end
+
   end
 
   helpers FormHelpers
