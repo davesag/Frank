@@ -13,12 +13,12 @@
       %tr<
         %th>= pref.name
         %td= pref.value
-      %tr<
-        %th>= t.labels.show_user_roles_label
-        %td<
-          %ul
-          - for role in target_user.roles do
-            %li>= role.name
+    %tr<
+      %th>= t.labels.show_user_roles_label
+      %td<
+        %ul
+        - for role in target_user.roles do
+          %li>= role.name
 -if active_user.can_edit_user?(target_user)
   #user_buttons
     [
