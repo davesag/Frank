@@ -82,8 +82,8 @@ u:
   register_message: L'enregistrement est facile et libre
   register_error: Déconnectez-vous complètement avant l'essai d'enregistrer un nouvel utilisateur
   register_error_already_as: Vous êtes déjà ouvert une session en tant que %1
-  register_error_username: Un utilisateur avec username '%1'  existe déjà
-  register_error_email: Un utilisateur avec l'email '%1' existe déjà
+  error_username_clash: Un utilisateur avec username '%1'  existe déjà
+  error_email_clash: Un utilisateur avec l'email '%1' existe déjà
   register_error_terms: Vous devez recevoir les limites
   register_success: Un email de confirmation a été envoyé à %1. Vous ne pourrez pas ouvrir une session jusqu'à ce que vous confirmiez votre adresse email
   register_success_confirmed: Votre enregistrement a été confirmé. Vous pouvez maintenant ouvrir une session
@@ -111,7 +111,6 @@ u:
   profile_edit_error: Modifications non sauvegardées
   profile_edit_success_email_confirmation: Un email de confirmation a été envoyé à %1. Une fois que vous vous déconnectez vous ne pourrez pas ouvrir une session de nouveau jusqu'à ce que vous confirmiez votre adresse email
   profile_edit_no_change: Aucunes modifications apportées
-  profile_edit_error_email_clash: Un utilisateur avec l'email '%1' existe déjà
   token_expired_error: 'Erreur : Le jeton a expiré'
   mail_registration_confirmation_subject: Frank demande que vous vérifiez votre adresse email.
   mail_registration_email_overlap_subject: Frank dit que quelqu'un utilise votre email.
@@ -131,17 +130,22 @@ u:
   edit_user_no_change: Vous n'avez apporté aucune modification
   edit_role_no_change: Vous n'avez pas changé le nom du rôle
   error_form: Il y avait des erreurs sous votre forme
+  error_required_field: La zone exigée était manquante
+  error_invalid_email: %1 n'étaient pas un email valide
+  error_invalid_username: Un username peut ne pas contenir les espaces et doit être moins de 20 caractères longtemps
+  error_invalid_password: Votre mot de passe doit être entre 4 et 20 caractères longtemps
+  error_invalid_new_password: Le nouveau mot de passe doit être entre 4 et 20 caractères longtemps
+  error_invalid_username_or_email: Vous devez assurer un username ou un email valide
+  error_invalid_role: Un rôle peut ne pas contenir les espaces et doit être moins de 20 caractères longtemps
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
   error_cant_edit_blessed_role_message: Vous ne pouvez pas éditer le rôle '%1'
   error_cant_delete_blessed_role_message: Vous ne pouvez pas effacer le rôle '%1'
   error_user_unknown_message: L'identification de l'utilisateur fournie n'a pas été identifiée
   error_role_unknown_message: Le nom de rôle fourni n'a pas été identifié
-  error_dupe_role_name_message: Il y a déjà un rôle appelé '%1'
+  error_dupe_role_name: Il y a déjà un rôle appelé '%1'
   delete_user_success_message: L'utilisateur '%1' a été effacé
   delete_role_message: Le rôle '%1' a été effacé
   create_user_message: Ajoutez un nouvel utilisateur
-  create_user_username_error: Un utilisateur avec username '%1' est déjà enregistré
-  create_user_email_error: Un utilisateur avec l'email %1 est déjà enregistré
   create_user_success: Vous avez ajouté un utilisateur appelé '%1'
   create_role_message: Ajoutez un nouveau rôle
   create_role_success: Le rôle '%1' a été créé

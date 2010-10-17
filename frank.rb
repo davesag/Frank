@@ -104,10 +104,10 @@ class Frank < Sinatra::Base
   get '/form_test' do
     flash.now[:message] = "This is a test of an active form"
     open_form
-    add_field("testfield1", "test 1", "text", true, nil, "name", nil )
-    add_field("testfield2", "test@test.test", "text", true, 'email', "Email", nil )
-    add_field("testfield3", '', "password", false, nil, "Password", nil )
-    add_field("testfield4", 'test 3 is the most wonderful test of all.', "textarea", true, nil, "Blurb", nil )
+    add_field("testfield1", "test 1", "text", true, nil, "name")
+    add_field("testfield2", "test@test.test", "text", true, 'email', "Email")
+    add_field("testfield3", '', "password", false, nil, "Password")
+    add_field("testfield4", 'test 3 is the most wonderful test of all.', "textarea", true, nil, "Blurb")
     add_field("testfield5", 'false', "select", true, nil, "Happy?", [{ :value => 'true', :text => 'Yes'}, { :value => 'false', :text => 'No'}] )
     add_field("testfield6", 'some value', 'hidden', true, nil, nil, nil)
 #    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
@@ -192,15 +192,15 @@ class Frank < Sinatra::Base
   # contact request - display contact form
   get '/contact' do
     open_form
-    add_field('subject', '', 'text', "required", nil, 'Subject', nil )
+    add_field('subject', '', 'text', "required", nil, 'Subject')
     #    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
     if is_logged_in?
       flash.now[:message] = t.u.contact_title_in
     else
       flash.now[:message] = t.u.contact_title_out
-      add_field('email', '', 'text', "required", 'email', 'Email', nil )
+      add_field('email', '', 'text', "required", 'email', 'Email')
     end
-    add_field('message', '', 'textarea', "required", nil, 'Message', nil )
+    add_field('message', '', 'textarea', "required", nil, 'Message')
     haml :contact, :locals => { :nav_hint => "contact" }
   end
 
@@ -248,7 +248,7 @@ class Frank < Sinatra::Base
 	  else
       flash.now[:message] = t.u.forgot_password
       open_form
-      add_field('email', '', 'text', true, 'email', t.labels.email_label, nil )
+      add_field('email', '', 'text', true, 'email', t.labels.email_label)
   	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
@@ -289,8 +289,8 @@ class Frank < Sinatra::Base
     else
       flash.now[:tip] = t.u.forgot_password_instruction_email
       open_form
-      add_field('token', user.validation_token, 'hidden', "required", nil, t.labels.password_label, nil )
-      add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
+      add_field('token', user.validation_token, 'hidden', "required", nil, t.labels.password_label)
+      add_field('password', '', 'password', "required", nil, t.labels.password_label)
       haml :reset_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
@@ -447,8 +447,8 @@ class Frank < Sinatra::Base
     login_required!
     flash.now[:message] = t.u.profile_edit_message
     open_form
-    add_field('email', active_user.email, 'text', true, 'email, unique', t.labels.edit_email_label, nil )
-    add_field('password', '', 'password', false, 'new_password', t.labels.edit_password_label, nil )
+    add_field('email', active_user.email, 'text', true, 'email, unique', t.labels.edit_email_label)
+    add_field('password', '', 'password', false, 'new_password', t.labels.edit_password_label)
     add_field('locale',active_user.locale, 'select', false, nil, t.labels.edit_language_label, language_options )
     add_field('html_email', active_user.get_preference('HTML_EMAIL').value, "select", false, nil, t.labels.edit_html_email_label,
       [{ :value => 'true', :text => t.labels.option_yes}, { :value => 'false', :text => t.labels.option_no }] )
@@ -529,7 +529,7 @@ class Frank < Sinatra::Base
   get '/users' do
     admin_required! "/"
     # an admin user can list everyone
-    user_list = User.all(:order => "LOWER(username) ASC")
+    user_list = User.all(:order => 'username')
     flash.now[:message] = t.u.list_users_message(user_list.size)
     haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
   end
@@ -538,6 +538,14 @@ class Frank < Sinatra::Base
   get '/user' do
     admin_required! "/"
     flash.now[:message] = t.u.create_user_message
+    open_form
+    add_field('username', '', 'text', true, 'username, unique', t.labels.create_user_username_label)
+    add_field('email', '', 'text', true, 'email, unique', t.labels.create_user_email_label)
+    add_field('password', '', 'password', true, 'password', t.labels.create_user_password_label)
+    add_field('_locale', i18n.locale, 'select', false, nil, t.labels.create_user_language_label, language_options )
+    add_field('html_email', 'true', "select", false, nil, t.labels.edit_html_email_label,
+      [{ :value => 'true', :text => t.labels.option_yes}, { :value => 'false', :text => t.labels.option_no }] )
+    add_field('roles[]', '', "select_multiple", false, nil, t.labels.create_user_roles_label, role_options, Role.count < 6 ? Role.count + 1 : 6 )
     haml :'in/new_user', :locals => { :nav_hint => "new_user" }
   end
 
@@ -546,7 +554,7 @@ class Frank < Sinatra::Base
     admin_required! "/"
     flash.now[:message] = t.u.create_role_message
     open_form
-    add_field('new_name', '', 'text', true, 'role, unique', t.labels.create_rolename_label, nil )
+    add_field('new_name', '', 'text', true, 'role, unique', t.labels.create_rolename_label)
     haml :'in/new_role', :locals => { :nav_hint => "new_role" }
   end
 
@@ -566,23 +574,21 @@ class Frank < Sinatra::Base
     end
   end
 
+  #      require 'ruby-debug'
+  #      debugger
+
   #if logged in and if an admin then you may create a new user.
   post '/user' do
     admin_required! "/"
-    new_name = params[:username]
-    new_email = params[:email]
-    new_password = params[:password]
-    new_html_pref = params[:html_email]
-    new_locale = params[:_locale]
+    update_form
+    if form_okay?
+      close_form
+      new_name = params[:username]
+      new_email = params[:email]
+      new_password = params[:password]
+      new_html_pref = params[:html_email]
+      new_locale = params[:_locale]
 
-    # check the user name doesn't already exist
-    if User.find_by_username(new_name) != nil
-      flash.now[:error] = t.u.create_user_username_error(new_name)
-      haml :'in/new_user', :locals => { :nav_hint => "new_user" }     
-    elsif User.find_by_email(new_email) != nil
-      flash.now[:error] = t.u.create_user_email_error(new_email)
-      haml :'in/new_user', :locals => { :nav_hint => "new_user" }           
-    else
       new_user = User.create( :username => new_name, :password => new_password, :email => new_email )
       new_user.set_preference('HTML_EMAIL', new_html_pref)
       new_user.locale = new_locale
@@ -595,15 +601,12 @@ class Frank < Sinatra::Base
         end
       end
       new_user.save!
-#      @@log.debug("Created new user with username #{new_user.username}")
-      user_list = User.all(:order => "LOWER(username) ASC")               # TODO: Redundant given that all usernames are lowercase.
-
-#      require 'ruby-debug'
-#      debugger
-
-#      @@log.debug("There are now #{t.users(user_list.size)}")
+      user_list = User.all(:order => 'username')
       flash.now[:tip] = t.u.create_user_success(new_name)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
+    else
+      flash.now[:error] = t.u.error_form
+      haml :'in/new_user', :locals => { :nav_hint => "new_user" }
     end
   end
 
@@ -771,7 +774,7 @@ class Frank < Sinatra::Base
     else
       flash.now[:message] =  t.u.edit_role_message(target_role.name)
       open_form
-      add_field('new_name', target_role.name, 'text', true, 'role, unique', t.labels.edit_rolename_label, nil )
+      add_field('new_name', target_role.name, 'text', true, 'role, unique', t.labels.edit_rolename_label)
       haml :'in/edit_role', :locals => { :target_role => target_role, :nav_hint => "edit_role" }
     end
   end

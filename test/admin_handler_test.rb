@@ -328,7 +328,7 @@ class AdminHandlerTest < HandlerTestBase
     post '/user', { :username => GOOD_USERNAME, :password => GOOD_PASSWORD,
       :email => "new_user_franktest@davesag.com", :_locale => "en", :html_email => 'true', :roles => [''] }
     assert last_response.ok?
-    assert last_response.body.include?("A user with username '#{GOOD_USERNAME}' is already registered")
+    assert last_response.body.include?("A user with username '#{GOOD_USERNAME}' already exists")
  
     post '/user', { :username => "new_username", :password => GOOD_PASSWORD,
       :email => GOOD_EMAIL, :_locale => "en", :html_email => 'true', :roles => [''] }
@@ -337,7 +337,7 @@ class AdminHandlerTest < HandlerTestBase
 #    require 'ruby-debug'
 #    debugger
 
-    assert last_response.body.include?("A user with email #{GOOD_EMAIL} is already registered")
+    assert last_response.body.include?("A user with email '#{GOOD_EMAIL}' already exists")
  
   end
   

@@ -20,7 +20,15 @@ module Sinatra
         lo << { :value => locl.code, :text => locl.title }
       end
       return lo
-     end
+    end
+
+    def role_options
+      ro = [ { :value => '', :text => t.labels.no_role }]
+      Role.all(:order => 'name').each do |r|
+        ro << { :value => r.name, :text => r.name }
+      end
+      return ro
+    end
 
     def is_blessed_role?(role)
       return ['admin', 'superuser'].include?(role.name)

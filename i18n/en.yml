@@ -82,8 +82,8 @@ u:
   register_message: Registration is easy and free
   register_error: Logout completely before trying to register a new user
   register_error_already_as: You are already logged in as %1
-  register_error_username: A user with username '%1' already exists
-  register_error_email: A user with email '%1' already exists
+  error_username_clash: A user with username '%1' already exists
+  error_email_clash: A user with email '%1' already exists
   register_error_terms: You must accept the terms & conditions
   register_success: A confirmation email has been sent to %1. You will not be able to log in until you confirm your email address
   register_success_confirmed: Your registration has been confirmed. You may now log in
@@ -111,7 +111,6 @@ u:
   profile_edit_error: Changes not saved
   profile_edit_success_email_confirmation: A confirmation email has been sent to %1. Once you log out you will not be able to log in again until you confirm your email address
   profile_edit_no_change: No changes made
-  profile_edit_error_email_clash: A user with email '%1' already exists
   token_expired_error: 'Error: Token expired'
   mail_registration_confirmation_subject: Frank requests that you verify your email address.
   mail_registration_email_overlap_subject: Frank says someone is using your email.
@@ -131,17 +130,22 @@ u:
   edit_user_no_change: You made no changes
   edit_role_no_change: You made no changes
   error_form: There were errors in your form
+  error_required_field: Required field was missing
+  error_invalid_email: %1 was not a valid email
+  error_invalid_username: A username may not contain spaces and must be less than 20 characters long
+  error_invalid_password: Your password must be between 4 and 20 characters long
+  error_invalid_new_password: The new password must be between 4 and 20 characters long
+  error_invalid_username_or_email: You must supply a valid username or email
+  error_invalid_role: A role may not contain spaces and must be less than 20 characters long
   error_cant_delete_superuser_message: You can not delete a superuser
   error_cant_edit_blessed_role_message: You can't edit the role '%1'
   error_cant_delete_blessed_role_message: You can't delete the role '%1'
   error_user_unknown_message: The user id supplied was not recognised
   error_role_unknown_message: The role name supplied was not recognised
-  error_dupe_role_name_message: There is already a role called '%1'
+  error_dupe_role_name: There is already a role called '%1'
   delete_user_success_message: User '%1' has been deleted
   delete_role_message: The role '%1' was deleted
   create_user_message: Add a new User
-  create_user_username_error: A user with username '%1' is already registered
-  create_user_email_error: A user with email %1 is already registered
   create_user_success: You have added a user called '%1'
   create_role_message: Add a new Role
   create_role_success: Role '%1' created
