@@ -46,7 +46,7 @@ labels:
   choose_password_label: Choisissez le mot de passe
   edit_password_label: Nouveau mot de passe
   edit_html_email_label: Email formaté par HTML
-  read_and_agree_label: J'ai lu et suis d'accord sur le
+  read_and_agree_label: J'ai lu et suis d'accord sur le <a href='/terms'>limites</a>
   register_me_label: Enregistrez-moi
   delete_me_label: Effacez-moi
   update_me_label: Mettez- à jourmoi

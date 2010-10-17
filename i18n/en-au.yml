@@ -46,7 +46,7 @@ labels:
   choose_password_label: Choose a Password
   edit_password_label: New password
   edit_html_email_label: D'ya want HTML Formatted Email?
-  read_and_agree_label: I've read and agree to the
+  read_and_agree_label: I've read and agree to the <a href='/terms'>legals</a>
   register_me_label: Sign me up
   delete_me_label: Please delete me
   update_me_label: Save
