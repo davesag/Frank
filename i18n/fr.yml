@@ -130,6 +130,7 @@ u:
   edit_user_permission_error: Vous n'avez pas le droit d'éditer cet utilisateur
   edit_user_no_change: Vous n'avez apporté aucune modification
   edit_role_no_change: Vous n'avez pas changé le nom du rôle
+  error_form: Il y avait des erreurs sous votre forme
   error_cant_delete_superuser_message: Vous ne pouvez pas effacer un super utilisateur
   error_cant_edit_blessed_role_message: Vous ne pouvez pas éditer le rôle '%1'
   error_cant_delete_blessed_role_message: Vous ne pouvez pas effacer le rôle '%1'
@@ -143,7 +144,6 @@ u:
   create_user_email_error: Un utilisateur avec l'email %1 est déjà enregistré
   create_user_success: Vous avez ajouté un utilisateur appelé '%1'
   create_role_message: Ajoutez un nouveau rôle
-  create_role_error: Un rôle appelé '%1' existe déjà
   create_role_success: Le rôle '%1' a été créé
   list_roles_message: !!pl
     0: Aucuns rôles ici
@@ -151,6 +151,7 @@ u:
     n: Il y a %1 rôles
   edit_role_message: Éditez le rôle '%1'.
   edit_role_success: Rôle sauvegardé
+  edit_role_error: Hélas, '%1' n'est pas un nom valide de rôle
   delete_role_success_message: Le rôle '%1' a été effacé
   contact_title_in: Obtenez dans le contact
   contact_title_out: Détails de contact

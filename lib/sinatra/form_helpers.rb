@@ -13,7 +13,7 @@ module Sinatra
   module FormHelpers
 
     # reset the form and its associated error fields and flags.
-    def clear_form
+    def open_form
       session[:active_form] = []
       session[:active_form_changed?] = false
       session[:active_form_errors] = Hash.new
@@ -24,69 +24,87 @@ module Sinatra
     # test for any required fields and run any simple validations.
     # and if the field is then okay move the param into the field.
     def update_form
-      session[:active_form_changed?] = false
-      session[:active_form_errors] = Hash.new
-      session[:active_form_error_flags] = Hash.new
-      for field in active_form do
-        old_value = field[:value]
-        new_value = params[:"#{field[:name]}"]
-        error = false
-        # do validations
-        if field[:required] && new_value ==  '' && field[:validation] != 'new_password'
-          add_error(field[:name], "Required field was missing", 'missing')
-          error = true
-        elsif field[:validation] != nil && new_value != old_value   # only validate fields that have changed.
-          # we support email[, unique], username[, unique], password or username_or_email validation
-          fv = field[:validation]
-          case
-          when fv.start_with?('email')
-            if !validate_email(new_value)
-              add_error(field[:name], "#{new_value} was not a valid email", 'invalid')
-              error = true
+      if !active_form.empty?
+        session[:active_form_changed?] = false
+        session[:active_form_errors] = Hash.new
+        session[:active_form_error_flags] = Hash.new
+        for field in active_form do
+          old_value = field[:value]
+          new_value = params[:"#{field[:name]}"]
+          error = false
+
+#          require 'ruby-debug'
+#          debugger
+
+          # do validations
+          if field[:required] && new_value ==  '' && field[:validation] != 'new_password'
+            add_error(field[:name], "Required field was missing", 'missing')
+            error = true
+          elsif field[:validation] != nil && new_value != old_value   # only validate fields that have changed.
+            # we support email[, unique], username[, unique], password or username_or_email validation
+            fv = field[:validation]
+            case
+            when fv.start_with?('email')
+              if !validate_email(new_value)
+                add_error(field[:name], "#{new_value} was not a valid email", 'invalid')
+                error = true
+              end
+              if fv.end_with?('unique') && !validate_email_is_unique(new_value)
+                add_error(field[:name], t.u.profile_edit_error_email_clash(new_value), 'unique')
+                error = true
+              end
+            when fv.start_with?('username') && fv != 'username_or_email'
+              if !validate_username(new_value)
+                add_error(field[:name], "A username may not contain spaces and must be less than 20 characters long", 'invalid')
+                error = true
+              end
+              if fv.end_with?('unique') && !validate_username_is_unique(new_value)
+                add_error(field[:name], t.u.register_error_username(new_value), 'unique')
+                error = true
+              end
+            when fv.start_with?('role')
+              if !validate_role_name(new_value)
+                add_error(field[:name], "A role name may not contain spaces and must be less than 20 characters long", 'invalid')
+                error = true
+              end
+              if fv.end_with?('unique') && !validate_role_name_is_unique(new_value)
+                add_error(field[:name], t.u.error_dupe_role_name_message(new_value), 'unique')
+                error = true
+              end
+            when fv == 'password'
+              if !validate_password(new_value)
+                add_error(field[:name], "Your password must be between 4 and 20 characters long", 'invalid')
+                error = true
+              end            
+            when fv == 'new_password'
+              return true unless new_value != ''
+              if !validate_password(new_value)
+                add_error(field[:name], "The new password must be between 4 and 20 characters long", 'invalid')
+                error = true
+              end
+            when fv == 'username_or_email'
+              if !(validate_username(new_value) || validate_email(new_value))
+                add_error(field[:name], "You must supply a valid username or email", 'invalid')
+                error = true
+              end            
+            else
+              # we don't recognise any other validations right now.
             end
-            if fv.end_with?('unique') && !validate_email_is_unique(new_value)
-              add_error(field[:name], t.u.profile_edit_error_email_clash(new_value), 'unique')
-              error = true
-            end
-          when fv.start_with?('username') && fv != 'username_or_email'
-            if !validate_username(new_value)
-              add_error(field[:name], "A username may not contain spaces and must be less than 20 characters long", 'invalid')
-              error = true
-            end
-            if fv.end_with?('unique') && !validate_username_is_unique(new_value)
-              add_error(field[:name], t.u.register_error_username(new_value), 'unique')
-              error = true
-            end
-          when fv == 'password'
-            if !validate_password(new_value)
-              add_error(field[:name], "Your password must be between 4 and 20 characters long", 'invalid')
-              error = true
-            end            
-          when fv == 'new_password'
-            return true unless new_value != ''
-            if !validate_password(new_value)
-              add_error(field[:name], "The new password must be between 4 and 20 characters long", 'invalid')
-              error = true
-            end
-          when fv == 'username_or_email'
-            if !(validate_username(new_value) || validate_email(new_value))
-              add_error(field[:name], "You must supply a valid username or email", 'invalid')
-              error = true
-            end            
-          else
-            # we don't recognise any other validations right now.
-            @@log.error "Validation type '#{fv}' was not recognised."
+          end
+
+          if !error
+            # update the field value
+            field[:value] = new_value unless field[:type] == 'password' && new_value == ''
+        
+            # set the changed flag
+            session[:active_form_changed?] ||= old_value != new_value
           end
         end
-
-        if !error
-          # update the field value
-          field[:value] = new_value unless field[:type] == 'password' && new_value == ''
-        
-          # set the changed flag
-          session[:active_form_changed?] ||= old_value != new_value
-        end
       end
+    end
+
+    def close_form
+      open_form           # does the same thing for now.
     end
 
     def form_changed?
@@ -95,7 +113,7 @@ module Sinatra
 
     # return the current active form container
     def active_form
-      clear_form unless session[:active_form]
+      open_form unless session[:active_form]
       return session[:active_form]
     end
 
@@ -184,16 +202,32 @@ module Sinatra
       return true
     end
 
+    # a valid role name has no whitespace and is less than 20 characters
+    def validate_role_name(rolename)
+      return false unless rolename != nil
+      if rolename.length > 19
+        return false
+      end
+      stripped = rolename.gsub(/[ &=+-?]/,'')
+      return rolename == stripped
+    end
+
+    # check to see if the username already exists
+    def validate_role_name_is_unique(rolename)
+      return false unless rolename != nil
+      return Role.find_by_name(rolename) == nil
+    end
+
     # specific form field configurations
     
     def prep_login_form(default_name)
-      clear_form
+      open_form
       add_field('username', default_name, 'text', "required", 'username_or_email', t.labels.username_label, nil )
       add_field('password', '', 'password', "required", 'password', t.labels.password_label, nil )
     end
 
     def prep_registration_form
-      clear_form
+      open_form
       add_field('email', '', 'text', true, 'email, unique', t.labels.choose_email_label, nil )
       add_field('username', '', 'text', true, 'username, unique', t.labels.choose_username_label, nil )
       add_field('password', '', 'password', true, 'password', t.labels.choose_password_label, nil )

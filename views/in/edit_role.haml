@@ -1,6 +1,2 @@
 #entry_form
-  %form{ :'accept-charset' => 'UTF-8', :action => "/role/edit/#{target_role.name}", :method => 'post'}
-    %p< 
-      %label{ :for => "new_name" }#{t.labels.edit_rolename_label}
-      %input(name='new_name' type='text' value='#{target_role.name}')
-    %input{ :type => "submit", :value => t.nav.update_role_button}
+  =haml :'chunks/active_form', :locals => { :form_action => "/role/edit/#{params[:name]}", :submit_label =>  t.nav.update_role_button }

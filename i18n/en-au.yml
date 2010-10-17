@@ -130,6 +130,7 @@ u:
   edit_user_permission_error: You do not have permission to edit that user
   edit_user_no_change: You made no changes
   edit_role_no_change: You made no changes
+  error_form: There were errors in your form
   error_cant_delete_superuser_message: You can not delete a superuser
   error_cant_edit_blessed_role_message: You can't edit the role '%1'
   error_cant_delete_blessed_role_message: You can't delete the role '%1'
@@ -143,7 +144,6 @@ u:
   create_user_email_error: A user with email %1 is already registered
   create_user_success: You have added a user called '%1'
   create_role_message: Add a new Role
-  create_role_error: A role called '%1' already exists
   create_role_success: Role '%1' created
   list_roles_message: !!pl
     0: No roles here
@@ -151,6 +151,7 @@ u:
     n: There are %1 roles
   edit_role_message: Edit Role '%1'.
   edit_role_success: Role Saved
+  edit_role_error: Mate, '%1' isn't a valid role name
   delete_role_success_message: Role '%1' has been deleted
   contact_title_in: Get In Touch
   contact_title_out: Contact Details

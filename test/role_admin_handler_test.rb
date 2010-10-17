@@ -61,26 +61,27 @@ class RoleAdminHandlerTest < HandlerTestBase
     assert last_response.body.include?(role.name)
     
     # check the mechanics of posting an update but change nothing just yet.
-    new_name = 'new_role_name'
 
     post "/role/edit/#{role.name}", { :new_name => role.name }
     assert last_response.ok?
     assert last_response.body.include?("no changes")
     
     # try changing role's name to something new
+    new_name = 'new_role_name'
+    get "/role/edit/#{role.name}"   # to open the form
+
     post "/role/edit/#{role.name}", { :new_name => new_name }
     assert last_response.ok?
     assert last_response.body.include?("Role Saved")
     
     # try changing role's name to 'admin'
+    get "/role/edit/#{new_name}"    # to open the form.
     post "/role/edit/#{new_name}", { :new_name => 'admin' }
     assert last_response.ok?
     assert last_response.body.include?("There is already a role called 'admin'")
     
     get '/logout'
-
     role.destroy
-
   end
 
   # test an admin can show a specific role's details.
@@ -164,9 +165,14 @@ class RoleAdminHandlerTest < HandlerTestBase
     assert last_response.body.include?("Role 'new_role' created")
   
     # try again with the same name should give an error
+    get '/role'
     post '/role', {:new_name => "new_role"}
     assert last_response.ok?
-    assert last_response.body.include?("A role called 'new_role' already exists")
+
+#    require 'ruby-debug'
+#    debugger
+
+    assert last_response.body.include?("There is already a role called 'new_role'")
     
     new_role = Role.find_by_name('new_role')
     new_role.destroy

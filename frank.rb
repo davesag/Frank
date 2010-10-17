@@ -103,7 +103,7 @@ class Frank < Sinatra::Base
 
   get '/form_test' do
     flash.now[:message] = "This is a test of an active form"
-    clear_form
+    open_form
     add_field("testfield1", "test 1", "text", true, nil, "name", nil )
     add_field("testfield2", "test@test.test", "text", true, 'email', "Email", nil )
     add_field("testfield3", '', "password", false, nil, "Password", nil )
@@ -123,7 +123,7 @@ class Frank < Sinatra::Base
         flash.now[:warning] = "There were no changes."
       end
     else
-      flash.now[:error] = "There were errors in your form"
+      flash.now[:error] = t.u.error_form
     end
     haml :active_form_test, :locals => { :nav_hint => "test" }
   end
@@ -175,6 +175,7 @@ class Frank < Sinatra::Base
       pass = params['password']
       entering_user = auth_user(name, pass)
       if entering_user != nil
+        close_form
         log_user_in!(entering_user)
         flash.now[:tip] = t.u.login_success(active_user_name)
         haml :'in/index', :locals => { :nav_hint => "home" }
@@ -183,14 +184,14 @@ class Frank < Sinatra::Base
         haml :login, :locals => { :nav_hint => "login" }
       end
     else
-      flash.now[:error] = "There were errors in your form"
+      flash.now[:error] = t.u.error_form
       haml :login, :locals => { :nav_hint => "login" }
     end
   end
 
   # contact request - display contact form
   get '/contact' do
-    clear_form
+    open_form
     add_field('subject', '', 'text', "required", nil, 'Subject', nil )
     #    add_field("name", "value", "type", "required", "validation", "label_text", "options" )
     if is_logged_in?
@@ -217,7 +218,7 @@ class Frank < Sinatra::Base
     	  haml :message_only, :locals => { :detailed_message => t.u.contact_send_message_detailed_out, :nav_hint => "contact" }
       end
     else
-      flash.now[:error] = "There were errors in your form"
+      flash.now[:error] = t.u.error_form
       haml :contact, :locals => { :nav_hint => "contact" }
     end
 
@@ -246,7 +247,7 @@ class Frank < Sinatra::Base
       haml :'in/index', :locals => { :nav_hint => "home" }
 	  else
       flash.now[:message] = t.u.forgot_password
-      clear_form
+      open_form
       add_field('email', '', 'text', true, 'email', t.labels.email_label, nil )
   	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
     end
@@ -273,7 +274,7 @@ class Frank < Sinatra::Base
       	  haml :message_only, :locals => { :detailed_message => t.u.forgot_password_instruction_detail, :nav_hint => "forgot_password" }
         end
       else
-        flash.now[:error] = "There were errors in your form"
+        flash.now[:error] = t.u.error_form
     	  haml :forgot_password, :locals => { :nav_hint => "forgot_password" }
       end
     end
@@ -287,7 +288,7 @@ class Frank < Sinatra::Base
       haml :login, :locals => {:nav_hint => "login"}
     else
       flash.now[:tip] = t.u.forgot_password_instruction_email
-      clear_form
+      open_form
       add_field('token', user.validation_token, 'hidden', "required", nil, t.labels.password_label, nil )
       add_field('password', '', 'password', "required", nil, t.labels.password_label, nil )
       haml :reset_password, :locals => { :nav_hint => "forgot_password" }
@@ -315,7 +316,7 @@ class Frank < Sinatra::Base
         haml :login, :locals => { :nav_hint => "login" }
       end
     else
-      flash.now[:error] = "There were errors in your form"
+      flash.now[:error] = t.u.error_form
   	  haml :reset_password, :locals => { :nav_hint => "forgot_password" }
     end
   end
@@ -326,25 +327,25 @@ class Frank < Sinatra::Base
   post '/registration' do
     if is_logged_in?
       flash.now[:error] = t.u.register_error_already_as(active_user_name)
-      clear_form
+      open_form
       haml :'in/index', :locals => { :nav_hint => "home" }
     else
       update_form
       if form_okay?
-        email = params['email']
-        name = params['username']
-        terms = params['terms']
+        email = params[:email]
+        name = params[:username]
+        terms = params[:terms]
         if 'true' != terms
           flash.now[:error] = t.u.register_error_terms
           add_error('terms', t.u.register_error_terms, 'must_be_true')
       	  haml :register, :locals => { :nav_hint => "register" }        
         else
-          user = User.create(:username => name, :password => params['password'], :email => email)
+          user = User.create(:username => name, :password => params[:password], :email => email)
           user.set_preference("HTML_EMAIL", "true")
           locale_code = params[:locale]
           # just check the locale code provided is legit.
           if !locale_available?(locale_code)
-            @@log.error("Unknown local code #{locale_code}supplied.  Check your user interface code.")
+            @@log.error("Unknown local code #{locale_code}supplied.  Check your UI code.")
             user.locale = R18n::I18n.default
           else
             user.locale = locale_code
@@ -354,11 +355,11 @@ class Frank < Sinatra::Base
           user.save!
           send_registration_confirmation_to(user)
           flash.now[:tip] = t.u.register_success(email)
-          prep_login_form name
+          prep_login_form name          # closes the old form
           haml :login, :locals => { :nav_hint => "login" }
         end
       else
-        flash.now[:error] = "There were errors in your form"
+        flash.now[:error] = t.u.error_form
         # was it the uniqueness of the email?
         if active_error_flags['email'] == 'unique'
           notify_user_of_registration_overlap_attempt!(params['email'],params['username'])
@@ -373,7 +374,7 @@ class Frank < Sinatra::Base
     user = User.find_by_validation_token(params[:token])
     if user == nil || user.validated?
       flash.now[:error] = t.u.token_expired_error
-      clear_form                    # a security precaution.
+      close_form                    # a security precaution.
       haml :index, :locals => { :nav_hint => "home"}
     else
       user.validated = true
@@ -445,7 +446,7 @@ class Frank < Sinatra::Base
   get '/profile/edit' do
     login_required!
     flash.now[:message] = t.u.profile_edit_message
-    clear_form
+    open_form
     add_field('email', active_user.email, 'text', true, 'email, unique', t.labels.edit_email_label, nil )
     add_field('password', '', 'password', false, 'new_password', t.labels.edit_password_label, nil )
     add_field('locale',active_user.locale, 'select', false, nil, t.labels.edit_language_label, language_options )
@@ -459,6 +460,7 @@ class Frank < Sinatra::Base
     user = active_user
     update_form
     if form_okay?
+      close_form
       new_email = params['email']
       new_password = params['password']
       new_html_email_pref = params['html_email']
@@ -543,24 +545,24 @@ class Frank < Sinatra::Base
   get '/role' do
     admin_required! "/"
     flash.now[:message] = t.u.create_role_message
+    open_form
+    add_field('new_name', '', 'text', true, 'role, unique', t.labels.create_rolename_label, nil )
     haml :'in/new_role', :locals => { :nav_hint => "new_role" }
   end
 
   #if logged in and if an admin then you may create a new role.
   post '/role' do
     admin_required! "/"
-    new_name = params[:new_name]
-    # check the role name doesn't already exist
-    if Role.find_by_name(new_name) != nil
-      flash.now[:error] = t.u.create_role_error(new_name)
-      haml :'in/new_role', :locals => { :nav_hint => "new_role" }     
-    else
-      new_role = Role.create( :name => new_name )
-#      @@log.debug("Created new role with name #{new_role.name}")
+    update_form
+    if form_okay?
+      close_form
+      new_role = Role.create( :name => params[:new_name] )
       role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("There are now #{t.roles(role_list.size)}")
-      flash.now[:tip] = t.u.create_role_success(new_name)
+      flash.now[:tip] = t.u.create_role_success(params[:new_name])
       haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
+    else
+      flash.now[:error] = t.u.error_form
+      haml :'in/new_role', :locals => { :nav_hint => "new_role" }
     end
   end
 
@@ -755,60 +757,66 @@ class Frank < Sinatra::Base
     haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
   end
 
-  get '/role/edit/:username' do
+  get '/role/edit/:name' do
     admin_required! "/"
-    target_role = Role.find_by_name(params[:username])
+    target_role = Role.find_by_name(params[:name])
     if target_role == nil
       role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  "#{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}"
       haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
       role_list = Role.all(:order => "LOWER(name)")
-      flash.now[:error] =  t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
+      flash.now[:error] =  "#{t.u.error_cant_edit_blessed_role_message(target_role.name)}. #{t.u.list_roles_message(role_list.size)}"
+      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     else
       flash.now[:message] =  t.u.edit_role_message(target_role.name)
+      open_form
+      add_field('new_name', target_role.name, 'text', true, 'role, unique', t.labels.edit_rolename_label, nil )
       haml :'in/edit_role', :locals => { :target_role => target_role, :nav_hint => "edit_role" }
     end
   end
 
-  post '/role/edit/:username' do
+  post '/role/edit/:name' do
     admin_required! "/"
-    new_name = params[:new_name]
-    target_role = Role.find_by_name(params[:username])
+    # before we look at validating the form, make user the role name supplied
+    # actually exists, and is not a blessed role.
+    target_role = Role.find_by_name(params[:name])
     if target_role == nil
+      close_form
       role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("No roles with that name. There are #{t.roles(role_list.size)}")
       flash.now[:error] =  "#{t.u.error_role_unknown_message}. #{t.u.list_roles_message(role_list.size)}"
+#      @@log.warn "User #{active_user.username} attempted to change a role called #{params[:name]}.  Check the UI code."
       haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
     elsif is_blessed_role?(target_role)
+      close_form
       role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("That role was 'blessed' and can't be changed. There are #{t.roles(role_list.size)}")
-      flash.now[:error] =  t.u.error_cant_edit_blessed_role_message(target_role.name) + '. ' + t.u.list_roles_message(role_list.size)
+      flash.now[:error] =  "#{t.u.error_cant_edit_blessed_role_message(target_role.name)}. #{t.u.list_roles_message(role_list.size)}"
+#      @@log.warn "User #{active_user.username} attempted to change the 'blessed' role #{target_role.name}.  Check the UI code."
       haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }
-    elsif new_name == target_role.name
-      # no changes.
-      role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("That role name was not changed. There are #{t.roles(role_list.size)}")
-      flash.now[:warning] =  t.u.edit_role_no_change
-      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }            
-    elsif Role.find_by_name(new_name) != nil  # there's already a role called #{newname}
-      # TODO: for now just call error but a better solution is to offer to merge the roles.
-      #       Need to define business logic for that so it's beyond the scope of Frank.
-      role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("That is the name of an existing role. There are #{t.roles(role_list.size)}")
-      flash.now[:error] =   t.u.error_dupe_role_name_message(new_name) + '. ' + t.u.list_roles_message(role_list.size)
-      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }            
     else
-      # change the name of the role.  How does this affect other users in that role? (TODO: test that)
-      target_role.name = new_name
-      target_role.save!
-#      @@log.debug("Saved #{target_role.name}")
-      role_list = Role.all(:order => "LOWER(name)")
-#      @@log.debug("There are now #{t.roles(role_list.size)}")
-      flash.now[:tip] =  t.u.edit_role_success
-      haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
+      update_form
+      if form_okay?
+        changed = form_changed?
+        close_form  # either way we close the form
+        if changed
+          # change the name of the role.
+          # How does this affect other users in that role?
+          # TODO: test that
+          target_role.name = params[:new_name]
+          target_role.save!
+          role_list = Role.all(:order => "LOWER(name)")
+          flash.now[:tip] =  t.u.edit_role_success
+          haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }      
+        else
+          # no changes.
+          role_list = Role.all(:order => "LOWER(name)")
+          flash.now[:warning] =  t.u.edit_role_no_change
+          haml :'in/list_roles', :locals => { :role_list => role_list, :nav_hint => "list_roles" }            
+        end
+      else
+        flash.now[:error] = t.u.error_form
+        haml :'in/edit_role', :locals => { :nav_hint => "edit_role" }
+      end
     end
   end
 
