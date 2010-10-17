@@ -1,33 +1,6 @@
 #entry_form
-  %form{ :'accept-charset' => 'UTF-8', :action => "/user/edit/#{target_user.id}", :method => 'post'}
-    %p< 
-      %label{ :for => "email" }#{t.labels.edit_email_label}
-      %input(name='email' type='text' value='#{target_user.email}')
-    %p<
-      %label{ :for => "password" }#{t.labels.edit_password_label}
-      %input(name='password' type='password')
-    %p<
-      %label{ :for => "locale" }#{t.labels.edit_language_label}
-      %select{ :name => "_locale" }
-        - for locl in r18n.available_locales do
-          %option{:value=> "#{locl.code}", :selected => locl.code == target_user.locale ? "selected" : nil }#{locl.title}
-    %p<
-      %label{ :for => "html_email" }#{t.labels.edit_html_email_label}
-      %select(name='html_email')
-        %option{ :value => 'true', :selected => (target_user.get_preference('HTML_EMAIL').value == 'true' ? "selected" : nil)}<
-          #{t.labels.option_yes}
-        %option{ :value => 'false', :selected => (target_user.get_preference('HTML_EMAIL').value == 'false' ? "selected" : nil)}<
-          #{t.labels.option_no}
-    %p<
-      %label{ :for => "roles[]" }#{t.labels.create_user_roles_label}
-      %select{ :name => 'roles[]', :multiple => 'multiple', :size => Role.count < 6 ? Role.count + 1 : 6 }
-        %option(value='')<
-          #{t.labels.no_role}
-        - for role in Role.all do
-          %option{ :value => role.name, :selected => target_user.has_role?(role.name) }<
-            #{role.name}
-    %input{ :type => "submit", :value => t.nav.update_user_button}
+  =haml :'chunks/active_form', :locals => { :form_action => "/user/edit/#{params[:id]}", :submit_label =>  t.nav.update_user_button }
 #user_buttons
   [
-  %a{ :href => "/user/#{target_user.id}", :method => 'get'}#{t.nav.view_user_button}
+  %a{ :href => "/user/#{params[:id]}", :method => 'get'}#{t.nav.view_user_button}
   ]

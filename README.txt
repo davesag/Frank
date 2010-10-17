@@ -47,7 +47,7 @@ Proposed Feature Set for v1
 * modularised handlers (done)
 * smart form handling - define the form fields in ruby and they build automatically in haml
 ** supports text, password, hidden, textarea and select
-* form validations (done for login, registration, contact, password reminder, profile editing, role creation and editing)
+* form validations (done)
 ** validations supported include email[, unique], username[, unique], role[, unique], password, new_password, and username_or_email
 ** required is a special validation that works in parallel with other validations
 ** ((( javascript form validation is not working yet )))

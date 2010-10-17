@@ -12,9 +12,9 @@
         -if field[:type] == 'password'
           %input{ :name => field[:name], :value => '', :onchange => build_validation_call(field), :type => 'password'}
         -if field[:type] == 'select_multiple'
-          %select{ :name => field[:name], :onchange => build_validation_call(field), :multiple => 'multiple', :size => field[:size]}
+          %select{ :name => "#{field[:name]}[]", :onchange => build_validation_call(field), :multiple => 'multiple', :size => field[:size]}
             -for opt in field[:options] do
-              %option{ :value => opt[:value], :selected => (opt[:value] == field[:value]) }#{opt[:text]}
+              %option{ :value => opt[:value], :selected => field[:value].include?(opt[:value]) }#{opt[:text]}
         -if field[:type] == 'select'
           %select{ :name => field[:name], :onchange => build_validation_call(field)}
             -for opt in field[:options] do

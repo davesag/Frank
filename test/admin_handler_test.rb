@@ -94,12 +94,11 @@ class AdminHandlerTest < HandlerTestBase
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
       :html_email => pref, :roles => [''] }
     assert last_response.ok?
-#    require 'ruby-debug'
-#    debugger
     assert last_response.body.include?("no changes")
     
     # try changing george's html email preference only
     not_pref = pref == 'true' ? 'false' : 'true'
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
       :html_email => not_pref, :roles => [''] }
     assert last_response.ok?
@@ -107,11 +106,12 @@ class AdminHandlerTest < HandlerTestBase
     assert not_pref == george.get_preference('HTML_EMAIL').value
     
     # try changing george's email to mildred's
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => mildred.email, :password => "", :_locale => george.locale,
       :html_email => pref, :roles => [''] }
     assert last_response.ok?
-    assert last_response.body.include?("Changes were not saved")
-    
+    assert last_response.body.include?("A user with email '#{mildred.email}' already exists")
+
     # try changing george's email to something nice
     post "/user/edit/#{george.id}", { :email => "testytestgeorgegeorge@davesag.com", :password => "", :_locale => george.locale,
       :html_email => pref, :roles => [''] }
@@ -121,6 +121,7 @@ class AdminHandlerTest < HandlerTestBase
     assert george.email == 'testytestgeorgegeorge@davesag.com'
     
     # try changing george's password and locale.
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => george.email, :password => "newpassword", :_locale => 'fr',
       :html_email => pref, :roles => [''] }
     assert last_response.ok?
@@ -133,6 +134,7 @@ class AdminHandlerTest < HandlerTestBase
     special_role_two = Role.create(:name => 'special-role-two')
 
     # try making george a 'special-role-one' and a 'user'.
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
       :html_email => pref, :roles => ['special-role-one','user'] }
     assert last_response.ok?
@@ -144,6 +146,7 @@ class AdminHandlerTest < HandlerTestBase
     assert george.locale == 'fr'
  
     # try making george just a 'user'.
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
       :html_email => pref, :roles => ['user'] }
     assert last_response.ok?
@@ -155,6 +158,7 @@ class AdminHandlerTest < HandlerTestBase
     assert george.locale == 'fr'
     
     # now try making george an 'admin'
+    get "/user/edit/#{george.id}"       # to open the form
     post "/user/edit/#{george.id}", { :email => george.email, :password => "", :_locale => george.locale,
       :html_email => pref, :roles => ['admin'] }
     assert last_response.ok?
@@ -169,7 +173,6 @@ class AdminHandlerTest < HandlerTestBase
     get '/logout'
     
     # try logging george in with his new password
-    get '/login'  # need to do this to set up the form container.
     post '/login', { :username => george.username, :password => "newpassword" }
     assert last_response.body.include?('Vous avez ouvert une session comme')    # we changed him to French.
     assert last_response.body.include?(george.username)    
@@ -183,6 +186,7 @@ class AdminHandlerTest < HandlerTestBase
     
     # try changing mildred's email to something nice will bounce.
 
+    get "/user/edit/#{mildred.id}"       # to open the form
     post "/user/edit/#{mildred.id}", { :email => "testytestmildredpierce@davesag.com", :password => "", :_locale => mildred.locale,
       :html_email => pref, :roles => [''] }
     assert last_response.ok?         
@@ -202,6 +206,7 @@ class AdminHandlerTest < HandlerTestBase
     # TODO: This of course means a corrupt admin could create a fake user for another email address they own, with superuser access. 
     #        To close this loophole only superusers ought to be able to assign someone a superuser role.
     #       admins may not assign anyone a superuser role.
+    get "/user/edit/#{mildred.id}"       # to open the form
     post "/user/edit/#{mildred.id}", { :email => "testytestmildredpierce@davesag.com", :password => "", :_locale => mildred.locale,
       :html_email => pref, :roles => ['admin', 'superuser'] }
     assert last_response.ok?
@@ -217,6 +222,7 @@ class AdminHandlerTest < HandlerTestBase
     
     # finally we test that root can edit another superuser.  So now that is a mildred a superuser root should edit her.
     # in this case change her email and remove her from the superuser role, but leave her as an admin.
+    get "/user/edit/#{mildred.id}"       # to open the form
     post "/user/edit/#{mildred.id}", { :email => "taketwofortestymildred@davesag.com", :password => "", :_locale => mildred.locale,
       :html_email => pref, :roles => ['admin'] }
     assert last_response.ok?
@@ -234,6 +240,7 @@ class AdminHandlerTest < HandlerTestBase
     post '/login', {:username => 'mildred', :password => GOOD_PASSWORD }
     assert last_response.ok?
 
+    get "/user/edit/#{root.id}"       # to open the form
     post "/user/edit/#{root.id}", { :email => "changeisasgoodasaholiday@davesag.com", :password => "", :_locale => root.locale,
       :html_email => pref, :roles => ['admin','superuser'] }
     assert last_response.ok?

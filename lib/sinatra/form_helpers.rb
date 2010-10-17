@@ -32,10 +32,10 @@ module Sinatra
           old_value = field[:value]
           new_value = params[:"#{field[:name]}"]
           error = false
-
-#          require 'ruby-debug'
-#          debugger
-
+#          if old_value != new_value
+#            require 'ruby-debug'
+#            debugger
+#          end
           # do validations
           if field[:required] && new_value ==  '' && field[:validation] != 'new_password'
             add_error(field[:name], t.u.error_required_field, 'missing')

@@ -545,7 +545,7 @@ class Frank < Sinatra::Base
     add_field('_locale', i18n.locale, 'select', false, nil, t.labels.create_user_language_label, language_options )
     add_field('html_email', 'true', "select", false, nil, t.labels.edit_html_email_label,
       [{ :value => 'true', :text => t.labels.option_yes}, { :value => 'false', :text => t.labels.option_no }] )
-    add_field('roles[]', '', "select_multiple", false, nil, t.labels.create_user_roles_label, role_options, Role.count < 6 ? Role.count + 1 : 6 )
+    add_field('roles', [''], "select_multiple", false, nil, t.labels.create_user_roles_label, role_options, Role.count < 6 ? Role.count + 1 : 6 )
     haml :'in/new_user', :locals => { :nav_hint => "new_user" }
   end
 
@@ -616,7 +616,7 @@ class Frank < Sinatra::Base
     # an admin user can display anyone
     target_user = User.find_by_id(params[:id])
     if target_user == nil
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
@@ -632,12 +632,25 @@ class Frank < Sinatra::Base
     # an admin user can edit anyone
     target_user = User.find_by_id(params[:id])
     if target_user == nil
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
       flash.now[:message] =  t.u.edit_user_message(target_user.username)
-      haml :'in/edit_user', :locals => { :target_user => target_user, :nav_hint => "edit_user" }
+      open_form
+      add_field('email', target_user.email, 'text', true, 'email, unique', t.labels.create_user_email_label)
+      add_field('password', '', 'password', true, 'new_password', t.labels.create_user_password_label)
+      add_field('_locale', target_user.locale, 'select', false, nil, t.labels.create_user_language_label, language_options )
+      add_field('html_email', target_user.get_preference('HTML_EMAIL').value, "select", false, nil, t.labels.edit_html_email_label,
+        [{ :value => 'true', :text => t.labels.option_yes}, { :value => 'false', :text => t.labels.option_no }] )
+      target_roles = target_user.roles
+      target_role_names = []
+      if target_roles != nil
+        target_roles.each {|r| target_role_names << r.name }
+      end
+      target_role_names = [''] unless !target_role_names.empty?
+      add_field('roles', target_role_names, "select_multiple", false, nil, t.labels.create_user_roles_label, role_options, Role.count < 6 ? Role.count + 1 : 6 )
+      haml :'in/edit_user', :locals => {:nav_hint => "edit_user" }
     end
   end
 
@@ -647,79 +660,73 @@ class Frank < Sinatra::Base
     # an admin user can edit anyone who is not a superuser or admin.
     target_user = User.find_by_id(params[:id])
     if target_user == nil
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     elsif active_user.can_edit_user?(target_user)
-      new_email = params[:email].downcase           # emails are always stored in lowercase so always compare as lowercase.
-      new_password = params[:password]
-      new_html_email_pref = params[:html_email]
-  
-      user_changed = false
-      error = false
-      message = t.u.edit_user_success
-  
-      old_html_email_pref = target_user.get_preference('HTML_EMAIL').value
+      update_form
 
-      if old_html_email_pref != new_html_email_pref
-        target_user.set_preference('HTML_EMAIL', new_html_email_pref)
-        user_changed = true
-      end
-      # if the password is not '' then overwrite the password with the one supplied
-      if new_password != ''
-        target_user.password = new_password
-        user_changed = true
-      end
-      # if the email is new then silently update it, assuming no email clash
-      if new_email != target_user.email
-        if User.email_exists?(new_email)
-          # don't bother to notify
-          message = "#{t.u.edit_user_error_email_clash(new_email)} #{t.u.edit_user_error}"
-          error = true
+#      require 'ruby-debug'
+#      debugger
+
+      if form_okay?
+        if form_changed?
+          close_form
+          new_email = params[:email].downcase           # emails are always stored in lowercase so always compare as lowercase.
+          new_password = params[:password]
+          new_html_email_pref = params[:html_email]
+  
+          message = t.u.edit_user_success
+  
+          old_html_email_pref = target_user.get_preference('HTML_EMAIL').value
+
+          if old_html_email_pref != new_html_email_pref
+            target_user.set_preference('HTML_EMAIL', new_html_email_pref)
+          end
+
+          target_user.password = new_password unless new_password == ''
+          # if the email is new then silently update it, assuming no email clash
+          if new_email != target_user.email
+              target_user.email = new_email
+              target_user.validated = true
+          end
+          new_locale = params['_locale']  # note different to when editing one's own profile.
+          # just check the locale code provided is legit.
+          if target_user.locale != new_locale && locale_available?(new_locale)
+            target_user.locale = new_locale
+            user_changed = true
+          end
+          new_roles = params[:roles]
+          roles_changed = false
+          if new_roles.size != target_user.roles.size + 1 # remember the 'none' option.
+            roles_changed = true
+          else
+            # same number of roles so lets see if they actually match
+            new_roles.delete('')  # eliminate the NONE option.
+            for new_role in new_roles do
+              roles_changed ||= !target_user.has_role?(new_role)
+            end
+          end
+          if roles_changed
+            target_user.replace_roles(new_roles)
+          end
+
+          target_user.save!
+          flash.now[:tip] =  message
+          haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "show_user" }
         else
-          target_user.email = new_email
-          target_user.validated = true
-          user_changed = true
+          # no changes
+          close_form
+          flash.now[:warning] =  t.u.edit_user_no_change
+          haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "profile" }
         end
-      end
-      new_locale = params['_locale']  # note different to when editing one's own profile.
-      # just check the locale code provided is legit.
-      if target_user.locale != new_locale && locale_available?(new_locale)
-        target_user.locale = new_locale
-        user_changed = true
-      end
-      new_roles = params[:roles]
-      roles_changed = false
-      if new_roles.size != target_user.roles.size + 1 # remember the 'none' option.
-        roles_changed = true
       else
-        # same number of roles so lets see if they actually match
-#        require 'ruby-debug'
-#        debugger
-        new_roles.delete("")  # eliminate the NONE option.
-        for new_role in new_roles do
-          roles_changed ||= !target_user.has_role?(new_role)
-        end
-      end
-      if roles_changed
-        target_user.replace_roles(new_roles)
-        user_changed = true
-      end
-      if error
-#        @@log.debug("Editing user with username #{target_user.username} but an error occured. #{message}")
-        flash.now[:error] =  message
-        haml :'in/edit_user', :locals => { :target_user => target_user, :nav_hint => "edit_user" }
-      elsif user_changed
-        target_user.save!
-#        @@log.debug("Edited user with username #{target_user.username}")
-        flash.now[:tip] =  message
-        haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "show_user" }
-      else
-        flash.now[:warning] =  t.u.edit_user_no_change
-        haml :'in/show_user', :locals => { :target_user => target_user, :nav_hint => "profile" }
+        # errors
+        flash.now[:error] =  t.u.error_form
+        haml :'in/edit_user', :locals => { :nav_hint => "edit_user" }
       end
     else
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.edit_user_permission_error + '. ' + t.u.list_users_message(user_list.size)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }  
     end
@@ -732,18 +739,18 @@ class Frank < Sinatra::Base
     # an admin user can delete anyone
     target_user = User.find_by_id(params[:id])
     if target_user == nil
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.error_user_unknown_message + '. ' + t.u.list_users_message(user_list.size)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     elsif target_user.has_role?('superuser')
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
       flash.now[:error] =  t.u.error_cant_delete_superuser_message
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
     else
       tu_name = target_user.username
       target_user.destroy
 #      @@log.debug("Deleted user with username #{tu_name}")
-      user_list = User.all(:order => "LOWER(username) ASC")
+      user_list = User.all(:order => 'username')
 #      @@log.debug("There are now #{t.users(user_list.size)}")
       flash.now[:tip] =  t.u.delete_user_success_message(tu_name)
       haml :'in/list_users', :locals => { :user_list => user_list, :nav_hint => "list_users" }
