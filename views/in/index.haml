@@ -1,21 +1,10 @@
 #details
   %h3 Welcome to your Frank user dashboard
-  %p<
-    Frank is a simple demonstration project built as part of teaching myself about
-    %ul<
-      %li< Ruby,
-      %li< Sinatra, 
-      %li< Haml,
-      %li< Active Record, and
-      %li< Heroku
-  %p Feel free to to to break this app, that's what it's for really.  Every now and again I may wipe all of the user data from here, in which case just re-register if you wish to see what's changed.
-  %p<
-    If you want to see the raw source code, or even fork it, contribute to it etc, please checkout
-    %a{ :href => ""}Frank on GitHub
-    and the associated
-    %a{ :href => ""}Frank on Lighthouse
-    for issue and progress tracking. (Yes I know I could use GitHub for that but I'm playing.)
-  %p Cheers
-  %p
-    %a{ :href => "http://www.davesag.com"}Dave Sag
+  #upload
+    %form{:action=>"/upload",:method=>"post",:enctype=>"multipart/form-data"}
+      %p<
+        %label{:for => 'file'}Upload a file
+        %input{:type=>"file",:name=>"file"}
+      %p<
+        %input{:type=>"submit",:value=>"Upload"}
   

@@ -852,4 +852,24 @@ class Frank < Sinatra::Base
     end
   end
 
+############## FILE UPLOADER  ##################
+
+  post '/upload' do
+    admin_required! "/"
+    if params[:file] == nil
+      flash.now[:error] = "You did not attach a file."
+      haml :'in/index', :locals => { :nav_hint => "home" }
+    else
+      tmpfile = params[:file][:tempfile]
+      name = params[:file][:filename]
+      @@log.debug "Uploading file, original name #{name.inspect}"
+      while blk = tmpfile.read(65536)
+        # here you would write it to its final location
+        puts blk.inspect
+      end
+      flash.now[:message] = "Upload complete"
+      haml :'in/index', :locals => { :nav_hint => "home" }
+    end
+  end
+
 end
