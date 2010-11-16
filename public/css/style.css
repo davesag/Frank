@@ -136,7 +136,7 @@ h3{
 }
 
 #content {
-	height: 600px;
+	min-height: 600px;
 	background: #GhostWhite;
 	clear: both;
 	padding-top: 5px;
