@@ -171,7 +171,7 @@ then log in as root and change your root password.  Then you should not have to 
 
 I want to be a part of it
 -------------------------
-So who is this project aimed at?  Me really, in that I need to build a web-app for a project I am doing and figure a great way to learn more about Sinatra and Ruby and so on is to polish up a more feature complete generic web app that does the very core of what I believe all 'user aware' web apps need to be able to do.
+So who is this project aimed at?  Me really, in that I need to build a web-app for a project I am doing and figure a great way to learn more about Sinatra and Ruby and so on is to polish up a more feature complete generic web app that does the very core of what I believe all 'user aware' web apps need to be able to do. I'm also doing my best to produce fully validated HTMl and CSS.
 
 If you'd like to collaborate with me on this then please get in touch
 

@@ -1,22 +1,22 @@
-%form{ :method => 'POST', :action => "#{form_action}", :'accept-charset' => 'UTF-8', :onsubmit => "check_required(this); check_valid(this);" }
+%form{ :method => 'POST', :action => "#{form_action}", :'accept-charset' => 'UTF-8', :onsubmit => 'check_required(this); check_valid(this);' }
   -for field in active_form do
     -if field[:type] == 'hidden'
-      %input{ :name => field[:name], :value => field[:value], :type => 'hidden' }
+      %input{ :id => field[:name], :name => field[:name], :value => field[:value], :type => 'hidden' }
     -else
       %p{  :class => field_okay?(field[:name]) ? (field[:required] ? 'required' : nil ) : 'error' }<
         %label{ :for => field[:name]}#{field[:label_text] }
         -if field[:type] == 'text'
-          %input{ :name => field[:name], :value => field[:value], :onchange => build_validation_call(field) }
+          %input{ :id => field[:name], :name => field[:name], :value => field[:value], :onchange => build_validation_call(field) }
         -if field[:type] == 'textarea'
-          %textarea{ :name => field[:name], :onchange => build_validation_call(field) }#{field[:value]}
+          %textarea{ :rows => 5, :cols => 20, :name => field[:name], :onchange => build_validation_call(field) }#{field[:value]}
         -if field[:type] == 'password'
-          %input{ :name => field[:name], :value => '', :onchange => build_validation_call(field), :type => 'password'}
+          %input{ :id => field[:name], :name => field[:name], :value => '', :onchange => build_validation_call(field), :type => 'password'}
         -if field[:type] == 'select_multiple'
-          %select{ :name => "#{field[:name]}[]", :onchange => build_validation_call(field), :multiple => 'multiple', :size => field[:size]}
+          %select{ :id => field[:name], :name => "#{field[:name]}[]", :onchange => build_validation_call(field), :multiple => 'multiple', :size => field[:size]}
             -for opt in field[:options] do
               %option{ :value => opt[:value], :selected => field[:value].include?(opt[:value]) }#{opt[:text]}
         -if field[:type] == 'select'
-          %select{ :name => field[:name], :onchange => build_validation_call(field)}
+          %select{ :id => field[:name], :name => field[:name], :onchange => build_validation_call(field)}
             -for opt in field[:options] do
               %option{ :value => opt[:value], :selected => (opt[:value] == field[:value]) }#{opt[:text]}
         -if !field_okay?(field[:name])
