@@ -187,7 +187,7 @@ h3{
 	background: #DCDCDC;
 	font-size: .7em;
 	clear: both;
-	height: 30px;
+	height: 40px;
 	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
@@ -203,14 +203,36 @@ h3{
 	outline:none;
 }
 
-#footer a:visited{
+#footnav {
+	float: left;
+}
+
+#footnav a:visited{
   color:#0084bd;
 }
 
-#footer a:hover{
+#footnav a:hover{
   color:#DCDCDC;
 	background:#2F4F4F;
   text-decoration:underline;
+}
+
+#socialmedia {
+	float:right;
+	min-width: 180px;
+}
+
+#socialmedia ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#socialmedia li {
+	display: inline;
+	padding: 0em 0em;
+	margin: 0em 0em;
+	font-size: .25em;	
 }
 
 .required {

@@ -41,25 +41,28 @@
       = yield
     #footer
       / template footer content goes here
-      %p<
-        [
-        -if nav_hint == 'about'
-          #{t.nav.about_button}
-        -else
-          %a{:href=>'/about'}#{t.nav.about_button}
-        |
-        -if nav_hint == 'contact'
-          #{t.nav.contact_button}
-        -else
-          %a{:href=>'/contact'}#{t.nav.contact_button}
-        |
-        -if nav_hint == 'privacy'
-          #{t.nav.privacy_button}
-        -else
-          %a{:href=>'/privacy'}#{t.nav.privacy_button}
-        |
-        -if nav_hint == 'terms'
-          #{t.nav.terms_button}
-        -else
-          %a{:href=>'/terms'}#{t.nav.terms_button}
-        ]
+      %span{ :id=>'footnav' }
+        %p<
+          [
+          -if nav_hint == 'about'
+            #{t.nav.about_button}
+          -else
+            %a{:href=>'/about'}#{t.nav.about_button}
+          |
+          -if nav_hint == 'contact'
+            #{t.nav.contact_button}
+          -else
+            %a{:href=>'/contact'}#{t.nav.contact_button}
+          |
+          -if nav_hint == 'privacy'
+            #{t.nav.privacy_button}
+          -else
+            %a{:href=>'/privacy'}#{t.nav.privacy_button}
+          |
+          -if nav_hint == 'terms'
+            #{t.nav.terms_button}
+          -else
+            %a{:href=>'/terms'}#{t.nav.terms_button}
+          ]
+      %span{ :id => 'socialmedia'}
+        =haml(:'chunks/social_media_links')
