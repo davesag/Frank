@@ -9,3 +9,10 @@ build/    # ignore all files in the build/ directory
 *.sqlite3	# ignore all sqlite3 files
 *.swp     # no swap files
 .DS_Store # ignore the OSX finder info
+
+/.bundle/
+/.rdebugrc
+/coverage/
+/db/development.sqlite3
+/db/test.sqlite3
+/rdebugnotes.txt
